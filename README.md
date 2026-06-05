@@ -35,9 +35,12 @@ Unlike generic CRMs, TramiFlow includes a **built-in PDF toolkit that runs 100% 
 
 ---
 
-## 💎 Core vs Pro
+## 💎 Freemium & Distribution Model
 
-TramiFlow operates on an Open Core model. This repository contains the Community Edition.
+TramiFlow CE (Community Edition) represents the fully functional core of the application. 
+
+**Architectural Philosophy:** 
+While strictly defined "Open Core" software often relies on complex dependency injection or git submodules to separate Enterprise features, we opted for a pragmatic **Freemium / Upstream Model** tailored for the Next.js App Router. This repository serves as the clean, unpolluted upstream. The private PRO (SaaS) edition acts as a direct downstream fork that extends this core via isolated Next.js Route Groups (`(pro)`) and server-side feature flags, avoiding the overhead of heavy DI abstractions in the Community Edition.
 
 | Feature | Community (Free) | Pro |
 |---|---|---|
@@ -100,7 +103,7 @@ graph TD
 ### Installation
 
 ```bash
-git clone https://github.com/tu-usuario/tramiflow-ce.git
+git clone https://github.com/carlosindriago/tramiflow-ce.git
 cd tramiflow-ce
 npm install
 cp .env.example .env.local

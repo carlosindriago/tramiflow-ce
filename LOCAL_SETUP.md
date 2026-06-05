@@ -13,7 +13,7 @@ Esta guía te permite ejecutar TramiFlow localmente con Supabase en Docker.
 
 ### 1. Clonar el Repo (si no lo tienes)
 ```bash
-git clone https://github.com/tu-usuario/tramiflow-ce.git
+git clone https://github.com/carlosindriago/tramiflow-ce.git
 cd tramiflow-ce
 ```
 

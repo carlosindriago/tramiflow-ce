@@ -76,7 +76,7 @@
 
 ```bash
 # 1. Clonar
-git clone <repo-url>
+git clone https://github.com/carlosindriago/tramiflow-ce.git
 cd tramiflow-ce
 
 # 2. Instalar dependencias
