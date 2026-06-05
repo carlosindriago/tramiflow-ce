@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient as createAdminClient } from '@supabase/supabase-js'
-import { requireSuperAdmin } from '@tramiflow/core'
+import { requireSuperAdmin } from '@tramiflow/core/server'
 import { revalidatePath } from 'next/cache'
 
 const getSupabaseAdmin = () => createAdminClient(

@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@tramiflow/database/server'
-import { requireSuperAdmin } from '@tramiflow/core'
+import { requireSuperAdmin } from '@tramiflow/core/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
