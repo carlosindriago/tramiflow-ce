@@ -1,5 +1,5 @@
 -- ==========================================
--- TramiFlow CRM - Core Tables Migration
+-- TramiFlow CE - Core Tables Migration
 -- ==========================================
 -- Multi-tenant architecture for SaaS
 --

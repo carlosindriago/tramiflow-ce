@@ -1,4 +1,4 @@
-# Patrones de UX - TramiFlow CRM
+# Patrones de UX - TramiFlow CE
 
 Guía de patrones de experiencia de usuario para consistencia en toda la aplicación.
 

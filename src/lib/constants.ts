@@ -1,5 +1,5 @@
 /**
- * TramiFlow CRM - Application Constants
+ * TramiFlow CE - Application Constants
  *
  * Centralized constants for:
  * - Routes
@@ -150,7 +150,7 @@ export const CURRENCY = {
 // App Metadata
 // ==========================================
 export const APP = {
-    NAME: 'TramiFlow CRM',
+    NAME: 'TramiFlow CE',
     DESCRIPTION: 'Gestión de trámites migratorios',
     VERSION: '1.0.0',
 } as const

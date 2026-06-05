@@ -1,4 +1,4 @@
-# Design System - TramiFlow CRM
+# Design System - TramiFlow CE
 
 Guía oficial de patrones de diseño, componentes y comportamiento visual.
 
@@ -556,7 +556,7 @@ Antes de agregar un nuevo componente a la UI, verificar:
 
 ---
 
-**IMPORTANTE:** Este documento es la **fuente de verdad** para el diseño de TramiFlow CRM. Cualquier cambio en la UI debe actualizarse aquí primero.
+**IMPORTANTE:** Este documento es la **fuente de verdad** para el diseño de TramiFlow CE. Cualquier cambio en la UI debe actualizarse aquí primero.
 
 ---
 

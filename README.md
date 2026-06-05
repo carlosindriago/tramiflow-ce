@@ -1,7 +1,7 @@
 <div align="center">
   <img src="public/window.svg" alt="TramiFlow Logo" width="120" />
   
-  # TramiFlow CRM
+  # TramiFlow CE
   
   **Open-source SaaS CRM for immigration procedure management**
   

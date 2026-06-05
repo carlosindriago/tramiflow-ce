@@ -1,4 +1,4 @@
-# Contributing to TramiFlow CRM
+# Contributing to TramiFlow CE
 
 Thank you for your interest in contributing! This project follows a structured methodology to ensure high code quality and rigorous security standards.
 

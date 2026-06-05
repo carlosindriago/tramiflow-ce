@@ -1,6 +1,6 @@
-# TramiFlow CRM - Supabase Migrations
+# TramiFlow CE - Supabase Migrations
 
-Esta carpete contiene todas las migraciones de base de datos y storage para TramiFlow CRM.
+Esta carpete contiene todas las migraciones de base de datos y storage para TramiFlow CE.
 
 ## 🚀 Ejecutar Migraciones
 

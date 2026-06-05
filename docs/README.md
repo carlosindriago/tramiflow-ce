@@ -1,4 +1,4 @@
-# 📖 TramiFlow CRM — Documentación Técnica
+# 📖 TramiFlow CE — Documentación Técnica
 
 > **Versión:** 0.1.0 (MVP) · **Última actualización:** 2026-02-11  
 > **Estado:** En desarrollo activo · **Licencia:** Privada
@@ -20,7 +20,7 @@
 
 ## 🎯 Visión del Producto
 
-**TramiFlow CRM** es un **SaaS B2B multi-tenant** diseñado para **gestores migratorios en Perú**. Resuelve el problema de desorganización, multas por vencimientos y el uso desconectado de herramientas (Excel, WhatsApp) que sufren estos profesionales.
+**TramiFlow CE** es un **SaaS B2B multi-tenant** diseñado para **gestores migratorios en Perú**. Resuelve el problema de desorganización, multas por vencimientos y el uso desconectado de herramientas (Excel, WhatsApp) que sufren estos profesionales.
 
 ### Propuesta de Valor
 
@@ -77,7 +77,7 @@
 ```bash
 # 1. Clonar
 git clone <repo-url>
-cd tramiflow-crm
+cd tramiflow-ce
 
 # 2. Instalar dependencias
 npm install
@@ -98,7 +98,7 @@ npm run dev
 ## 📁 Vista Rápida de la Estructura
 
 ```
-tramiflow-crm/
+tramiflow-ce/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── (dashboard)/        # Layout group: sidebar + header

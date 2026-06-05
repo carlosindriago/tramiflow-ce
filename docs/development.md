@@ -1,6 +1,6 @@
 # 👨‍💻 Guía de Desarrollo
 
-> Convenciones, configuración del entorno, Git flow, TDD y workflows para contribuir a TramiFlow CRM.
+> Convenciones, configuración del entorno, Git flow, TDD y workflows para contribuir a TramiFlow CE.
 
 ---
 
@@ -20,7 +20,7 @@
 ```bash
 # 1. Clonar el repositorio
 git clone <repo-url>
-cd tramiflow-crm
+cd tramiflow-ce
 
 # 2. Instalar dependencias
 npm install

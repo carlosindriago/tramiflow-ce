@@ -1,4 +1,4 @@
-# 🏗️ TRAMIFLOW CRM - CONTEXTO MAESTRO
+# 🏗️ TRAMIFLOW CE - CONTEXTO MAESTRO
 
 ## 🎯 VISIÓN DEL PRODUCTO
 SaaS B2B para gestores migratorios en Perú.

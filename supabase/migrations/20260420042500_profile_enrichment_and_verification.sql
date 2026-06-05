@@ -1,5 +1,5 @@
 -- ==========================================
--- TramiFlow CRM - Profile Enrichment & Verification
+-- TramiFlow CE - Profile Enrichment & Verification
 -- ==========================================
 
 -- 1. Actualizar tabla profiles

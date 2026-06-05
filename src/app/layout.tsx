@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TramiFlow CRM",
+  title: "TramiFlow CE",
   description: "SaaS B2B para gestores migratorios en Perú",
 };
 

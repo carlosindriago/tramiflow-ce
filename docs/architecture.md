@@ -1,6 +1,6 @@
 # 🏗️ Arquitectura del Sistema
 
-> Este documento describe la arquitectura técnica de TramiFlow CRM, las decisiones de diseño y los patrones utilizados.
+> Este documento describe la arquitectura técnica de TramiFlow CE, las decisiones de diseño y los patrones utilizados.
 
 ---
 

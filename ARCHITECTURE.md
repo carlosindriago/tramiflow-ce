@@ -1,4 +1,4 @@
-# TramiFlow CRM - Architecture & Rules
+# TramiFlow CE - Architecture & Rules
 
 **Última actualización:** 2026-03-07  
 **Versión:** 0.2.0

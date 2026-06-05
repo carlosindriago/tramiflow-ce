@@ -1,4 +1,4 @@
-# TramiFlow CRM - Open Core & PRO Features
+# TramiFlow CE - Open Core & PRO Features
 
 TramiFlow follows an Open Core model. The core CRM and essential tools are open-source (Community Edition), while advanced features for scaling businesses are part of the PRO tier.
 

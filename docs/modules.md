@@ -1,13 +1,13 @@
 # 📦 Módulos del Sistema
 
-> Descripción funcional detallada de cada módulo de TramiFlow CRM.
+> Descripción funcional detallada de cada módulo de TramiFlow CE.
 
 ---
 
 ## Mapa de Módulos
 
 ```
-TramiFlow CRM
+TramiFlow CE
 ├── 🔐 Auth                    # Autenticación y sesiones
 ├── 📊 Dashboard               # Panel principal con stats
 ├── 👥 Clientes                # Gestión de clientes
