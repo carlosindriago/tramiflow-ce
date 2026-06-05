@@ -133,7 +133,7 @@ Contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for:
 - Branch naming convention
 - Commit message format
 - PR process and review criteria
-- AI-Assisted (JARVIS) workflow guidelines
+- Security reporting guidelines
 
 ---
 

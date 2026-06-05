@@ -1,38 +1,38 @@
 # Contributing to TramiFlow CRM
 
-Thank you for your interest in contributing! This project follows a structured methodology optimized for AI-assisted development and rigorous security standards.
+Thank you for your interest in contributing! This project follows a structured methodology to ensure high code quality and rigorous security standards.
 
 ## 🔄 Git Workflow
 
-We use a branch-based methodology:
+We use a standard feature-branch methodology:
 
-- **`main`**: Production branch (stable).
+- **`main`**: Production branch (stable releases).
 - **`develop`**: Main integration branch. All development converges here.
-- **Feature Branches**: Branches for new features or fixes.
+- **Feature Branches**: Branches for new features or bug fixes.
   - Format: `feat/feature-name` or `fix/fix-name`.
   - Created from `develop` and merged back to `develop`.
 
-## 🤖 AI-Assisted Development Workflow (JARVIS)
+## 🛠️ Development Guidelines
 
-We use an AI-assisted pull request protocol to ensure quality and compliance.
+To ensure code quality and prevent data leaks in our multi-tenant architecture, please follow these guidelines:
 
-### Before Coding
-1. Update develop branch: `git checkout develop && git pull`
-2. Create branch from develop: `git checkout -b feat/TRAMI-XXX-description`
-3. Analyze context and present a structured plan.
-4. Verify multi-tenancy impact (ensure `organization_id` is always used).
+### 1. Preparation
+- Always start from the latest `develop` branch: `git checkout develop && git pull`
+- Create a descriptive branch: `git checkout -b feat/TRAMI-XXX-description`
+- **Security Check**: Always verify the multi-tenancy impact of your changes. Ensure `organization_id` is used in all relevant database queries.
 
-### Before Commit
-1. Use the `[JARVIS]` prefix in all commits: `git commit -m "[JARVIS] feat: description"`
-2. Verify TypeScript and Linting: `npm run build` (Do NOT rely only on `npm run dev`)
-3. Ensure there are no leftover `console.log` statements.
-4. Double-check that EVERY Supabase query includes `.eq('organization_id', orgId)`.
+### 2. Implementation Rules
+- **TypeScript & Linting**: We use strict TypeScript. Run `npm run build` to verify there are no type or linting errors before committing. Do not rely solely on the dev server.
+- **Clean Code**: Remove all debugging `console.log` statements before opening a PR.
+- **Supabase RLS**: Double-check that EVERY Supabase query explicitly enforces the tenant boundary, e.g., `.eq('organization_id', orgId)`.
 
-### Delivery via Pull Request
-1. Push branch: `git push -u origin branch-name`
-2. Create PR: `gh pr create --base develop --title "[JARVIS] feat: description" --body "..." --label "AI-Agent"`
-3. DO NOT MERGE automatically. Wait for Tech Lead authorization.
+### 3. Pull Request Process
+- Use conventional commits: `git commit -m "feat: description"` or `git commit -m "fix: description"`.
+- Push your branch: `git push -u origin branch-name`
+- Open a Pull Request targeting the `develop` branch.
+- Provide a clear description of the changes and link any related issues.
+- Wait for a code review and CI checks to pass before merging.
 
-### Post-Merge
-1. Update local: `git checkout develop && git pull`
-2. Clean branch: `git branch -d branch-name`
+### 4. Post-Merge
+- Update your local repository: `git checkout develop && git pull`
+- Clean up your local branch: `git branch -d branch-name`
