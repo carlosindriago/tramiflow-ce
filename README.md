@@ -150,4 +150,4 @@ TramiFlow Community Edition is licensed under [AGPL-3.0](./LICENSE).
 - ⚠️ If you offer TramiFlow as a hosted service, you must open-source your modifications
 - ❌ The Pro features are not covered by this license
 
-For commercial licensing inquiries: carlos@tramiflow.com
+For commercial licensing inquiries: hola@carlosindriago.com
