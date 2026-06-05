@@ -1,0 +1,24 @@
+{
+  "name": "@tramiflow/ui",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "@radix-ui/react-accordion": "^1.2.12",
+    "@radix-ui/react-icons": "^1.3.2",
+    "@radix-ui/react-radio-group": "^1.3.8",
+    "@radix-ui/react-slot": "^1.0.0",
+    "class-variance-authority": "^0.7.1",
+    "lucide-react": "^0.563.0",
+    "@tramiflow/core": "*",
+    "next": "^16.2.4",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tramiflow/config-typescript": "*",
+    "typescript": "^5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  }
+}
