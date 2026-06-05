@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import type { UserOrganization } from '@/types/organization'
+import { createClient } from '@tramiflow/database/server'
+import type { UserOrganization } from '@tramiflow/core'
 
 /**
  * Checks if the current user has completed onboarding (has at least one organization).

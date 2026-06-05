@@ -6,13 +6,13 @@ import { es } from 'date-fns/locale'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
 import { cn } from '@tramiflow/core'
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { Button } from '@tramiflow/ui'
+import { Calendar } from '@tramiflow/ui'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from '@/components/ui/popover'
+} from '@tramiflow/ui'
 
 /**
  * Professional DatePicker Component

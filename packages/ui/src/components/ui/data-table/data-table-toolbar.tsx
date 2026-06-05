@@ -6,8 +6,8 @@ import { Table } from '@tanstack/react-table'
 
 /* eslint-disable */
 import { cn } from '@tramiflow/core'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '@tramiflow/ui'
+import { Input } from '@tramiflow/ui'
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -15,7 +15,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@tramiflow/ui'
 import { Settings2 } from 'lucide-react'
 
 interface DataTableToolbarProps<TData> {

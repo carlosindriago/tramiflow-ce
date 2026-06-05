@@ -13,7 +13,7 @@ import {
 } from 'react-hook-form'
 
 import { cn } from '@tramiflow/core'
-import { Label } from '@/components/ui/label'
+import { Label } from '@tramiflow/ui'
 
 const Form = FormProvider
 

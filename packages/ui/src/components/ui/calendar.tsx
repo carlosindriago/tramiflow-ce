@@ -13,7 +13,7 @@ import {
 } from "react-day-picker"
 
 import { cn } from "@tramiflow/core"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@tramiflow/ui"
 
 function Calendar({
   className,

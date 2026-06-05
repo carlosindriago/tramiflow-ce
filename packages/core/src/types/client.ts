@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { Tables } from './database.types'
+import { Tables } from '@tramiflow/database/types'
 
 export type Client = Tables<'clients'>
 

@@ -4,11 +4,11 @@
  * Wrapper around Sonner for consistent toast notifications
  *
  * Usage in Client Components:
- *   import { toast } from '@/lib/toast'
+ *   import { toast } from '@tramiflow/core'
  *   toast.success('Operation successful')
  *
  * Usage in Server Actions:
- *   import { showSuccess } from '@/lib/toast'
+ *   import { showSuccess } from '@tramiflow/core'
  *   showSuccess('Saved successfully')
  */
 

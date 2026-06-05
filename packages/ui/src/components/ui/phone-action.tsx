@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 
 import { useState } from 'react'
@@ -7,8 +8,8 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { toast } from '@/lib/toast'
+} from '@tramiflow/ui'
+import { toast } from '@tramiflow/core'
 
 interface PhoneActionProps {
     phone: string

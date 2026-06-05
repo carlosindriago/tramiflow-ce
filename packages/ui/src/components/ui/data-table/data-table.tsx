@@ -18,7 +18,7 @@ import {
 import { cn } from '@tramiflow/core'
 
 /* eslint-disable */
-import { Button } from '@/components/ui/button'
+import { Button } from '@tramiflow/ui'
 import {
     Table,
     TableBody,
@@ -26,7 +26,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table'
+} from '@tramiflow/ui'
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 
