@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Run TypeScript Compiler (Type Check)
+        run: npx tsc --noEmit
+
+      # Uncomment this step when you write Vitest tests
+      # - name: Run Tests
+      #   run: npx vitest run
+
+      - name: Build Next.js
+        run: npm run build
+        env:
+          # Dummy variables required for Next.js static generation during build
+          NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-anon-key"
+          NEXT_PUBLIC_SITE_URL: "http://localhost:3000"
