@@ -138,7 +138,7 @@ export async function deleteClientAction(clientId: string): Promise<ClientAction
 
     if (error) return { error: { _form: [error.message] } }
 
-    const { logAudit } = await import('@tramiflow/core')
+    const { logAudit } = await import('@tramiflow/core/server')
     await logAudit(member.organization_id, 'CLIENT_DELETED', clientId, 'client')
 
     revalidatePath('/clients')

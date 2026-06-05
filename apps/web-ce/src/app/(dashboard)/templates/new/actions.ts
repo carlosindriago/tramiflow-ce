@@ -114,7 +114,7 @@ export async function deleteTemplate(id: string) {
 
     if (!member?.organization_id) throw new Error('No organization')
 
-    const { logAudit } = await import('@tramiflow/core')
+    const { logAudit } = await import('@tramiflow/core/server')
     const { error } = await supabase
         .from('procedure_templates')
         .update({ is_archived: true })

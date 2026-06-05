@@ -3,7 +3,7 @@
 
 import { createClient } from '@tramiflow/database/server'
 /* eslint-disable */
-import { requireAdmin, requireSuperAdmin } from '@tramiflow/core'
+import { requireAdmin, requireSuperAdmin } from '@tramiflow/core/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import type { AdminActionResult, AdminRole } from '@tramiflow/core'
