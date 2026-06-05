@@ -1,0 +1,16 @@
+{
+  "name": "@tramiflow/pdf-kit",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^5.4.624",
+    "browser-image-compression": "^2.0.2",
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "@tramiflow/config-typescript": "*",
+    "typescript": "^5"
+  }
+}

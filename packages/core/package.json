@@ -1,0 +1,15 @@
+{
+  "name": "@tramiflow/core",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.4.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tramiflow/config-typescript": "*",
+    "typescript": "^5"
+  }
+}
