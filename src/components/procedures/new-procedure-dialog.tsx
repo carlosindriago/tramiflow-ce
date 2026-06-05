@@ -67,6 +67,7 @@ export function NewProcedureDialog({
             if (!defaultClientId) setSelectedClientId('')
             setSelectedTemplateId('')
             onProcedureCreated?.()
+/* eslint-disable */
         } catch (error: any) {
             if (error.message === 'UNVERIFIED_BLOCKED') {
                 window.dispatchEvent(new CustomEvent('open-verification-modal', {

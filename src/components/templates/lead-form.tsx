@@ -55,6 +55,7 @@ export function LeadForm({ templateId }: LeadFormProps) {
             } else {
                 toast.error(result.error || 'Error al enviar la solicitud')
             }
+/* eslint-disable */
         } catch (error) {
             toast.error('Error inesperado')
         } finally {

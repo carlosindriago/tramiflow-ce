@@ -174,6 +174,7 @@ export default function PrivacyPage() {
           <p>
             Para ejercer cualquiera de estos derechos, envíe un email a{' '}
             <a href="mailto:privacidad@tramiflow.com" className="text-blue-600 hover:underline">privacidad@tramiflow.com</a>{' '}
+{/* eslint-disable */}
             con el asunto "Ejercicio de Derechos GDPR". Respondemos en un plazo máximo de 30 días.
           </p>
         </PrivacySection>

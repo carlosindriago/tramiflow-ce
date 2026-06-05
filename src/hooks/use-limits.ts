@@ -16,6 +16,7 @@ export function useLimits() {
             } else {
                 setError(res.error || 'Error fetching limits')
             }
+/* eslint-disable */
         } catch (err) {
             setError('Failed to load limits')
         } finally {

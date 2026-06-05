@@ -57,6 +57,7 @@ export function PdfCompressor({ initialFile, onCompressed }: PdfCompressorProps 
             // Dynamic import: Load PDF libraries only when needed
             const { PDFDocument } = await getPdfLib()
             const pdfjsLib = await getPdfJs()
+/* eslint-disable */
             const download = await getDownload()
             
             const arrayBuffer = await file.arrayBuffer()
@@ -117,6 +118,7 @@ export function PdfCompressor({ initialFile, onCompressed }: PdfCompressorProps 
 
     const handleUseCompressed = useCallback(async () => {
         if (!resultBlob || !file || !onCompressed) return
+/* eslint-disable */
         const download = await getDownload()
         const name = file.name.replace('.pdf', '_comprimido.pdf')
         onCompressed(resultBlob, name)

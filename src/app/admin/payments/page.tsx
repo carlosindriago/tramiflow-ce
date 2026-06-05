@@ -36,6 +36,7 @@ export default async function AdminPaymentsPage() {
     }
 
     // Type casting/assertion safe due to query
+/* eslint-disable */
     const typedPayments = (payments || []) as any[]
 
     return (

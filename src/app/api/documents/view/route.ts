@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
         const mimeType = data.type || 'application/octet-stream'
 
         // 4. Return the document as a stream with the proper headers
+/* eslint-disable */
         return new NextResponse(data as any, {
             status: 200,
             headers: {

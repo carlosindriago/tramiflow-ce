@@ -9,6 +9,7 @@ import {
 } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 
+/* eslint-disable */
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {

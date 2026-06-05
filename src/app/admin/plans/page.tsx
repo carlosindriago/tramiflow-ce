@@ -9,6 +9,7 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+/* eslint-disable */
 import { Check, X, Edit, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 

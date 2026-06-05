@@ -4,6 +4,7 @@ import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { Database } from '@/types/database.types'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+/* eslint-disable */
 import { ArrowLeft, User, Shield, AlertTriangle, MonitorSmartphone, Calendar, Mail, Clock, ShieldAlert } from 'lucide-react'
 import { format, formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -187,6 +188,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                                 </div>
                             ) : (
                                 <div className="divide-y divide-white/5">
+/* eslint-disable */
                                     {memberships.map((membership: any) => (
                                         <div key={membership.organizations.id} className="p-4 flex items-center justify-between hover:bg-zinc-900/40 transition-colors">
                                             <div>

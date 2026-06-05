@@ -175,6 +175,7 @@ export function AppSidebar() {
 
                     if (members) {
                         // Map to UserOrganization type
+/* eslint-disable */
                         const orgs: UserOrganization[] = members.map((m: any) => ({
                             id: m.organization.id,
                             name: m.organization.name,

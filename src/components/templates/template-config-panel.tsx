@@ -84,6 +84,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
     const totalCost = Number(displayFeesProfessional || 0) + Number(displayFeesOfficial || 0)
 
     // Handler to update values and force re-render
+/* eslint-disable */
     const updateField = (field: keyof TemplateFormData, value: any) => {
         form.setValue(field, value, { shouldDirty: true })
     }

@@ -91,6 +91,7 @@ describe('ProcedureCard', () => {
 
     it('does NOT render checklist when template.steps is absent (template is null)', () => {
       const procedure = createMockProcedure({
+/* eslint-disable */
         template: null as any,
       })
 

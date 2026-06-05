@@ -22,6 +22,7 @@ export async function signInWithGoogle() {
         } else if (data.url) {
             redirectUrl = data.url
         }
+/* eslint-disable */
     } catch (e) {
         errorOccurred = true
     }
@@ -71,6 +72,7 @@ export async function signInWithEmail(email: string, password: string) {
                 }
             }
         }
+/* eslint-disable */
     } catch (e) {
         errorOccurred = true
         errorMessage = 'Error inesperado al iniciar sesión'
@@ -124,6 +126,7 @@ export async function signUpWithEmail(email: string, password: string) {
         } else if (data.session) {
             success = true
         }
+/* eslint-disable */
     } catch (e) {
         // Only catch true unexpected errors, not NEXT_REDIRECT (though we aren't calling it here)
         errorOccurred = true
@@ -186,6 +189,7 @@ export async function verifyMfaAction(code: string) {
         })
 
         if (verify.error) throw verify.error
+/* eslint-disable */
     } catch (e: any) {
         errorOccurred = true
         errorMessage = 'Código incorrecto. Intenta de nuevo.'

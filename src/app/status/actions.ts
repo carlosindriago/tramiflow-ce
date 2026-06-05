@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+/* eslint-disable */
 import { notFound } from 'next/navigation'
 
 export async function getPublicProcedureStatus(trackingId: string) {

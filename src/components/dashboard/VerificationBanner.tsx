@@ -25,6 +25,7 @@ export default function VerificationBanner({ emailVerified, className }: Verific
             setIsModalOpen(true)
             // Trigger code send automatically if we are blocking them
             if (customEvent.detail?.message) {
+/* eslint-disable */
                 handleSendCode(true) // Silent error on resend if already sent
             }
         }

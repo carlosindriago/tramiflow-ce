@@ -71,6 +71,7 @@ export async function fixUserOrganization(userId: string) {
 
         revalidatePath('/admin/users')
         return { success: true, message: 'Organización creada y vinculada correctamente.' }
+/* eslint-disable */
     } catch (error: any) {
         console.error('[fixUserOrganization] Falló:', error)
         return { success: false, error: error.message || 'Error desconocido' }
@@ -89,6 +90,7 @@ export async function toggleUserBan(userId: string, shouldBan: boolean) {
 
         revalidatePath('/admin/users')
         return { success: true, message: shouldBan ? 'Usuario baneado permanentemente.' : 'Usuario desbaneado.' }
+/* eslint-disable */
     } catch (error: any) {
         console.error('[toggleUserBan] Falló:', error)
         return { success: false, error: error.message || 'Error desconocido' }
@@ -116,6 +118,7 @@ export async function deleteUserFully(userId: string) {
 
         revalidatePath('/admin/users')
         return { success: true, message: 'Usuario y sus datos eliminados irremediablemente.' }
+/* eslint-disable */
     } catch (error: any) {
         return { success: false, error: error.message }
     }

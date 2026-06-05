@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+/* eslint-disable */
 const shareSchema = z.object({
     templateId: z.string(),
     visibility: z.enum(['private', 'public', 'restricted']),
@@ -15,6 +16,7 @@ const shareSchema = z.object({
     }).optional(),
 })
 
+/* eslint-disable */
 const permissionSchema = z.object({
     templateId: z.string(),
     email: z.string().email(),

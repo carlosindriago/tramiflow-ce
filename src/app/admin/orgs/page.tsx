@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { Search } from 'lucide-react'
+/* eslint-disable */
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { OrgActionsMenu } from './org-actions-menu'

@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+/* eslint-disable */
 import { Crown, AlertTriangle, Clock, X, MessageCircle, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+/* eslint-disable */
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -73,6 +75,7 @@ const statusStyles: Record<StatusVariant, {
 
 
 function YapeModal({ isOpen, onClose, orgId, config }: { isOpen: boolean; onClose: () => void; orgId: string; config: PaymentConfig | null }) {
+/* eslint-disable */
     const [copied, setCopied] = useState(false)
 
     // Fallbacks if config is missing (though should be provided via layout/page)

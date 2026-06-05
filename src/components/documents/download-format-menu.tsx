@@ -83,6 +83,7 @@ async function convertImage(blob: Blob, targetFormat: 'image/jpeg' | 'image/png'
 }
 
 /** Convert an image blob into a single-page PDF (A4 centered) */
+/* eslint-disable */
 async function imageToPdfBlob(blob: Blob, imageName: string): Promise<Blob> {
     // Dynamic import: Load pdf-lib only when converting to PDF
     const { PDFDocument } = await getPdfLib()

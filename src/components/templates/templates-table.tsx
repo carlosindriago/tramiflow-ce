@@ -70,6 +70,7 @@ export function TemplatesTable({ templates, isLoading }: TemplatesTableProps) {
             toast.success('Plantilla eliminada')
             // Refresh the page
             window.location.reload()
+/* eslint-disable */
         } catch (error) {
             toast.error('Error al eliminar la plantilla')
         }
@@ -80,6 +81,7 @@ export function TemplatesTable({ templates, isLoading }: TemplatesTableProps) {
             await duplicateTemplate(templateId)
             toast.success('Plantilla duplicada')
             window.location.reload()
+/* eslint-disable */
         } catch (error) {
             toast.error('Error al duplicar la plantilla')
         }

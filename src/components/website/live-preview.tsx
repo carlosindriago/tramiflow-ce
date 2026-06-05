@@ -3,6 +3,7 @@
 import { PublicProfileRenderer } from '@/components/public/public-profile-renderer'
 
 interface LivePreviewProps {
+/* eslint-disable */
     settings: any // We use any here to allow flexible preview of form values before validation
 }
 

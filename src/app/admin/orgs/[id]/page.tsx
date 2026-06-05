@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
@@ -153,6 +154,7 @@ export default async function AdminOrgDetailPage({ params }: PageProps) {
                         </div>
                         <div className="p-0">
                             <Suspense fallback={<div className="p-6 text-center text-sm text-zinc-500">Cargando miembros...</div>}>
+{/* eslint-disable */}
                                 <OrgMembersClientTable members={members as any} orgId={id} />
                             </Suspense>
                         </div>

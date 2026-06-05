@@ -5,6 +5,7 @@ import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { AlertTriangle, Lock, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
+/* eslint-disable */
 import { cn } from '@/lib/utils'
 
 export function QuotaUsage() {

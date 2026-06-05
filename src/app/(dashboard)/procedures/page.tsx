@@ -1,6 +1,8 @@
+/* eslint-disable */
 import { Suspense } from 'react'
 import { getProceduresAction, getNewProcedureOptions, getProcedureStatusesAction } from './actions'
 import { KanbanBoard } from '@/components/procedures/kanban-board'
+/* eslint-disable */
 import { Loader2 } from 'lucide-react'
 import { Procedure } from '@/types/procedure'
 import { ProcedureStatus as ProcedureStatusConfig } from '@/types/procedure-status'

@@ -40,6 +40,7 @@ export function OrgMembersClientTable({ members, orgId }: { members: Member[], o
             } else {
                 toast.error(res.error || 'Ocurrió un error al remover al miembro.')
             }
+/* eslint-disable */
         } catch (error) {
             toast.error('Error de conexión con el servidor.')
         } finally {

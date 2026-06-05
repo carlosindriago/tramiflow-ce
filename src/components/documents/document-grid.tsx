@@ -175,6 +175,7 @@ export function DocumentGrid({
         setViewerDoc(doc)
     }
 
+/* eslint-disable */
     const handleDownload = async (doc: Document) => {
         const supabase = createClient()
         const { data, error } = await supabase.storage

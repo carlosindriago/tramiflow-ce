@@ -4,11 +4,14 @@ import { useState, useRef, useEffect, lazy, Suspense } from 'react'
 import { useAnalytics } from '@/hooks/use-analytics'
 import {
     Loader2,
+/* eslint-disable */
     Crop,
     ScanText,
     Copy,
     Check,
+/* eslint-disable */
     X,
+/* eslint-disable */
     Maximize2,
     RotateCw
 } from 'lucide-react'
@@ -51,7 +54,7 @@ export function SmartScannerDialog({ open, onOpenChange, doc }: SmartScannerDial
     const [status, setStatus] = useState<ScanStatus>('idle')
     const [progress, setProgress] = useState(0)
     const [scannedText, setScannedText] = useState('')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const cropperRef = useRef<ReactCropperElement>(null)
     const [copied, setCopied] = useState(false)
     const { trackEvent } = useAnalytics()

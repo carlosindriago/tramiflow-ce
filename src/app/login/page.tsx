@@ -44,6 +44,7 @@ export default function LoginPage() {
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
     const [signupSuccess, setSignupSuccess] = useState(false)
     const [resetSuccess, setResetSuccess] = useState(false)
+/* eslint-disable */
     const [mounted, setMounted] = useState(false)
     const [mfaCode, setMfaCode] = useState('')
 

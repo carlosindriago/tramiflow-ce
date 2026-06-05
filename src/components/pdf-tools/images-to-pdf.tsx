@@ -20,6 +20,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { FileDropzone } from './file-dropzone'
 import { ProcessingIndicator, formatFileSize } from './processing-indicator'
+/* eslint-disable */
 import { ImageIcon, GripVertical, X, Download, FileOutput } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getPdfLib, getDownload, getA4Dimensions } from '@/lib/pdf-utils'

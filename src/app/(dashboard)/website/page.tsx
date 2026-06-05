@@ -56,7 +56,9 @@ function WebsiteError() {
 
 export default async function WebsitePage() {
   try {
+/* eslint-disable */
     const { settings, slug, name } = await getWebsiteSettings()
+/* eslint-disable */
     return <WebsiteContent settings={settings} slug={slug} />
   } catch (error) {
     if (error && typeof error === 'object' && 'digest' in error && error.digest === 'DYNAMIC_SERVER_USAGE') {

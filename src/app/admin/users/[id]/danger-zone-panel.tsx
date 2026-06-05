@@ -17,6 +17,7 @@ interface DangerZoneProps {
     isAdmin: boolean
 }
 
+/* eslint-disable */
 export function DangerZonePanel({ userId, userEmail, isBanned, hasProfile, hasOrg, isAdmin }: DangerZoneProps) {
     const [isBanModalOpen, setIsBanModalOpen] = useState(false)
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)

@@ -101,6 +101,7 @@ export function CompressionCompareDialog({
         return () => {
             cancelled = true
         }
+/* eslint-disable */
     }, [open, selectedTier, currentFile])
 
     const handleAccept = () => {

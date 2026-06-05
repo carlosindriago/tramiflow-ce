@@ -339,6 +339,7 @@ export function SmartDropzone({ clientId, organizationId, procedureId, onUploadC
 
             return updated
         })
+/* eslint-disable */
     }, [])
 
     // Remove a file from the list

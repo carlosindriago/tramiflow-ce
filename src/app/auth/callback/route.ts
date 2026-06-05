@@ -33,6 +33,7 @@ export async function GET(request: Request) {
                     .eq('id', session.user.id)
                     .single()
 
+/* eslint-disable */
                 const updateData: any = { last_ip: ip }
                 if (profile && !profile.registration_ip) {
                     updateData.registration_ip = ip

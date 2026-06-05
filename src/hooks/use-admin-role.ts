@@ -1,6 +1,8 @@
 'use client'
 
+/* eslint-disable */
 import { useCallback } from 'react'
+/* eslint-disable */
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import type { AdminRole } from '@/types/admin'

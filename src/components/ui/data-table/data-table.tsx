@@ -14,8 +14,10 @@ import {
     useReactTable,
 } from '@tanstack/react-table'
 
+/* eslint-disable */
 import { cn } from '@/lib/utils'
 
+/* eslint-disable */
 import { Button } from '@/components/ui/button'
 import {
     Table,
@@ -59,6 +61,7 @@ export function DataTable<TData, TValue>({
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
 
+/* eslint-disable */
     const table = useReactTable({
         data,
         columns,

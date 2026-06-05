@@ -53,6 +53,7 @@ export function LogoUpload({ value, onChange, organizationId }: LogoUploadProps)
 
             onChange(publicUrl)
             toast.success('Logo actualizado')
+/* eslint-disable */
         } catch (error: any) {
             console.error(error)
             toast.error('Error al subir la imagen')

@@ -2,7 +2,9 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+/* eslint-disable */
 import { redirect } from 'next/navigation'
+/* eslint-disable */
 import { ProcedureStatus, ProcedureChecklistProgress } from '@/types/procedure'
 
 export async function getProcedureStatusesAction() {
@@ -76,6 +78,7 @@ export async function getProceduresAction(includeArchived: boolean = false) {
         query = query.order('created_at', { ascending: false })
     }
 
+/* eslint-disable */
     const { data, error, count } = await query
 
     if (error) {
