@@ -11,5 +11,9 @@ export * from './types/organization';
 export * from './types/payment';
 export * from './types/procedure';
 export * from './types/admin';
-export * from './types/procedure-status';
+export {
+  type ProcedureStatus as ProcedureStatusConfig,
+  type CreateProcedureStatusInput,
+  type UpdateProcedureStatusInput
+} from './types/procedure-status';
 export * from './types/template';
