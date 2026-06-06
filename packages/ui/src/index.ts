@@ -38,3 +38,4 @@ export * from './components/ui/data-table/data-table-pagination';
 export * from './components/ui/data-table/data-table-toolbar';
 export * from './components/ui/data-table/data-table';
 export * from './components/ui/data-table/index';
+export * from './pro-feature-gate';
