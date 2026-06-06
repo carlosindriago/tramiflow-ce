@@ -1,8 +1,13 @@
 {
   "name": "@tramiflow/database",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
   "exports": {
+    ".": "./src/index.ts",
     "./*": "./src/*.ts",
     "./client": "./src/client.ts",
     "./server": "./src/server.ts",
