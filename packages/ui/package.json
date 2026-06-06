@@ -14,10 +14,12 @@
     "@radix-ui/react-slot": "^1.0.0",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.563.0",
-    "@tramiflow/core": "*",
+    "@tramiflow/core": "*"
+  },
+  "peerDependencies": {
     "next": "^16.2.4",
-    "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@tramiflow/config-typescript": "*",
