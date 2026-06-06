@@ -2,7 +2,7 @@
 
 import { createClient } from '@tramiflow/database/server'
 /* eslint-disable */
-import { type AuditAction } from '@tramiflow/core'
+import { type AuditAction } from '@tramiflow/core/server'
 
 export interface AuditLog {
     id: string
