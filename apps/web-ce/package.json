@@ -46,10 +46,10 @@
     "sonner": "^2.0.7",
     "tesseract.js": "^7.0.0",
     "zod": "^4.3.6",
-    "@tramiflow/core": "*",
-    "@tramiflow/database": "*",
-    "@tramiflow/ui": "*",
-    "@tramiflow/pdf-kit": "*"
+    "@carlosindriago/core": "*",
+    "@carlosindriago/database": "*",
+    "@carlosindriago/ui": "*",
+    "@carlosindriago/pdf-kit": "*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

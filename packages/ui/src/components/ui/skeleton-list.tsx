@@ -1,5 +1,5 @@
-import { Skeleton } from '@tramiflow/ui'
-import { TableCell, TableRow } from '@tramiflow/ui'
+import { Skeleton } from '@carlosindriago/ui'
+import { TableCell, TableRow } from '@carlosindriago/ui'
 
 interface SkeletonListProps {
     rows?: number

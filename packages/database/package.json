@@ -1,5 +1,5 @@
 {
-  "name": "@tramiflow/database",
+  "name": "@carlosindriago/database",
   "version": "1.0.0",
   "private": false,
   "publishConfig": {
@@ -22,7 +22,7 @@
     "@supabase/supabase-js": "^2.95.3"
   },
   "devDependencies": {
-    "@tramiflow/config-typescript": "*",
+    "@carlosindriago/config-typescript": "*",
     "typescript": "^5"
   }
 }

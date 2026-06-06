@@ -7,10 +7,10 @@ import { z } from 'zod'
 import { FileText, Star, ArrowLeftRight, Cloud, Lock, Loader2, ArrowLeft, MailCheck } from 'lucide-react'
 import { signInWithGoogle, signInWithEmail, signUpWithEmail, resetPassword } from './actions'
 
-import { Button } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
-import { Separator } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
+import { Separator } from '@carlosindriago/ui'
 
 // Validation schemas - Security hardened
 const loginSchema = z.object({

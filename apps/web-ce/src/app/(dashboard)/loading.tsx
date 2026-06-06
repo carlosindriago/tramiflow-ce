@@ -1,4 +1,4 @@
-import { Skeleton } from '@tramiflow/ui'
+import { Skeleton } from '@carlosindriago/ui'
 
 export default function DashboardLoading() {
     return (

@@ -2,9 +2,9 @@
 
 /* eslint-disable */
 import { Verified, Clock, CheckCircle2, Phone, Instagram, Linkedin, Star, ArrowRight, MessageCircle } from 'lucide-react'
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import { LeadCaptureModal } from '@/components/public/lead-capture-modal'
-import { cn } from '@tramiflow/core'
+import { cn } from '@carlosindriago/core'
 
 interface PublicProfileProps {
     data: {

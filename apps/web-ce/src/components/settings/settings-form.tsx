@@ -8,7 +8,7 @@ import { z } from 'zod'
 import { Loader2, Save } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     Form,
     FormControl,
@@ -17,8 +17,8 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
 import { LogoUpload } from './logo-upload'
 import { updateOrganization } from '@/lib/actions/organization'
 

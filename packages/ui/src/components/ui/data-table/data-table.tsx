@@ -15,10 +15,10 @@ import {
 } from '@tanstack/react-table'
 
 /* eslint-disable */
-import { cn } from '@tramiflow/core'
+import { cn } from '@carlosindriago/core'
 
 /* eslint-disable */
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     Table,
     TableBody,
@@ -26,7 +26,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 

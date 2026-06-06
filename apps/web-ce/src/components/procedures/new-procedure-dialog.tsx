@@ -4,20 +4,20 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
     Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter
-} from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
 import {
     Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import {
     Popover, PopoverContent, PopoverTrigger
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import {
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import { Check, ChevronsUpDown, Loader2, Plus } from 'lucide-react'
-import { cn } from '@tramiflow/core'
+import { cn } from '@carlosindriago/core'
 import { createProcedureAction } from '@/app/(dashboard)/procedures/actions'
 import { toast } from 'sonner'
 

@@ -12,8 +12,8 @@ import {
   type DayButton,
 } from "react-day-picker"
 
-import { cn } from "@tramiflow/core"
-import { Button, buttonVariants } from "@tramiflow/ui"
+import { cn } from "@carlosindriago/core"
+import { Button, buttonVariants } from "@carlosindriago/ui"
 
 function Calendar({
   className,

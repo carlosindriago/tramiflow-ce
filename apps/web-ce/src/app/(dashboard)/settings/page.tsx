@@ -1,9 +1,9 @@
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { SettingsForm } from '@/components/settings/settings-form'
 import Link from 'next/link'
 import { ArrowRight, ListChecks, Crown, ShieldAlert } from 'lucide-react'
-import { Button } from '@tramiflow/ui'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@carlosindriago/ui'
 
 export default async function SettingsPage() {
     const supabase = await createClient()

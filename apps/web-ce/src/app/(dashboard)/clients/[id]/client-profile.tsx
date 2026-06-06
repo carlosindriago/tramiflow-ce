@@ -13,13 +13,13 @@ import {
     CreditCard,
 } from 'lucide-react'
 import Link from 'next/link'
-import { PhoneAction } from '@tramiflow/ui'
+import { PhoneAction } from '@carlosindriago/ui'
 
-import { Button } from '@tramiflow/ui'
-import { Card, CardContent, CardHeader, CardTitle } from '@tramiflow/ui'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
-import { Skeleton } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@carlosindriago/ui'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
+import { Skeleton } from '@carlosindriago/ui'
 
 import { SmartDropzone } from '@/components/documents/smart-dropzone'
 import { DocumentGrid } from '@/components/documents/document-grid'
@@ -28,10 +28,10 @@ import { NewProcedureDialog } from '@/components/procedures/new-procedure-dialog
 
 import { getClientById, getClientDocuments, getClientProcedures } from './actions'
 import { getTemplatesAction } from '@/app/(dashboard)/procedures/actions'
-import type { Client } from '@tramiflow/core'
-import { getPrimaryIdentificationNumber } from '@tramiflow/core'
-import type { Document } from '@tramiflow/core'
-import type { Procedure } from '@tramiflow/core'
+import type { Client } from '@carlosindriago/core'
+import { getPrimaryIdentificationNumber } from '@carlosindriago/core'
+import type { Document } from '@carlosindriago/core'
+import type { Procedure } from '@carlosindriago/core'
 
 interface ClientProfileProps {
     clientId: string

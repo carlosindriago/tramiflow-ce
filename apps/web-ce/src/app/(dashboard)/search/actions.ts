@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { z } from 'zod'
 
 const MAX_RESULTS = 5

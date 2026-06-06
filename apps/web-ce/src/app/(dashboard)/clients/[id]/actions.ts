@@ -1,8 +1,8 @@
 'use server'
 
-import { createClient } from '@tramiflow/database/server'
-import { type Client } from '@tramiflow/core'
-import { type Document } from '@tramiflow/core'
+import { createClient } from '@carlosindriago/database/server'
+import { type Client } from '@carlosindriago/core'
+import { type Document } from '@carlosindriago/core'
 
 export async function getClientById(id: string): Promise<Client | null> {
     try {

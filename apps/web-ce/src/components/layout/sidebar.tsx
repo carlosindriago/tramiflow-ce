@@ -25,21 +25,21 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '@tramiflow/ui'
-import { Avatar, AvatarFallback } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Avatar, AvatarFallback } from '@carlosindriago/ui'
 import { signOutAction } from '@/actions/auth'
 import Link from 'next/link'
 import { TeamSwitcher } from '@/components/layout/team-switcher'
-import { type UserOrganization } from '@tramiflow/core'
-import { createClient } from '@tramiflow/database/client'
+import { type UserOrganization } from '@carlosindriago/core'
+import { createClient } from '@carlosindriago/database/client'
 import { useLimits } from '@/hooks/use-limits'
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import { Sparkles, AlertTriangle, Archive } from 'lucide-react'
 import { differenceInDays } from 'date-fns'
 

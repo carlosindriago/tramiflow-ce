@@ -10,8 +10,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
 
 /**
  * Animated Success Modal Component

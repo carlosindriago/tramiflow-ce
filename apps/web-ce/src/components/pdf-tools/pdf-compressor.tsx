@@ -4,8 +4,8 @@ import { useState, useCallback, useEffect } from 'react'
 import { FileDropzone } from './file-dropzone'
 import { ProcessingIndicator, formatFileSize } from './processing-indicator'
 import { FileText, Download, Trash2, SlidersHorizontal, Check } from 'lucide-react'
-import { cn } from '@tramiflow/core'
-import { getPdfLib, getDownload, getPdfJs } from '@tramiflow/pdf-kit'
+import { cn } from '@carlosindriago/core'
+import { getPdfLib, getDownload, getPdfJs } from '@carlosindriago/pdf-kit'
 
 interface PdfCompressorProps {
     /** Pre-loaded file (skips dropzone) */

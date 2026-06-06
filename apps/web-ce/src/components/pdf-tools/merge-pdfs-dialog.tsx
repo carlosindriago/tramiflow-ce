@@ -7,10 +7,10 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-} from '@tramiflow/ui'
-import { createClient } from '@tramiflow/database/client'
+} from '@carlosindriago/ui'
+import { createClient } from '@carlosindriago/database/client'
 import { PdfMerger } from './pdf-merger'
-import type { Document } from '@tramiflow/core'
+import type { Document } from '@carlosindriago/core'
 
 interface MergePdfsDialogProps {
     open: boolean

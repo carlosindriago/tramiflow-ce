@@ -1,8 +1,8 @@
 // @ts-nocheck
 'use server'
 
-import { createClient } from '@tramiflow/database/server'
-import { templateSchema, type TemplateFormData } from '@tramiflow/core'
+import { createClient } from '@carlosindriago/database/server'
+import { templateSchema, type TemplateFormData } from '@carlosindriago/core'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
@@ -114,7 +114,7 @@ export async function deleteTemplate(id: string) {
 
     if (!member?.organization_id) throw new Error('No organization')
 
-    const { logAudit } = await import('@tramiflow/core/server')
+    const { logAudit } = await import('@carlosindriago/core/server')
     const { error } = await supabase
         .from('procedure_templates')
         .update({ is_archived: true })

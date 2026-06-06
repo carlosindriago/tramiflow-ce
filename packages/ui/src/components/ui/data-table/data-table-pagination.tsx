@@ -10,15 +10,15 @@ import {
 import { Table } from '@tanstack/react-table'
 
 /* eslint-disable */
-import { cn } from '@tramiflow/core'
-import { Button } from '@tramiflow/ui'
+import { cn } from '@carlosindriago/core'
+import { Button } from '@carlosindriago/ui'
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 
 interface DataTablePaginationProps<TData> {
     table: Table<TData>

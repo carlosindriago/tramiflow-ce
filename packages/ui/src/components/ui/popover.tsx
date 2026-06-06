@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Popover as PopoverPrimitive } from "radix-ui"
 
-import { cn } from "@tramiflow/core"
+import { cn } from "@carlosindriago/core"
 
 function Popover({
   ...props

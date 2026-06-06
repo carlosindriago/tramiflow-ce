@@ -1,8 +1,8 @@
 // @ts-nocheck
 'use client'
 
-import { Procedure, ProcedureStatus, PROCEDURE_STATUS_LABELS } from '@tramiflow/core'
-import { ProcedureStatus as ProcedureStatusConfig } from '@tramiflow/core'
+import { Procedure, ProcedureStatus, PROCEDURE_STATUS_LABELS } from '@carlosindriago/core'
+import { ProcedureStatus as ProcedureStatusConfig } from '@carlosindriago/core'
 import {
     updateProcedureChecklistAction,
     updateProcedureStatusAction,
@@ -22,14 +22,14 @@ import {
     CardHeader,
     CardTitle,
     CardDescription
-} from '@tramiflow/ui'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@tramiflow/ui'
-import { Checkbox } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@tramiflow/ui'
-import { Separator } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@carlosindriago/ui'
+import { Checkbox } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@carlosindriago/ui'
+import { Separator } from '@carlosindriago/ui'
 import {
 /* eslint-disable */
     LayoutDashboard,
@@ -66,10 +66,10 @@ import {
     DollarSign
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { cn } from '@tramiflow/core'
+import { cn } from '@carlosindriago/core'
 import Link from 'next/link'
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { PhoneAction } from '@tramiflow/ui'
+import { PhoneAction } from '@carlosindriago/ui'
 import { DocumentGrid } from '@/components/documents/document-grid'
 import { SmartDropzone } from '@/components/documents/smart-dropzone'
 import { ImagesToPdfDialog } from '@/components/pdf-tools/images-to-pdf-dialog'
@@ -80,7 +80,7 @@ import { use, useState } from 'react'
 import { format } from 'date-fns'
 import { useQueryClient } from '@tanstack/react-query'
 import { es } from 'date-fns/locale'
-import type { Document } from '@tramiflow/core'
+import type { Document } from '@carlosindriago/core'
 
 interface ProcedurePageProps {
     params: Promise<{

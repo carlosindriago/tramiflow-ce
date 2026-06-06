@@ -1,11 +1,11 @@
 // @ts-nocheck
 'use server'
 
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { headers } from 'next/headers'
-import { leadCaptureSchema, RATE_LIMITS } from '@tramiflow/core'
+import { leadCaptureSchema, RATE_LIMITS } from '@carlosindriago/core'
 import { userAgent } from 'next/server'
-import { rateLimit } from '@tramiflow/core/server'
+import { rateLimit } from '@carlosindriago/core/server'
 
 // --- Actions for Public View ---
 

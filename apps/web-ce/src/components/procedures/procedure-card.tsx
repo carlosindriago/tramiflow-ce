@@ -1,10 +1,10 @@
 // @ts-nocheck
 'use client'
 
-import { Procedure, ProcedureStatus, PROCEDURE_STATUS_LABELS } from '@tramiflow/core'
-import { Card, CardContent } from '@tramiflow/ui'
-import { Progress } from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
+import { Procedure, ProcedureStatus, PROCEDURE_STATUS_LABELS } from '@carlosindriago/core'
+import { Card, CardContent } from '@carlosindriago/ui'
+import { Progress } from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,14 +12,14 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import { Calendar, User, MoreVertical, Check } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import Link from 'next/link'
 
-import { ProcedureStatus as ProcedureStatusConfig } from '@tramiflow/core'
-import { cn } from '@tramiflow/core'
+import { ProcedureStatus as ProcedureStatusConfig } from '@carlosindriago/core'
+import { cn } from '@carlosindriago/core'
 
 interface ProcedureCardProps {
     procedure: Procedure

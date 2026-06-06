@@ -1,4 +1,4 @@
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { notFound } from 'next/navigation'
 import { PublicProfileRenderer } from '@/components/public/public-profile-renderer'
 import { Metadata } from 'next'

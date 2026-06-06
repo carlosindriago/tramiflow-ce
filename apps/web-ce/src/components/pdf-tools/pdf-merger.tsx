@@ -21,8 +21,8 @@ import { CSS } from '@dnd-kit/utilities'
 import { FileDropzone } from './file-dropzone'
 import { ProcessingIndicator, formatFileSize } from './processing-indicator'
 import { FileText, GripVertical, X, Merge } from 'lucide-react'
-import { cn } from '@tramiflow/core'
-import { getPdfLib, getDownload } from '@tramiflow/pdf-kit'
+import { cn } from '@carlosindriago/core'
+import { getPdfLib, getDownload } from '@carlosindriago/pdf-kit'
 
 interface PdfItem {
     id: string

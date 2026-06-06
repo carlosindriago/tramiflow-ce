@@ -1,8 +1,8 @@
 'use client'
 
 import { Component, ReactNode } from 'react'
-import { Button } from '@tramiflow/ui'
-import { Card, CardContent, CardHeader, CardTitle } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@carlosindriago/ui'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 
 interface ErrorBoundaryProps {

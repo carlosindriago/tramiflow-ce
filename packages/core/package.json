@@ -1,5 +1,5 @@
 {
-  "name": "@tramiflow/core",
+  "name": "@carlosindriago/core",
   "version": "1.0.0",
   "private": false,
   "publishConfig": {
@@ -15,13 +15,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@tramiflow/database": "*",
+    "@carlosindriago/database": "*",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@tramiflow/config-typescript": "*",
+    "@carlosindriago/config-typescript": "*",
     "typescript": "^5"
   }
 }

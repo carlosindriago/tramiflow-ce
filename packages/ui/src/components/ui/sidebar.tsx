@@ -6,24 +6,24 @@ import { PanelLeftIcon } from "lucide-react"
 import { Slot } from "radix-ui"
 
 import { useIsMobile } from "../../hooks/use-mobile"
-import { cn } from "@tramiflow/core"
-import { Button } from "@tramiflow/ui"
-import { Input } from "@tramiflow/ui"
-import { Separator } from "@tramiflow/ui"
+import { cn } from "@carlosindriago/core"
+import { Button } from "@carlosindriago/ui"
+import { Input } from "@carlosindriago/ui"
+import { Separator } from "@carlosindriago/ui"
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@tramiflow/ui"
-import { Skeleton } from "@tramiflow/ui"
+} from "@carlosindriago/ui"
+import { Skeleton } from "@carlosindriago/ui"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@tramiflow/ui"
+} from "@carlosindriago/ui"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7

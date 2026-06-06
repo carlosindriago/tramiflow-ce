@@ -9,16 +9,16 @@ import { ArrowLeft, Save, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { ShareModal } from '@/components/templates/share-modal'
 
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     templateSchema,
     type TemplateFormData,
-} from '@tramiflow/core'
+} from '@carlosindriago/core'
 import { saveTemplateAction } from '@/app/(dashboard)/templates/new/actions'
 import { TemplateConfigPanel } from './template-config-panel'
 import { TemplateTimeline } from './template-timeline'
-import { toast } from '@tramiflow/core'
-import { AnimatedSuccessModal } from '@tramiflow/ui'
+import { toast } from '@carlosindriago/core'
+import { AnimatedSuccessModal } from '@carlosindriago/ui'
 import { useFormSuccess } from '@/hooks/use-form-success'
 
 interface TemplateFormProps {

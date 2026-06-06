@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { Loader2, AlertTriangle, Info } from 'lucide-react'
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     Dialog,
     DialogContent,
@@ -10,7 +10,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 
 interface ConfirmDialogProps {
     open: boolean

@@ -14,17 +14,17 @@ import {
     TableHead, 
     TableHeader, 
     TableRow 
-} from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
 import { 
 /* eslint-disable */
     Download, 

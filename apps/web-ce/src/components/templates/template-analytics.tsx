@@ -12,8 +12,8 @@ import {
 } from 'recharts'
 import { Eye, Users, TrendingUp, MessageCircle } from 'lucide-react'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     Table,
     TableBody,
@@ -21,17 +21,17 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@tramiflow/ui'
-import { ScrollArea } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { ScrollArea } from '@carlosindriago/ui'
 import { getTemplateAnalytics, getTemplateClones } from '@/actions/growth'
-import type { TemplateAnalytics, RecentLead, TemplateClone } from '@tramiflow/core'
+import type { TemplateAnalytics, RecentLead, TemplateClone } from '@carlosindriago/core'
 
 interface TemplateAnalyticsProps {
     templateId: string

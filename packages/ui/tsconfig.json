@@ -1,5 +1,5 @@
 {
-  "extends": "@tramiflow/config-typescript/react-library.json",
+  "extends": "@carlosindriago/config-typescript/react-library.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

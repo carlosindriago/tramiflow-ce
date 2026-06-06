@@ -1,12 +1,12 @@
 'use client'
 
 import { useLimits } from '@/hooks/use-limits'
-import { Progress } from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
+import { Progress } from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
 import { AlertTriangle, Lock, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 /* eslint-disable */
-import { cn } from '@tramiflow/core'
+import { cn } from '@carlosindriago/core'
 
 export function QuotaUsage() {
     const { limits, loading } = useLimits()

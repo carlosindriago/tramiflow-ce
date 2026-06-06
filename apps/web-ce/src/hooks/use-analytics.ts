@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback } from 'react'
-import { createClient } from '@tramiflow/database/client'
+import { createClient } from '@carlosindriago/database/client'
 
 /**
  * Fire-and-forget analytics tracking.

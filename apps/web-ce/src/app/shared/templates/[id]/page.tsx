@@ -1,19 +1,19 @@
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { notFound } from 'next/navigation'
 import {
     FileText,
     MessageCircle,
 } from 'lucide-react'
 
-import { Button } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import {
     Dialog,
     DialogContent,
@@ -21,10 +21,10 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@tramiflow/ui'
-import { Separator } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Separator } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
 
 import { trackView, submitLead } from '@/actions/growth'
 

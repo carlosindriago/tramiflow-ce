@@ -5,9 +5,9 @@ import { Cross2Icon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 
 /* eslint-disable */
-import { cn } from '@tramiflow/core'
-import { Button } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
+import { cn } from '@carlosindriago/core'
+import { Button } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -15,7 +15,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import { Settings2 } from 'lucide-react'
 
 interface DataTableToolbarProps<TData> {

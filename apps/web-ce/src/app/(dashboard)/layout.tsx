@@ -1,11 +1,11 @@
-import { SidebarProvider, SidebarInset } from '@tramiflow/ui'
+import { SidebarProvider, SidebarInset } from '@carlosindriago/ui'
 import { AppSidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { OnboardingGuard } from '@/components/auth/onboarding-guard'
 import { HeartbeatProvider } from '@/components/providers/heartbeat-provider'
 import VerificationBanner from '@/components/dashboard/VerificationBanner'
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 
 interface DashboardLayoutProps {
     children: React.ReactNode

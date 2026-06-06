@@ -5,14 +5,14 @@ import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
-import { cn } from '@tramiflow/core'
-import { Button } from '@tramiflow/ui'
-import { Calendar } from '@tramiflow/ui'
+import { cn } from '@carlosindriago/core'
+import { Button } from '@carlosindriago/ui'
+import { Calendar } from '@carlosindriago/ui'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 
 /**
  * Professional DatePicker Component

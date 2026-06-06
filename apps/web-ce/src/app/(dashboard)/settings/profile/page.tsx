@@ -1,9 +1,9 @@
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { redirect } from 'next/navigation'
 import { ProfileEditorForm } from '@/components/settings/profile-editor-form'
 import { AlertCircle } from 'lucide-react'
-import { Alert, AlertDescription, AlertTitle } from '@tramiflow/ui'
-import { type Organization } from '@tramiflow/core'
+import { Alert, AlertDescription, AlertTitle } from '@carlosindriago/ui'
+import { type Organization } from '@carlosindriago/core'
 
 export default async function ProfileSettingsPage() {
     const supabase = await createClient()

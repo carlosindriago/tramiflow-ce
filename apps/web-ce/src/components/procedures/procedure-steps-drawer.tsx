@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 /* eslint-disable */
 import { Check, ChevronRight, FileText, X } from 'lucide-react'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
-import { cn } from '@tramiflow/core'
-import type { Procedure, TemplateStep, StepsProgress } from '@tramiflow/core'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
+import { cn } from '@carlosindriago/core'
+import type { Procedure, TemplateStep, StepsProgress } from '@carlosindriago/core'
 import { updateProcedureStepsProgressAction } from '@/app/(dashboard)/procedures/actions'
 
 interface ProcedureStepsDrawerProps {

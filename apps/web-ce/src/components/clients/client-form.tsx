@@ -6,15 +6,15 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Plus, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-import { Button } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
 import {
     DialogFooter,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import { createClientAction } from '@/app/(dashboard)/clients/actions'
 /* eslint-disable */
-import { createClientSchema, type CreateClientInput, type ClientActionResult } from '@tramiflow/core'
+import { createClientSchema, type CreateClientInput, type ClientActionResult } from '@carlosindriago/core'
 import { toast } from 'sonner'
 
 interface ClientFormProps {

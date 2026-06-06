@@ -1,4 +1,4 @@
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { NextResponse } from 'next/server'
 
 /**

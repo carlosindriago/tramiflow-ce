@@ -9,14 +9,14 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import {
     InputOTP,
     InputOTPGroup,
     InputOTPSeparator,
     InputOTPSlot,
-} from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
 import { verifyEmailCode, sendVerificationCode } from '@/actions/verification'
 import { toast } from 'sonner'
 

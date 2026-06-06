@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClient } from '@tramiflow/database/client'
-import { Button } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
+import { createClient } from '@carlosindriago/database/client'
+import { Button } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
 /* eslint-disable */
 import { Shield, ShieldCheck, Smartphone, CheckCircle, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'

@@ -3,12 +3,12 @@
 import { useState, useTransition } from 'react'
 import {
     Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger
-} from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@tramiflow/ui'
-import { Switch } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@carlosindriago/ui'
+import { Switch } from '@carlosindriago/ui'
 /* eslint-disable */
 import { Share2, Copy, Check, Lock, Globe, Users, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'

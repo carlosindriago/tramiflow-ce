@@ -8,8 +8,8 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '@tramiflow/ui'
-import { toast } from '@tramiflow/core'
+} from '@carlosindriago/ui'
+import { toast } from '@carlosindriago/core'
 
 interface PhoneActionProps {
     phone: string

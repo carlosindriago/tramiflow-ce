@@ -7,7 +7,7 @@ import { Loader2, MessageCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     Form,
     FormControl,
@@ -15,10 +15,10 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
 import { submitLead } from '@/actions/growth'
-import { leadCaptureSchema } from '@tramiflow/core'
+import { leadCaptureSchema } from '@carlosindriago/core'
 
 type LeadFormData = z.infer<typeof leadCaptureSchema>
 

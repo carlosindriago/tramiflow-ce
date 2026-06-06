@@ -17,20 +17,20 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogFooter,
-} from '@tramiflow/ui'
-import { Textarea } from '@tramiflow/ui'
-import { Progress } from '@tramiflow/ui'
-import { createClient } from '@tramiflow/database/client'
-import type { Document } from '@tramiflow/core'
+} from '@carlosindriago/ui'
+import { Textarea } from '@carlosindriago/ui'
+import { Progress } from '@carlosindriago/ui'
+import { createClient } from '@carlosindriago/database/client'
+import type { Document } from '@carlosindriago/core'
 import type { ReactCropperElement } from 'react-cropper'
-import { performOCR } from '@tramiflow/pdf-kit'
+import { performOCR } from '@carlosindriago/pdf-kit'
 
 // Lazy load Cropper - heavy dependency (~200KB)
 // Only loads when user opens the scanner

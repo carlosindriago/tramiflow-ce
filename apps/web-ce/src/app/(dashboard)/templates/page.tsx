@@ -1,4 +1,4 @@
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { TemplatesView } from '@/components/templates/templates-view'
 import { redirect } from 'next/navigation'
 

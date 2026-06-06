@@ -4,8 +4,8 @@
 import { useCallback } from 'react'
 /* eslint-disable */
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { createClient } from '@tramiflow/database/client'
-import type { AdminRole } from '@tramiflow/core'
+import { createClient } from '@carlosindriago/database/client'
+import type { AdminRole } from '@carlosindriago/core'
 
 interface AdminRoleState {
     role: AdminRole | null

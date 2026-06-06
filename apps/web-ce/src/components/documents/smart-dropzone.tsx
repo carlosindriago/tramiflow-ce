@@ -17,17 +17,17 @@ import {
 } from 'lucide-react'
 import { PdfCompressorDialog } from '@/components/pdf-tools/pdf-compressor-dialog'
 
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
-import { createClient } from '@tramiflow/database/client'
-import { detectBlur } from '@tramiflow/pdf-kit'
+} from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
+import { createClient } from '@carlosindriago/database/client'
+import { detectBlur } from '@carlosindriago/pdf-kit'
 import { CompressionCompareDialog } from '@/components/documents/compression-compare-dialog'
 
 import {
@@ -45,7 +45,7 @@ import {
     AGGRESSIVE_THRESHOLD_BYTES,
     isImageFile,
     formatFileSize,
-} from '@tramiflow/core'
+} from '@carlosindriago/core'
 
 interface SmartDropzoneProps {
     clientId: string

@@ -17,19 +17,19 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import {
     Tabs,
     TabsList,
     TabsTrigger,
-} from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
 import {
     COMPRESSION_TIERS,
     type CompressionTier,
     formatFileSize,
-} from '@tramiflow/core'
+} from '@carlosindriago/core'
 
 interface CompressionCompareDialogProps {
     open: boolean

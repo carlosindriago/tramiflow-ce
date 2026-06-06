@@ -1,5 +1,5 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@tramiflow/ui"
-import { Button } from "@tramiflow/ui"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@carlosindriago/ui"
+import { Button } from "@carlosindriago/ui"
 import { ArrowRight, FileText, Clock, CheckCircle2 } from "lucide-react"
 import { LeadCaptureModal } from "./lead-capture-modal"
 

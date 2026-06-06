@@ -7,7 +7,7 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 
 const PdfCompressor = dynamic(
     () => import('@/components/pdf-tools/pdf-compressor').then((mod) => mod.PdfCompressor),

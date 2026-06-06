@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@tramiflow/ui'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@carlosindriago/ui'
 import { ImagesToPdf } from '@/components/pdf-tools/images-to-pdf'
 import { PdfMerger } from '@/components/pdf-tools/pdf-merger'
 import { FileDown, ImageIcon, Merge, Wrench, Loader2, Lock } from 'lucide-react'

@@ -1,4 +1,4 @@
-import { cn } from "@tramiflow/core"
+import { cn } from "@carlosindriago/core"
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (

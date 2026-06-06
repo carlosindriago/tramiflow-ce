@@ -18,16 +18,16 @@ import {
     MoreVertical,
 } from 'lucide-react'
 
-import { Button } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@carlosindriago/ui'
 import {
     Card,
     CardContent,
     CardFooter,
     CardHeader,
     CardTitle,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import {
     Dialog,
     DialogContent,
@@ -35,24 +35,24 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@tramiflow/ui'
-import { ConfirmDialog } from '@tramiflow/ui'
-import { AnimatedSuccessModal } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { ConfirmDialog } from '@carlosindriago/ui'
+import { AnimatedSuccessModal } from '@carlosindriago/ui'
 import { useFormSuccess } from '@/hooks/use-form-success'
-import { SkeletonCard } from '@tramiflow/ui'
-import { toast } from '@tramiflow/core'
-import { PhoneAction } from '@tramiflow/ui'
+import { SkeletonCard } from '@carlosindriago/ui'
+import { toast } from '@carlosindriago/core'
+import { PhoneAction } from '@carlosindriago/ui'
 import { ClientForm } from '@/components/clients/client-form'
 
 import { getClients, deleteClientAction } from './actions'
-import { type Client, getPrimaryIdentificationNumber } from '@tramiflow/core'
+import { type Client, getPrimaryIdentificationNumber } from '@carlosindriago/core'
 
 type ViewMode = 'grid' | 'table'
 

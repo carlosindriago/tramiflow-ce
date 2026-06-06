@@ -1,8 +1,8 @@
 'use server'
 
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 /* eslint-disable */
-import { type AuditAction } from '@tramiflow/core/server'
+import { type AuditAction } from '@carlosindriago/core/server'
 
 export interface AuditLog {
     id: string

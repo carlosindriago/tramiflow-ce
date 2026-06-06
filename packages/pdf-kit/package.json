@@ -1,5 +1,5 @@
 {
-  "name": "@tramiflow/pdf-kit",
+  "name": "@carlosindriago/pdf-kit",
   "version": "1.0.0",
   "private": false,
   "publishConfig": {
@@ -20,7 +20,7 @@
     "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
-    "@tramiflow/config-typescript": "*",
+    "@carlosindriago/config-typescript": "*",
     "typescript": "^5"
   }
 }

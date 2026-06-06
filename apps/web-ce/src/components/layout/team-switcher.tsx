@@ -10,10 +10,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger,
-} from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
-import { Avatar, AvatarFallback, AvatarImage } from '@tramiflow/ui'
-import { type UserOrganization } from '@tramiflow/core'
+} from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
+import { Avatar, AvatarFallback, AvatarImage } from '@carlosindriago/ui'
+import { type UserOrganization } from '@carlosindriago/core'
 
 interface TeamSwitcherProps {
     currentOrganization?: UserOrganization

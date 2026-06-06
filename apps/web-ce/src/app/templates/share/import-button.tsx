@@ -4,7 +4,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Import, Loader2 } from 'lucide-react'
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import { toast } from 'sonner'
 import { importTemplateAction } from './actions'
 

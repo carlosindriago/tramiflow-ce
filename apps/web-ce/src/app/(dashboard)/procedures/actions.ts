@@ -1,11 +1,11 @@
 'use server'
 
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { revalidatePath } from 'next/cache'
 /* eslint-disable */
 import { redirect } from 'next/navigation'
 /* eslint-disable */
-import { ProcedureStatus, ProcedureChecklistProgress } from '@tramiflow/core'
+import { ProcedureStatus, ProcedureChecklistProgress } from '@carlosindriago/core'
 
 export async function getProcedureStatusesAction() {
     const supabase = await createClient()
@@ -167,7 +167,7 @@ export async function createProcedureAction(input: {
     if (!member) return { success: false, error: 'No organization' }
 
     // Check Plan Limits
-    const { checkLimit } = await import('@tramiflow/database/limits')
+    const { checkLimit } = await import('@carlosindriago/database/limits')
     const limitStatus = await checkLimit(member.organization_id, 'procedures', supabase)
 
     if (limitStatus.status === 'unverified_blocked') {

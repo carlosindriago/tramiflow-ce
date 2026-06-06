@@ -4,14 +4,14 @@ import * as React from "react"
 import { Command as CommandPrimitive } from "cmdk"
 import { SearchIcon } from "lucide-react"
 
-import { cn } from "@tramiflow/core"
+import { cn } from "@carlosindriago/core"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@tramiflow/ui"
+} from "@carlosindriago/ui"
 
 function Command({
   className,

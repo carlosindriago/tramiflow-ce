@@ -1,9 +1,9 @@
 'use client'
 
 import { Plus } from 'lucide-react'
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import { ThemeToggle } from '@/components/layout/theme-toggle'
-import { SidebarTrigger } from '@tramiflow/ui'
+import { SidebarTrigger } from '@carlosindriago/ui'
 import { NotificationsBell } from '@/components/layout/notifications-bell'
 import { GlobalSearch } from '@/components/global-search'
 import Link from 'next/link'

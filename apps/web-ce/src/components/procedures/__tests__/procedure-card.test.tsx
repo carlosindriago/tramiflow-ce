@@ -2,8 +2,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ProcedureCard } from '../procedure-card'
-import type { Procedure, TemplateStep } from '@tramiflow/core'
-import type { ProcedureStatus } from '@tramiflow/core'
+import type { Procedure, TemplateStep } from '@carlosindriago/core'
+import type { ProcedureStatus } from '@carlosindriago/core'
 
 // Factory pattern for creating test procedures
 const createMockProcedure = (overrides: Partial<Procedure> = {}): Procedure => ({

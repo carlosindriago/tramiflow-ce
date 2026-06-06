@@ -2,8 +2,8 @@
 
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import { createClient } from '@tramiflow/database/server'
-import type { UserOrganization } from '@tramiflow/core'
+import { createClient } from '@carlosindriago/database/server'
+import type { UserOrganization } from '@carlosindriago/core'
 
 /**
  * Server action to check if user has completed onboarding.

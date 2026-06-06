@@ -10,7 +10,7 @@ import {
     CommandItem,
     CommandList,
     CommandSeparator,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import { searchGlobal } from '@/app/(dashboard)/search/actions'
 import { useDebounce } from '@/hooks/use-debounce'
 import { Loader2, Search, User, FileText } from 'lucide-react'

@@ -2,7 +2,7 @@
 
 import { useTheme } from 'next-themes'
 import { Moon, Sun } from 'lucide-react'
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 
 export function ThemeToggle() {
     const { resolvedTheme, setTheme } = useTheme()

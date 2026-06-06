@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     Dialog,
     DialogContent,
@@ -12,7 +12,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import {
     Form,
     FormControl,
@@ -20,8 +20,8 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 

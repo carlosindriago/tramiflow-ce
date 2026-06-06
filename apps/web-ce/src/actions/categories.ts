@@ -1,9 +1,9 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { z } from 'zod'
-import type { Category } from '@tramiflow/core'
+import type { Category } from '@carlosindriago/core'
 
 // Schema para validar categorías
 const categorySchema = z.object({

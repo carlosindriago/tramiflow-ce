@@ -2,10 +2,10 @@ import { notFound } from 'next/navigation'
 /* eslint-disable */
 import Image from 'next/image'
 import { CheckCircle2, Circle, Clock, FileText, LayoutDashboard } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@tramiflow/ui'
-import { Progress } from '@tramiflow/ui'
-import { Separator } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@carlosindriago/ui'
+import { Progress } from '@carlosindriago/ui'
+import { Separator } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
 import { getPublicProcedureStatus } from '../actions'
 
 interface StatusPageProps {

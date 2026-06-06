@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@tramiflow/database/server'
-import type { UserOrganization } from '@tramiflow/core'
+import { createClient } from '@carlosindriago/database/server'
+import type { UserOrganization } from '@carlosindriago/core'
 
 /**
  * Checks if the current user has completed onboarding (has at least one organization).

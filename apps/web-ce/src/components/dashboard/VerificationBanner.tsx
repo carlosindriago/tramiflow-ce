@@ -2,8 +2,8 @@
 
 import { useState, useTransition, useEffect } from 'react'
 import { AlertCircle, ArrowRight, Loader2 } from 'lucide-react'
-import { Alert, AlertDescription, AlertTitle } from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
+import { Alert, AlertDescription, AlertTitle } from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
 import { sendVerificationCode } from '@/actions/verification'
 import OTPVerificationModal from './OTPVerificationModal'
 import { toast } from 'sonner'

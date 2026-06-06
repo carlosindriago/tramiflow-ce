@@ -17,14 +17,14 @@ import {
     ScanText,
 } from 'lucide-react'
 
-import { Button } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
-import { Checkbox } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
+import { Checkbox } from '@carlosindriago/ui'
 import {
     ConfirmDialog,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import { DocumentViewerModal } from '@/components/shared/document-viewer-modal'
-import { createClient } from '@tramiflow/database/client'
+import { createClient } from '@carlosindriago/database/client'
 import { PdfThumbnail } from '@/components/documents/pdf-thumbnail'
 import { DownloadFormatMenu } from '@/components/documents/download-format-menu'
 import dynamic from 'next/dynamic'
@@ -40,7 +40,7 @@ import {
     DOCUMENT_CATEGORIES,
     formatFileSize,
     isImageFile,
-} from '@tramiflow/core'
+} from '@carlosindriago/core'
 
 interface DocumentGridProps {
     documents: Document[]

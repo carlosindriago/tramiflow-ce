@@ -10,12 +10,12 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
 import { Loader2 } from 'lucide-react'
 import { getProceduresAction } from '@/app/(dashboard)/procedures/actions'
-import { Procedure } from '@tramiflow/core'
+import { Procedure } from '@carlosindriago/core'
 import Link from 'next/link'
 
 export function ProcedureArchiveTable() {

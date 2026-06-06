@@ -22,8 +22,8 @@ import { FileDropzone } from './file-dropzone'
 import { ProcessingIndicator, formatFileSize } from './processing-indicator'
 /* eslint-disable */
 import { ImageIcon, GripVertical, X, Download, FileOutput } from 'lucide-react'
-import { cn } from '@tramiflow/core'
-import { getPdfLib, getDownload, getA4Dimensions } from '@tramiflow/pdf-kit'
+import { cn } from '@carlosindriago/core'
+import { getPdfLib, getDownload, getA4Dimensions } from '@carlosindriago/pdf-kit'
 
 interface ImageItem {
     id: string

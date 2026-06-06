@@ -17,21 +17,21 @@ import {
     Loader2,
 } from 'lucide-react'
 import { useForm, useFieldArray } from 'react-hook-form'
-import { type TemplateFormData } from '@tramiflow/core'
+import { type TemplateFormData } from '@carlosindriago/core'
 
-import { Label } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
-import { Switch } from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@tramiflow/ui'
+import { Label } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
+import { Switch } from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@carlosindriago/ui'
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
 import {
     Dialog,
     DialogContent,
@@ -39,8 +39,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@tramiflow/ui'
-import { type Category } from '@tramiflow/core'
+} from '@carlosindriago/ui'
+import { type Category } from '@carlosindriago/core'
 
 interface TemplateConfigPanelProps {
     form: ReturnType<typeof useForm<TemplateFormData>>

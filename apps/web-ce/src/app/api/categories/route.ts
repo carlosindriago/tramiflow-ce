@@ -1,5 +1,5 @@
 import { createCategory } from '@/actions/categories'
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 

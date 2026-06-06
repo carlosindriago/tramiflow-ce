@@ -1,7 +1,7 @@
 'use client'
 
-import { createClient } from '@tramiflow/database/client'
-import { onboardingSchema, type OnboardingActionResult } from '@tramiflow/core'
+import { createClient } from '@carlosindriago/database/client'
+import { onboardingSchema, type OnboardingActionResult } from '@carlosindriago/core'
 import { seedDefaultProcedureStatuses } from '@/app/(dashboard)/settings/statuses/actions'
 
 export async function createOrganizationAction(formData: FormData): Promise<OnboardingActionResult> {

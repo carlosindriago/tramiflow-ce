@@ -16,10 +16,10 @@ import {
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { Plus } from 'lucide-react'
-import { type TemplateFormData } from '@tramiflow/core'
+import { type TemplateFormData } from '@carlosindriago/core'
 
-import { Button } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
 import { SortableStepCard } from './template-step-card'
 
 interface TemplateTimelineProps {

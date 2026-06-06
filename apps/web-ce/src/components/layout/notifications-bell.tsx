@@ -3,15 +3,15 @@
 import { useEffect, useState } from 'react'
 /* eslint-disable */
 import { Bell, Check, Loader2 } from 'lucide-react'
-import { createClient } from '@tramiflow/database/client'
+import { createClient } from '@carlosindriago/database/client'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
-import { ScrollArea } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
+import { ScrollArea } from '@carlosindriago/ui'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { toast } from 'sonner'

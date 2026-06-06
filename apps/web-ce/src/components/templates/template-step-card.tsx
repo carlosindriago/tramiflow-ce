@@ -9,22 +9,22 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Trash2 } from 'lucide-react'
-import { type TemplateFormData, type StepType, stepTypeOptions, stepTypeIconMap } from '@tramiflow/core'
+import { type TemplateFormData, type StepType, stepTypeOptions, stepTypeIconMap } from '@carlosindriago/core'
 
-import { Button } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
-import { Textarea } from '@tramiflow/ui'
-import { Switch } from '@tramiflow/ui'
-import { Card, CardContent } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
+import { Textarea } from '@carlosindriago/ui'
+import { Switch } from '@carlosindriago/ui'
+import { Card, CardContent } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 
 interface SortableStepCardProps {
     stepId: string

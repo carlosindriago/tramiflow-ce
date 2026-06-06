@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -12,19 +12,19 @@ import {
     Trash2,
 } from 'lucide-react'
 
-import { Badge } from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
-import { Card, CardContent, CardHeader, CardTitle } from '@tramiflow/ui'
-import { Separator } from '@tramiflow/ui'
+import { Badge } from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@carlosindriago/ui'
+import { Separator } from '@carlosindriago/ui'
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '@tramiflow/ui'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@tramiflow/ui"
+} from '@carlosindriago/ui'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@carlosindriago/ui"
 
-import { stepTypeIconMap, type StepType } from '@tramiflow/core'
+import { stepTypeIconMap, type StepType } from '@carlosindriago/core'
 import { ShareModal } from '@/components/templates/share-modal'
 import { TemplateAnalytics } from '@/components/templates/template-analytics'
 import { deleteTemplate } from '../new/actions'

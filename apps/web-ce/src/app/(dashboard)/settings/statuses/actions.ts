@@ -1,9 +1,9 @@
 // @ts-nocheck
 'use server'
 
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { revalidatePath } from 'next/cache'
-import { CreateProcedureStatusInput, UpdateProcedureStatusInput } from '@tramiflow/core'
+import { CreateProcedureStatusInput, UpdateProcedureStatusInput } from '@carlosindriago/core'
 
 export async function createProcedureStatusAction(input: CreateProcedureStatusInput) {
     const supabase = await createClient()

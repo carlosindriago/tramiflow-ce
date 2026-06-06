@@ -14,7 +14,7 @@
   "rtl": false,
   "aliases": {
     "components": "@/components",
-    "utils": "@tramiflow/core",
+    "utils": "@carlosindriago/core",
     "ui": "@/components/ui",
     "lib": "@/lib",
     "hooks": "@/hooks"

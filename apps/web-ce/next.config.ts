@@ -24,7 +24,7 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@tramiflow/ui', '@tramiflow/core', '@tramiflow/database', '@tramiflow/pdf-kit'],
+  transpilePackages: ['@carlosindriago/ui', '@carlosindriago/core', '@carlosindriago/database', '@carlosindriago/pdf-kit'],
   /* config options here */
   reactCompiler: true,
   async headers() {

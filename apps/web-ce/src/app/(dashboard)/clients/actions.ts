@@ -1,7 +1,7 @@
 'use server'
 
-import { createClient } from '@tramiflow/database/server'
-import { createClientSchema, type CreateClientInput, type Client, type ClientActionResult, type ClientActionError } from '@tramiflow/core'
+import { createClient } from '@carlosindriago/database/server'
+import { createClientSchema, type CreateClientInput, type Client, type ClientActionResult, type ClientActionError } from '@carlosindriago/core'
 import { revalidatePath } from 'next/cache'
 
 export async function getClients(): Promise<Client[]> {
@@ -62,7 +62,7 @@ export async function createClientAction(input: CreateClientInput): Promise<Clie
     const organization_id = member.organization_id
 
     // Check Plan Limits
-    const { checkLimit } = await import('@tramiflow/database/limits')
+    const { checkLimit } = await import('@carlosindriago/database/limits')
     const limitStatus = await checkLimit(organization_id, 'clients', supabase)
 
     if (limitStatus.status === 'unverified_blocked') {
@@ -138,7 +138,7 @@ export async function deleteClientAction(clientId: string): Promise<ClientAction
 
     if (error) return { error: { _form: [error.message] } }
 
-    const { logAudit } = await import('@tramiflow/core/server')
+    const { logAudit } = await import('@carlosindriago/core/server')
     await logAudit(member.organization_id, 'CLIENT_DELETED', clientId, 'client')
 
     revalidatePath('/clients')

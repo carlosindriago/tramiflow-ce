@@ -12,8 +12,8 @@ import {
     useFormContext,
 } from 'react-hook-form'
 
-import { cn } from '@tramiflow/core'
-import { Label } from '@tramiflow/ui'
+import { cn } from '@carlosindriago/core'
+import { Label } from '@carlosindriago/ui'
 
 const Form = FormProvider
 

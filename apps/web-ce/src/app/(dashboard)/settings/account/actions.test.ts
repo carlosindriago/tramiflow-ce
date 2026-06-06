@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 // Mock Supabase
 const mockUpdateUser = vi.fn()
 
-vi.mock('@tramiflow/database/server', () => ({
+vi.mock('@carlosindriago/database/server', () => ({
   createClient: vi.fn(() => ({
       auth: {
           updateUser: mockUpdateUser,

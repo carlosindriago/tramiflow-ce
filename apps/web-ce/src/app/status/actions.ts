@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 /* eslint-disable */
 import { notFound } from 'next/navigation'
 

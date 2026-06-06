@@ -7,8 +7,8 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-} from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
 import { Download, Loader2 } from 'lucide-react'
 
 interface DocumentViewerModalProps {

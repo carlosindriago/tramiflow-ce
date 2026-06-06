@@ -7,21 +7,21 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 /* eslint-disable */
 import { Loader2, Save, Smartphone, Palette, Type, LayoutTemplate } from 'lucide-react'
-import { Button } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
-import { Switch } from '@tramiflow/ui'
-import { Textarea } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
+import { Switch } from '@carlosindriago/ui'
+import { Textarea } from '@carlosindriago/ui'
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 import { updatePublicSettings } from '@/lib/actions/settings'
 import { toast } from 'sonner'
-import { type Organization } from '@tramiflow/core'
+import { type Organization } from '@carlosindriago/core'
 
 // Schema matches the server action validation
 const profileSchema = z.object({

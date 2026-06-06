@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { createClient } from '@tramiflow/database/client'
-import { Button } from '@tramiflow/ui'
+import { createClient } from '@carlosindriago/database/client'
+import { Button } from '@carlosindriago/ui'
 import { Loader2, Upload, X, Image as ImageIcon } from 'lucide-react'
 import { toast } from 'sonner'
 

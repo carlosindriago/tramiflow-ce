@@ -1,8 +1,8 @@
 'use client'
 
-import { Progress } from '@tramiflow/ui'
+import { Progress } from '@carlosindriago/ui'
 import { Loader2, CheckCircle2, TrendingDown } from 'lucide-react'
-import { cn } from '@tramiflow/core'
+import { cn } from '@carlosindriago/core'
 
 interface ProcessingIndicatorProps {
     isProcessing: boolean

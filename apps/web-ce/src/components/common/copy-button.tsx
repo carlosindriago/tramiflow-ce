@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { Check, Link as LinkIcon } from 'lucide-react'
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '@tramiflow/ui'
+} from '@carlosindriago/ui'
 
 export function CopyButton() {
     const [hasCopied, setHasCopied] = useState(false)

@@ -1,8 +1,8 @@
 // @ts-nocheck
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { notFound, redirect } from 'next/navigation'
 import { TemplateForm } from '@/components/templates/template-form'
-import { TemplateFormData } from '@tramiflow/core'
+import { TemplateFormData } from '@carlosindriago/core'
 
 interface EditTemplatePageProps {
     params: Promise<{

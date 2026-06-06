@@ -1,5 +1,5 @@
 {
-  "name": "@tramiflow/config-eslint",
+  "name": "@carlosindriago/config-eslint",
   "version": "1.0.0",
   "private": true,
   "dependencies": {

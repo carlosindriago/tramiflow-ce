@@ -4,8 +4,8 @@ import { getProceduresAction, getNewProcedureOptions, getProcedureStatusesAction
 import { KanbanBoard } from '@/components/procedures/kanban-board'
 /* eslint-disable */
 import { Loader2 } from 'lucide-react'
-import { Procedure } from '@tramiflow/core'
-import { ProcedureStatus as ProcedureStatusConfig } from '@tramiflow/core'
+import { Procedure } from '@carlosindriago/core'
+import { ProcedureStatus as ProcedureStatusConfig } from '@carlosindriago/core'
 
 export default async function ProceduresPage() {
     const [proceduresRes, optionsRes, statusesRes] = await Promise.all([

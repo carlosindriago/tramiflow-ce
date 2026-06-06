@@ -2,8 +2,8 @@
 'use client'
 
 import { useState } from 'react'
-import { ProcedureStatus as ProcedureStatusConfig } from '@tramiflow/core'
-import { Button } from '@tramiflow/ui'
+import { ProcedureStatus as ProcedureStatusConfig } from '@carlosindriago/core'
+import { Button } from '@carlosindriago/ui'
 import { Plus, Pencil, Trash2, GripVertical } from 'lucide-react'
 import {
     Dialog,
@@ -14,10 +14,10 @@ import {
     DialogTitle,
 /* eslint-disable */
     DialogTrigger,
-} from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
-import { Checkbox } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
+import { Checkbox } from '@carlosindriago/ui'
 import { toast } from 'sonner'
 import { createProcedureStatusAction, updateProcedureStatusConfigAction, deleteProcedureStatusAction } from '@/app/(dashboard)/settings/statuses/actions'
 import { useRouter } from 'next/navigation'

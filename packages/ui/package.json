@@ -1,5 +1,5 @@
 {
-  "name": "@tramiflow/ui",
+  "name": "@carlosindriago/ui",
   "version": "1.0.0",
   "private": false,
   "publishConfig": {
@@ -21,7 +21,7 @@
     "@radix-ui/react-slot": "^1.0.0",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.563.0",
-    "@tramiflow/core": "*"
+    "@carlosindriago/core": "*"
   },
   "peerDependencies": {
     "next": "^16.2.4",
@@ -29,7 +29,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tramiflow/config-typescript": "*",
+    "@carlosindriago/config-typescript": "*",
     "typescript": "^5",
     "@types/react": "^19",
     "@types/react-dom": "^19"

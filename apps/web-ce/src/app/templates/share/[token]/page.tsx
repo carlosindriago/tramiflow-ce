@@ -3,17 +3,17 @@ import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 /* eslint-disable */
 import { ArrowLeft, CheckCircle2, FileText, Calendar, DollarSign, Bell, Import, Lock, Clock, Layers, ShieldCheck } from 'lucide-react'
-import { Button } from '@tramiflow/ui'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
 /* eslint-disable */
-import { Separator } from '@tramiflow/ui'
+import { Separator } from '@carlosindriago/ui'
 import { getSharedTemplateByToken } from '@/app/templates/share/actions'
 import { trackView } from '@/actions/growth'
 import { ImportButton } from '@/app/templates/share/import-button'
 import { LeadForm } from '@/components/templates/lead-form'
 /* eslint-disable */
-import { cn } from '@tramiflow/core'
+import { cn } from '@carlosindriago/core'
 
 interface SharePageProps {
     params: Promise<{

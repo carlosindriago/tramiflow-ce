@@ -1,8 +1,8 @@
 'use server'
 
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 import { revalidatePath } from 'next/cache'
-import type { Database } from '@tramiflow/database/types'
+import type { Database } from '@carlosindriago/database/types'
 
 type Document = Database['public']['Tables']['documents']['Row']
 type ProcedureDocumentJoin = {

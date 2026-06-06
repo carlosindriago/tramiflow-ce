@@ -7,10 +7,10 @@ import { z } from 'zod'
 import { updateProfileName, updateUserPassword } from '@/app/(dashboard)/settings/account/actions'
 import { User, Lock, Loader2, MailCheck, Save } from 'lucide-react'
 
-import { Button } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@carlosindriago/ui'
 
 // Validation schemas - Security hardened
 const nameSchema = z.object({

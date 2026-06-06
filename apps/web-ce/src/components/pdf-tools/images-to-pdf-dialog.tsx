@@ -23,12 +23,12 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-} from '@tramiflow/ui'
-import { Button } from '@tramiflow/ui'
-import { Input } from '@tramiflow/ui'
-import { Label } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Button } from '@carlosindriago/ui'
+import { Input } from '@carlosindriago/ui'
+import { Label } from '@carlosindriago/ui'
 /* eslint-disable */
-import { getPdfLib, getDownload } from '@tramiflow/pdf-kit'
+import { getPdfLib, getDownload } from '@carlosindriago/pdf-kit'
 import {
     ImageIcon,
     GripVertical,
@@ -42,9 +42,9 @@ import {
     LayoutGrid as LayoutGridIcon,
     Info,
 } from 'lucide-react'
-import { cn } from '@tramiflow/core'
-import { createClient } from '@tramiflow/database/client'
-import type { Document } from '@tramiflow/core'
+import { cn } from '@carlosindriago/core'
+import { createClient } from '@carlosindriago/database/client'
+import type { Document } from '@carlosindriago/core'
 
 // ─── Types ────────────────────────────────────────────────────────────
 

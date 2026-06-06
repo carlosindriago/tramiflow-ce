@@ -1,7 +1,7 @@
 'use server'
 
-import { createClient } from '@tramiflow/database/server'
-import { checkLimit, type ResourceUsage } from '@tramiflow/database/limits'
+import { createClient } from '@carlosindriago/database/server'
+import { checkLimit, type ResourceUsage } from '@carlosindriago/database/limits'
 
 export interface LimitsState {
     clients: ResourceUsage

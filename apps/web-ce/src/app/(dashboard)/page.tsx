@@ -1,11 +1,11 @@
-import { createClient } from '@tramiflow/database/server'
+import { createClient } from '@carlosindriago/database/server'
 /* eslint-disable */
 import { AlertTriangle, FileText, UserPlus, CheckCircle, Clock, Calendar, Users, ClipboardList } from 'lucide-react'
 import { formatDistanceToNow, format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { getLeadsStats } from '@/lib/actions/dashboard'
 import Link from 'next/link'
-import type { Database } from '@tramiflow/database/types'
+import type { Database } from '@carlosindriago/database/types'
 
 export const dynamic = 'force-dynamic'
 

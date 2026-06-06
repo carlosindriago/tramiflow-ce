@@ -26,7 +26,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 /* eslint-disable */
-import { Procedure, ProcedureStatus, PROCEDURE_STATUS_LABELS } from '@tramiflow/core'
+import { Procedure, ProcedureStatus, PROCEDURE_STATUS_LABELS } from '@carlosindriago/core'
 import { updateProcedureStatusAction } from '@/app/(dashboard)/procedures/actions'
 import { ProcedureCard } from './procedure-card'
 import { NewProcedureDialog } from './new-procedure-dialog'
@@ -35,7 +35,7 @@ import { createPortal } from 'react-dom'
 import { Plus, ClipboardList } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
-import { ProcedureStatus as ProcedureStatusConfig } from '@tramiflow/core'
+import { ProcedureStatus as ProcedureStatusConfig } from '@carlosindriago/core'
 
 // --- Sortable Item Wrapper ---
 function SortableProcedureCard({

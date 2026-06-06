@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Download, FileImage, FileText, Loader2, SlidersHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { Button } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,10 +12,10 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@tramiflow/ui'
-import { createClient } from '@tramiflow/database/client'
-import type { Document } from '@tramiflow/core'
-import { getPdfLib, getDownload } from '@tramiflow/pdf-kit'
+} from '@carlosindriago/ui'
+import { createClient } from '@carlosindriago/database/client'
+import type { Document } from '@carlosindriago/core'
+import { getPdfLib, getDownload } from '@carlosindriago/pdf-kit'
 
 interface DownloadFormatMenuProps {
     doc: Document

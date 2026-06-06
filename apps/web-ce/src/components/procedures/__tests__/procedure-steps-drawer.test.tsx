@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { ProcedureStepsDrawer } from '../procedure-steps-drawer'
-import type { Procedure } from '@tramiflow/core'
+import type { Procedure } from '@carlosindriago/core'
 import * as actions from '@/app/(dashboard)/procedures/actions'
 
 vi.mock('@/app/(dashboard)/procedures/actions', () => ({

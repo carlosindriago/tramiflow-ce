@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@tramiflow/core"
+import { cn } from "@carlosindriago/core"
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (

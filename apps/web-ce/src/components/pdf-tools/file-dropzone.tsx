@@ -3,7 +3,7 @@
 import { useCallback } from 'react'
 import { useDropzone, type Accept } from 'react-dropzone'
 import { Upload, FileUp } from 'lucide-react'
-import { cn } from '@tramiflow/core'
+import { cn } from '@carlosindriago/core'
 
 interface FileDropzoneProps {
     accept: Accept

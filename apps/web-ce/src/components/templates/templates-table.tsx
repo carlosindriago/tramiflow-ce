@@ -14,21 +14,21 @@ import {
 } from 'lucide-react'
 import { ColumnDef } from '@tanstack/react-table'
 
-import { Button } from '@tramiflow/ui'
-import { Badge } from '@tramiflow/ui'
+import { Button } from '@carlosindriago/ui'
+import { Badge } from '@carlosindriago/ui'
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@tramiflow/ui'
-import { Checkbox } from '@tramiflow/ui'
-import { DataTable } from '@tramiflow/ui'
-import { ConfirmDialog } from '@tramiflow/ui'
-import { SkeletonList } from '@tramiflow/ui'
+} from '@carlosindriago/ui'
+import { Checkbox } from '@carlosindriago/ui'
+import { DataTable } from '@carlosindriago/ui'
+import { ConfirmDialog } from '@carlosindriago/ui'
+import { SkeletonList } from '@carlosindriago/ui'
 import { deleteTemplate, duplicateTemplate } from '@/app/(dashboard)/templates/new/actions'
-import { toast } from '@tramiflow/core'
+import { toast } from '@carlosindriago/core'
 
 // Types - matches database schema after domain refactor
 interface Template {
