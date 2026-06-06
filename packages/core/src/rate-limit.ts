@@ -1,4 +1,5 @@
 import { Redis } from '@upstash/redis'
+import { RATE_LIMITS } from './constants'
 
 /**
  * Rate Limiting - Redis + In-Memory Fallback Implementation
@@ -122,12 +123,4 @@ export async function rateLimit(
     }
 }
 
-/**
- * Common rate limit configurations
- */
-export const RATE_LIMITS = {
-    VIEW_TRACKING: { limit: 10, window: 60 }, // 10 views per minute per template
-    LEAD_SUBMISSION: { limit: 5, window: 60 }, // 5 leads per minute per template
-    AUTH_ATTEMPTS: { limit: 5, window: 300 }, // 5 auth attempts per 5 minutes per IP
-    API_REQUESTS: { limit: 100, window: 60 }, // 100 API requests per minute per user
-} as const
+

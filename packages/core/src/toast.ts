@@ -13,6 +13,7 @@
  */
 
 import { toast as sonnerToast } from 'sonner'
+import { TOAST_DURATION } from './constants'
 
 type ToastPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'top-center' | 'bottom-center'
 type ToastDuration = number
@@ -124,14 +125,5 @@ export const showError = toast.error
 export const showInfo = toast.info
 export const showWarning = toast.warning
 export const showLoading = toast.loading
-
-/**
- * Toast duration constants
- */
-export const TOAST_DURATION = {
-    SHORT: 2000,
-    DEFAULT: 4000,
-    LONG: 6000,
-} as const
 
 export default toast
