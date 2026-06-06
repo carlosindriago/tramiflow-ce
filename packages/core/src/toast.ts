@@ -6,10 +6,6 @@
  * Usage in Client Components:
  *   import { toast } from '@tramiflow/core'
  *   toast.success('Operation successful')
- *
- * Usage in Server Actions:
- *   import { showSuccess } from '@tramiflow/core'
- *   showSuccess('Saved successfully')
  */
 
 import { toast as sonnerToast } from 'sonner'
@@ -115,15 +111,5 @@ export const toast = {
         return sonnerToast.promise(promise, messages) as unknown as Promise<T>
     },
 }
-
-/**
- * Direct export functions for Server Actions
- * (Can't use 'toast' object in Server Actions)
- */
-export const showSuccess = toast.success
-export const showError = toast.error
-export const showInfo = toast.info
-export const showWarning = toast.warning
-export const showLoading = toast.loading
 
 export default toast
