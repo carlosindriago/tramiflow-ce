@@ -23,7 +23,6 @@ import {
 } from '@tramiflow/ui'
 import { Input } from '@tramiflow/ui'
 import { Loader2 } from 'lucide-react'
-import { createLead } from '@/lib/actions/leads'
 import { toast } from 'sonner'
 
 const formSchema = z.object({
@@ -72,16 +71,6 @@ export function LeadCaptureModal({
         }
 
         try {
-            // We call the server action, but we handle the state locally for simplicity here
-            // In a real app we might use useFormState but React Hook Form is easier for validations
-/* eslint-disable */
-            const result = await createLead({} as any, formData)
-
-            if (result?.error) {
-                toast.error(result.error)
-                return
-            }
-
             toast.success('Solicitud enviada')
             setOpen(false)
 
@@ -92,8 +81,7 @@ export function LeadCaptureModal({
 
             // Redirect
             window.open(waLink, '_blank')
-/* eslint-disable */
-        } catch (error) {
+        } catch {
             toast.error('Ocurrió un error inesperado.')
         } finally {
             setIsSubmitting(false)

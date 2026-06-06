@@ -54,8 +54,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // 3.3. Organization Check (Only for protected routes)
-    // IMPORTANT: /admin routes bypass org check — admins may not belong to any org
-    if (user && !isPublicRoute && !pathname.startsWith('/onboarding') && !pathname.startsWith('/admin')) {
+    if (user && !isPublicRoute && !pathname.startsWith('/onboarding')) {
         // SECURITY: never trust a client-controlled cookie as proof that onboarding
         // was completed. Always validate the membership in the database.
         const { data: organizations } = await supabase
