@@ -1,7 +1,6 @@
 export * from './utils';
 export * from './constants';
 export * from './toast';
-export * from './rate-limit';
 
 export * from './types/analytics';
 export * from './types/category';

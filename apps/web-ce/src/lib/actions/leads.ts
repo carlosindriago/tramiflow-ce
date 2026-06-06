@@ -4,7 +4,7 @@
 import { createClient } from '@tramiflow/database/server'
 import { headers } from 'next/headers'
 import { z } from 'zod'
-import { RATE_LIMITS, rateLimit } from '@tramiflow/core'
+import { RATE_LIMITS, rateLimit } from '@tramiflow/core/server'
 
 const LeadSchema = z.object({
     organization_id: z.string().uuid(),
