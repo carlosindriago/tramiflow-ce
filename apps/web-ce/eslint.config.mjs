@@ -18,10 +18,10 @@ const eslintConfig = defineConfig([
     files: [
       "**/src/actions/growth.ts",
       "**/src/app/(dashboard)/clients/page.tsx",
-      "**/src/app/(dashboard)/procedures/[id]/page.tsx",
+      "**/src/app/(dashboard)/procedures/\\[id\\]/page.tsx",
       "**/src/app/(dashboard)/settings/statuses/actions.ts",
-      "**/src/app/(dashboard)/templates/[id]/edit/page.tsx",
-      "**/src/app/(dashboard)/templates/[id]/page.tsx",
+      "**/src/app/(dashboard)/templates/\\[id\\]/edit/page.tsx",
+      "**/src/app/(dashboard)/templates/\\[id\\]/page.tsx",
       "**/src/app/(dashboard)/templates/new/actions.ts",
       "**/src/components/procedures/__tests__/procedure-card.test.tsx",
       "**/src/components/procedures/kanban-board.tsx",
