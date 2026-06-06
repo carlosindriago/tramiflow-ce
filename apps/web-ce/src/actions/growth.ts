@@ -3,9 +3,9 @@
 
 import { createClient } from '@tramiflow/database/server'
 import { headers } from 'next/headers'
-import { leadCaptureSchema } from '@tramiflow/core'
+import { leadCaptureSchema, RATE_LIMITS } from '@tramiflow/core'
 import { userAgent } from 'next/server'
-import { rateLimit, RATE_LIMITS } from '@tramiflow/core/server'
+import { rateLimit } from '@tramiflow/core/server'
 
 // --- Actions for Public View ---
 
