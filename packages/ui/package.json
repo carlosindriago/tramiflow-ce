@@ -1,7 +1,11 @@
 {
   "name": "@tramiflow/ui",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
   "main": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
