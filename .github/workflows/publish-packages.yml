@@ -17,16 +17,19 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@tramiflow'
       - run: npm ci
-      - run: npx turbo run typecheck --filter=@tramiflow/core --filter=@tramiflow/database --filter=@tramiflow/ui --filter=@tramiflow/pdf-kit
-      - run: npm publish --workspace=packages/core
+      - name: Publish @tramiflow/core
+        run: npm publish --workspace=packages/core
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: npm publish --workspace=packages/database
+      - name: Publish @tramiflow/database
+        run: npm publish --workspace=packages/database
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: npm publish --workspace=packages/ui
+      - name: Publish @tramiflow/ui
+        run: npm publish --workspace=packages/ui
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: npm publish --workspace=packages/pdf-kit
+      - name: Publish @tramiflow/pdf-kit
+        run: npm publish --workspace=packages/pdf-kit
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

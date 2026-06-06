@@ -14,6 +14,9 @@
     "./limits": "./src/limits.ts",
     "./types": "./src/types/database.types.ts"
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.95.3",
