@@ -19,8 +19,7 @@
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
-    "@supabase/supabase-js": "^2.95.3",
-    "@tramiflow/core": "*"
+    "@supabase/supabase-js": "^2.95.3"
   },
   "devDependencies": {
     "@tramiflow/config-typescript": "*",
