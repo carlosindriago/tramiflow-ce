@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/window.svg" alt="TramiFlow Logo" width="120" />
+  <img src="apps/web-ce/public/window.svg" alt="TramiFlow Logo" width="120" />
   
   # TramiFlow CE
   
