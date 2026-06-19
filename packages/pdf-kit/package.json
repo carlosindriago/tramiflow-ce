@@ -1,6 +1,6 @@
 {
   "name": "@carlosindriago/pdf-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
@@ -14,13 +14,19 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "browser-image-compression": "^2.0.2",
+    "downloadjs": "^1.4.7",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^5.4.624",
-    "browser-image-compression": "^2.0.2",
+    "react-cropper": "^2.3.3",
     "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "@carlosindriago/config-typescript": "*",
     "typescript": "^5"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@carlosindriago/database",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
@@ -24,5 +24,8 @@
   "devDependencies": {
     "@carlosindriago/config-typescript": "*",
     "typescript": "^5"
+  },
+  "peerDependencies": {
+    "next": "^16.2.4"
   }
 }

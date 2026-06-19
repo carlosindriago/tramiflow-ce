@@ -1,6 +1,6 @@
 {
   "name": "@carlosindriago/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
@@ -16,12 +16,18 @@
   },
   "dependencies": {
     "@carlosindriago/database": "*",
+    "@upstash/redis": "^1.37.0",
     "clsx": "^2.1.1",
+    "lucide-react": "^0.563.0",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@carlosindriago/config-typescript": "*",
     "typescript": "^5"
+  },
+  "peerDependencies": {
+    "next": "^16.2.4"
   }
 }
