@@ -2,7 +2,6 @@
 
 /* eslint-disable */
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import {
     Table,
     TableBody,
@@ -13,37 +12,15 @@ import {
 } from '@carlosindriago/ui'
 import { Badge } from '@carlosindriago/ui'
 import { Button } from '@carlosindriago/ui'
-import { Loader2 } from 'lucide-react'
-import { getProceduresAction } from '@/app/(dashboard)/procedures/actions'
 import { Procedure } from '@carlosindriago/core'
 import Link from 'next/link'
 
-export function ProcedureArchiveTable() {
-    const { data: result, isLoading, error } = useQuery({
-        queryKey: ['archived-procedures'],
-        queryFn: async () => {
-            const res = await getProceduresAction(true)
-            return res.success ? (res.data as Procedure[]) : []
-        }
-    })
+interface ProcedureArchiveTableProps {
+    initialProcedures: Procedure[]
+}
 
-    const procedures = result || []
-
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-            </div>
-        )
-    }
-
-    if (error) {
-        return (
-            <div className="p-4 text-destructive bg-destructive/10 rounded-lg">
-                Error cargando archivos: {error.message}
-            </div>
-        )
-    }
+export function ProcedureArchiveTable({ initialProcedures }: ProcedureArchiveTableProps) {
+    const [procedures] = useState<Procedure[]>(initialProcedures)
 
     if (procedures.length === 0) {
         return (
