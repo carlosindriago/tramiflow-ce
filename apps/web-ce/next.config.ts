@@ -5,13 +5,13 @@ default-src 'self';
 script-src 'self' 'unsafe-eval' 'unsafe-inline';
 style-src 'self' 'unsafe-inline';
 img-src 'self' blob: data: https://*.supabase.co;
-font-src 'self';
+font-src 'self' data:;
 object-src 'none';
 base-uri 'none';
-form-action 'self';
+form-action 'self' https://*.supabase.co https://accounts.google.com;
 frame-ancestors 'none';
 connect-src 'self' https://*.supabase.co https://api.resend.com;
-`.replace(/\\s{2,}/g, ' ').trim();
+`.replace(/\n/g, ' ').trim();
 
 const securityHeaders = [
   { key: 'X-Frame-Options', value: 'DENY' },
