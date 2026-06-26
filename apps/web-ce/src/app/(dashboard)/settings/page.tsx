@@ -95,7 +95,7 @@ export default async function SettingsPage() {
                             Facturación y Plan
                         </CardTitle>
                         <CardDescription>
-                            Revisa el estado de tu suscripción o activa el Plan PRO con Yape / Plin.
+                            Revisa el estado de tu suscripción. (Las activaciones PRO en línea están deshabilitadas temporalmente).
                         </CardDescription>
                     </CardHeader>
                     <CardContent>

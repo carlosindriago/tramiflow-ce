@@ -82,10 +82,8 @@ export function QuotaUsage() {
 
             {limits.planCode === 'free' && (
                 <div className="mt-4 pt-3 border-t">
-                    <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 shadow-md transition-all duration-300 transform hover:scale-[1.02]" size="sm" asChild>
-                        <Link href="/settings/billing">
-                            🚀 Actualizar a PRO
-                        </Link>
+                    <Button disabled className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 shadow-md transition-all duration-300 opacity-50 cursor-not-allowed" size="sm">
+                        🚀 Actualizar a PRO (Próximamente)
                     </Button>
                 </div>
             )}

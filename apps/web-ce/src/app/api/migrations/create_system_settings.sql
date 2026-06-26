@@ -42,9 +42,9 @@ insert into system_settings (key, value)
 values (
   'payment_config',
   '{
-    "yape": {"number": "900 000 000", "name": "TramiFlow SAC", "active": true},
-    "plin": {"number": "900 000 000", "active": false},
-    "bank": {"account": "BCP 191-12345678-0-99", "cci": "002-191-001234567809-99", "name": "TramiFlow SAC", "active": true},
+    "yape": {"number": "", "name": "", "active": false},
+    "plin": {"number": "", "active": false},
+    "bank": {"account": "", "cci": "", "name": "", "active": false},
     "price": {"amount": 79.00, "currency": "PEN", "name": "Plan PRO Mensual"}
   }'::jsonb
 )
