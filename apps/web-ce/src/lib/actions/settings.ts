@@ -53,7 +53,8 @@ export async function updatePublicSettings(prevState: SettingsState, formData: F
             .select('role')
             .eq('organization_id', organization_id)
             .eq('user_id', user.id)
-            .single()
+            .limit(1)
+        .single()
 
         if (!member || !['OWNER', 'ADMIN'].includes(member.role)) {
             return { error: 'No tienes permisos para editar esta organización' }

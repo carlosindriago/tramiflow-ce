@@ -17,6 +17,7 @@ export async function getProcedureStatusesAction() {
         .from('organization_members')
         .select('organization_id')
         .eq('user_id', user.id)
+        .limit(1)
         .single()
 
     if (!member) return { success: false, error: 'No organization' }
@@ -45,6 +46,7 @@ export async function getProceduresAction(includeArchived: boolean = false) {
         .from('organization_members')
         .select('organization_id')
         .eq('user_id', user.id)
+        .limit(1)
         .single()
 
     if (!member) return { success: false, error: 'No organization' }
@@ -114,6 +116,7 @@ export async function getProcedureByIdAction(id: string) {
         .from('organization_members')
         .select('organization_id')
         .eq('user_id', user.id)
+        .limit(1)
         .single()
 
     if (!member) return { success: false, error: 'No organization' }
@@ -162,6 +165,7 @@ export async function createProcedureAction(input: {
         .from('organization_members')
         .select('organization_id')
         .eq('user_id', user.id)
+        .limit(1)
         .single()
 
     if (!member) return { success: false, error: 'No organization' }
@@ -318,6 +322,7 @@ export async function getNewProcedureOptions() {
         .from('organization_members')
         .select('organization_id')
         .eq('user_id', user.id)
+        .limit(1)
         .single()
 
     if (!member) return { success: false, error: 'No organization' }
@@ -356,6 +361,7 @@ export async function getTemplatesAction() {
         .from('organization_members')
         .select('organization_id')
         .eq('user_id', user.id)
+        .limit(1)
         .single()
 
     if (!member) return { success: false, error: 'No organization' }

@@ -37,7 +37,8 @@ export async function searchGlobal(
             .from('organization_members')
             .select('organization_id')
             .eq('user_id', user.id)
-            .single()
+            .limit(1)
+        .single()
 
         if (!member) return { success: false, error: 'Sin organización' }
 

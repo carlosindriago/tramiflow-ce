@@ -23,7 +23,8 @@ export async function getOrganizationLimits(): Promise<{ success: boolean; data?
             .from('organization_members')
             .select('organization_id, organization:organizations(plan_code, subscription_ends_at, status)')
             .eq('user_id', user.id)
-            .single()
+            .limit(1)
+        .single()
 
         if (!member) return { success: false, error: 'No organization' }
 

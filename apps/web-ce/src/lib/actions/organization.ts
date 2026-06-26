@@ -30,6 +30,7 @@ export async function updateOrganization(prevState: { message?: string, errors?:
         .select('role')
         .eq('organization_id', organizationId)
         .eq('user_id', user.id)
+        .limit(1)
         .single()
 
     if (!member || !['OWNER', 'ADMIN'].includes(member.role)) {

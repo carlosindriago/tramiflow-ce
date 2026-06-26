@@ -25,6 +25,7 @@ async function fetchAdminRole(): Promise<AdminRole | null> {
         .from('app_admins')
         .select('role')
         .eq('user_id', user.id)
+        .limit(1)
         .single()
 
     return data?.role ?? null

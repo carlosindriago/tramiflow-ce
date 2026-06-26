@@ -42,6 +42,7 @@ export async function getAuditLogsAction(params: GetAuditLogsParams = {}) {
         .from('organization_members')
         .select('organization_id, role')
         .eq('user_id', user.id)
+        .limit(1)
         .single()
 
     if (!member || !['OWNER', 'ADMIN'].includes(member.role)) {
@@ -100,6 +101,7 @@ export async function getAuditUsersAction() {
         .from('organization_members')
         .select('organization_id')
         .eq('user_id', user.id)
+        .limit(1)
         .single()
 
     if (!member) return []

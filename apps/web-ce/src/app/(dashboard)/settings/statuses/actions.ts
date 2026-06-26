@@ -15,6 +15,7 @@ export async function createProcedureStatusAction(input: CreateProcedureStatusIn
         .from('organization_members')
         .select('organization_id')
         .eq('user_id', user.id)
+        .limit(1)
         .single()
 
     if (!member) return { success: false, error: 'No organization' }
