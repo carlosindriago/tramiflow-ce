@@ -315,7 +315,7 @@ export function KanbanBoard({ initialProcedures, clients, templates, statuses = 
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
         >
-            <div className="h-full w-max flex gap-4 min-h-0 py-1 relative">
+            <div className="h-full min-w-full w-max flex gap-4 min-h-0 py-1 relative">
                 {columns.map((col) => (
                     <KanbanColumn
                         key={col.id}
