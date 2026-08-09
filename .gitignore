@@ -68,4 +68,14 @@ check-*.mjs
 
 # AI Agent internal files
 .codex
-build.log\nbuild_log.txt\n.agent/\n.agents/
+build.log
+build_log.txt
+.agent/
+.agents/
+.atl/
+.codebase-memory/
+
+# Scratch & build files
+dummy.mjs
+apps/web-ce/dist.css
+
