@@ -10,8 +10,9 @@
     "inlineSources": false,
     "isolatedModules": true,
     "moduleResolution": "bundler",
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitOverride": true,
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true

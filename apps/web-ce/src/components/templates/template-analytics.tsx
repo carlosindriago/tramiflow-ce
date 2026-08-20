@@ -213,7 +213,7 @@ export function TemplateAnalytics({ templateId }: TemplateAnalyticsProps) {
                                         <TableRow key={lead.id}>
                                             <TableCell className="font-medium">{lead.name}</TableCell>
                                             <TableCell>{lead.phone}</TableCell>
-                                            <TableCell>{new Date(lead.created_at).toLocaleDateString()}</TableCell>
+                                            <TableCell>{lead.created_at ? new Date(lead.created_at).toLocaleDateString() : '-'}</TableCell>
                                             <TableCell className="text-right">
                                                 <Button size="sm" variant="ghost" className="h-8 w-8 p-0" asChild>
                                                     <a
@@ -262,7 +262,7 @@ export function TemplateAnalytics({ templateId }: TemplateAnalyticsProps) {
                                                     <TableCell className="font-medium">{clone.organization_name}</TableCell>
                                                     <TableCell>{clone.country || 'Desconocido'}</TableCell>
                                                     <TableCell>
-                                                        {new Date(clone.created_at).toLocaleDateString()} {new Date(clone.created_at).toLocaleTimeString()}
+                                                        {clone.created_at ? `${new Date(clone.created_at).toLocaleDateString()} ${new Date(clone.created_at).toLocaleTimeString()}` : '-'}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
@@ -311,7 +311,7 @@ export function TemplateAnalytics({ templateId }: TemplateAnalyticsProps) {
                                         <TableRow key={clone.id}>
                                             <TableCell className="font-medium">{clone.organization_name}</TableCell>
                                             <TableCell>{clone.country || 'Desconocido'}</TableCell>
-                                            <TableCell>{new Date(clone.created_at).toLocaleDateString()}</TableCell>
+                                            <TableCell>{clone.created_at ? new Date(clone.created_at).toLocaleDateString() : '-'}</TableCell>
                                         </TableRow>
                                     ))
                                 )}

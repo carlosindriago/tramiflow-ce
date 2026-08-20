@@ -38,7 +38,7 @@ export async function getSharedTemplateByToken(token: string) {
                 .from('template_permissions')
                 .select('*')
                 .eq('template_id', restrictedTemplate.id)
-                .eq('email', user.email)
+                .eq('email', user.email || '')
                 .single()
 
             if (permission) {
@@ -84,9 +84,10 @@ export async function importTemplateAction(templateId: string) {
         .insert({
             name: `${source.name} (Importada)`,
             organization_id: profile.organization_id,
+            created_by: user.id,
             // Copy fields
-            fees_professional: source.fees_professional,
-            fees_official: source.fees_official,
+            fees_professional: (source as any).fees_professional ?? source.fees,
+            fees_official: (source as any).fees_official ?? source.government_fee,
             currency: source.currency,
             payment_terms: source.payment_terms,
             duration_work: source.duration_work,
@@ -104,7 +105,7 @@ export async function importTemplateAction(templateId: string) {
             // Tracking
             source_template_id: templateId,
             source_ip_country: country
-        })
+        } as any)
         .select('id')
         .single()
 

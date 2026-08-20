@@ -28,7 +28,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
             .single()
 
         if (profile) {
-            emailVerified = profile.email_verified
+            emailVerified = profile.email_verified ?? true
         }
     }
 

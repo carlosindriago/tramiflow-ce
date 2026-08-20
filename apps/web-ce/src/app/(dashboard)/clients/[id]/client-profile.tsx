@@ -62,7 +62,7 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
     // Fetch procedures
     const { data: procedures = [], refetch: refetchProcedures } = useQuery<Procedure[]>({
         queryKey: ['procedures', clientId],
-        queryFn: () => getClientProcedures(clientId) as Promise<Procedure[]>,
+        queryFn: () => getClientProcedures(clientId) as unknown as Promise<Procedure[]>,
     })
 
     // Fetch templates for the dropdown

@@ -21,20 +21,13 @@ export async function GET(request: Request) {
             const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown'
 
             if (ip !== 'unknown') {
-                // Update last_ip, and conditionally set registration_ip if it's the first time
-                await supabase.rpc('update_user_ip', {
-                    p_user_id: session.user.id,
-                    p_ip: ip
-                })
-                // Fallback direct update (since RPC might not exist yet)
                 const { data: profile } = await supabase
                     .from('profiles')
                     .select('registration_ip')
                     .eq('id', session.user.id)
                     .single()
 
-/* eslint-disable */
-                const updateData: any = { last_ip: ip }
+                const updateData: { last_ip: string; registration_ip?: string } = { last_ip: ip }
                 if (profile && !profile.registration_ip) {
                     updateData.registration_ip = ip
                 }

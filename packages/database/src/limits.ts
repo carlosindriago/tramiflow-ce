@@ -1,5 +1,6 @@
 import { createClient as createSupabaseClient, type SupabaseClient } from '@supabase/supabase-js'
 import { unstable_cache } from 'next/cache'
+import type { Database } from './types/database.types'
 
 // Use public anon key for cached queries (plans are public info)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -7,7 +8,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 // Create service-role client for cached queries (no auth needed)
 const getPublicClient = () => 
-    createSupabaseClient(supabaseUrl, supabaseAnonKey)
+    createSupabaseClient<Database>(supabaseUrl, supabaseAnonKey)
 
 export interface ResourceUsage {
     currentCount: number
@@ -43,7 +44,7 @@ export const getPlan = unstable_cache(
 export async function checkLimit(
     orgId: string,
     resource: 'clients' | 'procedures' | 'storage',
-    supabase: SupabaseClient
+    supabase: SupabaseClient<Database>
 ): Promise<ResourceUsage> {
     // 1. Get Organization Plan Code and Owner Verification Status
     const { data: org } = await supabase

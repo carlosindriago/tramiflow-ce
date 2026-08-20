@@ -50,7 +50,7 @@ export async function getCategories(): Promise<{ success: boolean; data?: Catego
             return { success: false, error: error.message }
         }
 
-        return { success: true, data: categories || [] }
+        return { success: true, data: (categories || []) as unknown as Category[] }
     } catch (error) {
         console.error('Error fetching categories:', error)
         return { success: false, error: 'Error al cargar categorías' }
@@ -104,7 +104,7 @@ export async function createCategory(input: CategoryInput): Promise<{ success: b
         revalidatePath('/templates/new')
         revalidatePath('/settings/categories')
 
-        return { success: true, data }
+        return { success: true, data: data as unknown as Category }
     } catch (error) {
         console.error('Error creating category:', error)
         if (error instanceof z.ZodError) {
@@ -171,7 +171,7 @@ export async function updateCategory(id: string, input: Partial<CategoryInput>):
         revalidatePath('/templates/new')
         revalidatePath('/settings/categories')
 
-        return { success: true, data }
+        return { success: true, data: data as unknown as Category }
     } catch (error) {
         console.error('Error updating category:', error)
         if (error instanceof z.ZodError) {

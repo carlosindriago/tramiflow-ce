@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react'
 
 export default async function ProcedureStatusesPage() {
     const statusesRes = await getProcedureStatusesAction()
-    const statuses = (statusesRes.success && statusesRes.data) ? (statusesRes.data as ProcedureStatusConfig[]) : []
+    const statuses = (statusesRes.success && statusesRes.data) ? (statusesRes.data as unknown as ProcedureStatusConfig[]) : []
 
     if (!statusesRes.success) {
         return (

@@ -9,7 +9,6 @@
  */
 
 import { toast as sonnerToast } from 'sonner'
-import { TOAST_DURATION } from './constants'
 
 type ToastPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'top-center' | 'bottom-center'
 type ToastDuration = number

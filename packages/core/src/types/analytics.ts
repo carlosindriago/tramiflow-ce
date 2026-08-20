@@ -13,14 +13,14 @@ export interface RecentLead {
     name: string
     phone: string
     email: string | null
-    created_at: string
+    created_at: string | null
 }
 
 export interface TemplateClone {
     id: string
-    organization_name: string
+    organization_name: string | null
     country: string | null
-    created_at: string
+    created_at: string | null
 }
 
 export interface TemplateAnalytics {

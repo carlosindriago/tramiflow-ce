@@ -14,10 +14,10 @@ export default async function ProceduresPage() {
         getProcedureStatusesAction()
     ])
 
-    const procedures = (proceduresRes.success && proceduresRes.data) ? (proceduresRes.data as Procedure[]) : []
+    const procedures = (proceduresRes.success && proceduresRes.data) ? (proceduresRes.data as unknown as Procedure[]) : []
     const clients = (optionsRes.success && optionsRes.data) ? optionsRes.data.clients : []
     const templates = (optionsRes.success && optionsRes.data) ? optionsRes.data.templates : []
-    const statuses = (statusesRes.success && statusesRes.data) ? (statusesRes.data as ProcedureStatusConfig[]) : []
+    const statuses = (statusesRes.success && statusesRes.data) ? (statusesRes.data as unknown as ProcedureStatusConfig[]) : []
 
     if (!proceduresRes.success) {
         return (

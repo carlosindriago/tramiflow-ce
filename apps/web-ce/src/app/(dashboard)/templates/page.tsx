@@ -35,7 +35,19 @@ export default async function TemplatesPage() {
         .select('*')
         .eq('organization_id', orgId)
         .eq('is_archived', false)
-        .order('created_at', { ascending: false })
+    const mappedTemplates = (templates || []).map((t) => ({
+        id: t.id,
+        name: t.name,
+        category: t.category,
+        fees_professional: t.fees ?? 0,
+        fees_official: t.government_fee ?? 0,
+        currency: t.currency ?? 'USD',
+        duration_work: t.duration_work ?? 0,
+        duration_resolution: t.duration_resolution ?? 0,
+        is_active: t.is_active ?? true,
+        steps: Array.isArray(t.steps) ? t.steps : null,
+        created_at: t.created_at ?? '',
+    }))
 
-    return <TemplatesView templates={templates || []} />
+    return <TemplatesView templates={mappedTemplates} />
 }

@@ -113,7 +113,7 @@ export default async function PublicTemplatePage({
                             <Card>
                                 <CardHeader className="p-4 text-center pb-2">
                                     <CardTitle className="text-3xl font-bold text-emerald-600">
-                                        {template.currency} {template.fees_professional + template.fees_official}
+                                        {template.currency} {((template as any).fees_professional ?? template.fees ?? 0) + ((template as any).fees_official ?? template.government_fee ?? 0)}
                                     </CardTitle>
                                     <CardDescription>Costo Estimado</CardDescription>
                                 </CardHeader>
@@ -122,7 +122,7 @@ export default async function PublicTemplatePage({
                         <Card className={!showFees ? 'col-span-2' : ''}>
                             <CardHeader className="p-4 text-center pb-2">
                                 <CardTitle className="text-3xl font-bold">
-                                    {template.duration_work + template.duration_resolution}
+                                    {(template.duration_work || 0) + (template.duration_resolution || 0)}
                                 </CardTitle>
                                 <CardDescription>Días Hábiles (Aprox.)</CardDescription>
                             </CardHeader>

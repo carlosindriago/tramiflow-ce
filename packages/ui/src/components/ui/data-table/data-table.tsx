@@ -14,11 +14,6 @@ import {
     useReactTable,
 } from '@tanstack/react-table'
 
-/* eslint-disable */
-import { cn } from '@carlosindriago/core'
-
-/* eslint-disable */
-import { Button } from '@carlosindriago/ui'
 import {
     Table,
     TableBody,

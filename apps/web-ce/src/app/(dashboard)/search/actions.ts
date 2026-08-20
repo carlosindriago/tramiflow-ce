@@ -55,11 +55,16 @@ export async function searchGlobal(
             return { success: false, error: 'Error al realizar la búsqueda' }
         }
 
-        const clientsWithId = (clients || []).map(c => ({
-            id: c.id,
-            full_name: c.full_name,
-            identification: c.identifications?.[0]?.number || ''
-        }))
+        const clientsWithId = (clients || []).map(c => {
+            const firstIdent = Array.isArray(c.identifications) && c.identifications[0] && typeof c.identifications[0] === 'object'
+                ? (c.identifications[0] as { number?: string }).number
+                : undefined
+            return {
+                id: c.id,
+                full_name: c.full_name,
+                identification: firstIdent || ''
+            }
+        })
 
         // Search tramites by title with org filter
         const { data: tramites, error: tramitesError } = await supabase
@@ -77,7 +82,7 @@ export async function searchGlobal(
         return {
             success: true,
             clients: clientsWithId,
-            tramites: tramites || [],
+            tramites: (tramites || []).map(t => ({ id: t.id, title: t.title, status: t.status || undefined })),
         }
     } catch (error) {
         if (error instanceof z.ZodError) {

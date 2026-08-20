@@ -78,7 +78,13 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
         <PublicProfileRenderer
             organization={org}
             data={settings}
-            services={templates || []}
+            services={(templates || []).map(t => ({
+                id: t.id,
+                name: t.name,
+                description: t.description || undefined,
+                price: (t.fees_professional ?? t.fees) || undefined,
+                duration: t.duration_work ? `${t.duration_work} días` : undefined,
+            }))}
         />
     )
 }
