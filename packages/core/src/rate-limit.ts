@@ -1,5 +1,4 @@
 import { Redis } from '@upstash/redis'
-import { RATE_LIMITS } from './constants'
 
 /**
  * Rate Limiting - Redis + In-Memory Fallback Implementation

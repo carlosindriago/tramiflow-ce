@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import {
     LayoutDashboard,
     Users,
@@ -33,7 +33,6 @@ import {
     DropdownMenuTrigger,
 } from '@carlosindriago/ui'
 import { Avatar, AvatarFallback } from '@carlosindriago/ui'
-import { signOutAction } from '@/actions/auth'
 import Link from 'next/link'
 import { TeamSwitcher } from '@/components/layout/team-switcher'
 import { type UserOrganization } from '@carlosindriago/core'
@@ -133,7 +132,6 @@ const navSections = [
 ]
 
 export function AppSidebar() {
-    const router = useRouter()
     const pathname = usePathname()
     const [user, setUser] = useState<{ name?: string; email?: string } | null>(null)
     const [organizations, setOrganizations] = useState<UserOrganization[]>([])
@@ -203,16 +201,17 @@ export function AppSidebar() {
         fetchUserData()
     }, [])
 
-    async function handleSignOut() {
+    async function handleSignOut(e?: Event | React.SyntheticEvent) {
+        e?.preventDefault()
         setIsSigningOut(true)
         try {
-            await signOutAction()
-            router.push('/login')
-            router.refresh()
+            const supabase = createClient()
+            await supabase.auth.signOut()
+            await fetch('/api/auth/signout', { method: 'POST' })
         } catch (error) {
             console.error('Error signing out:', error)
         } finally {
-            setIsSigningOut(false)
+            window.location.href = '/login'
         }
     }
 
@@ -325,7 +324,7 @@ export function AppSidebar() {
                                 side="top"
                             >
                                 <DropdownMenuItem
-                                    onSelect={handleSignOut}
+                                    onSelect={(e) => handleSignOut(e)}
                                     disabled={isSigningOut}
                                     className="cursor-pointer text-red-400 hover:text-red-300 hover:bg-red-500/10 focus:text-red-300 text-xs"
                                 >

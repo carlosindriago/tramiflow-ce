@@ -1,6 +1,5 @@
 'use client'
 
-import * as React from 'react'
 import {
     ChevronLeftIcon,
     ChevronRightIcon,
@@ -8,9 +7,6 @@ import {
     DoubleArrowRightIcon,
 } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
-
-/* eslint-disable */
-import { cn } from '@carlosindriago/core'
 import { Button } from '@carlosindriago/ui'
 import {
     Select,
