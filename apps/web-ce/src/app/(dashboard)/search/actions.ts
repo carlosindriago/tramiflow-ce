@@ -55,11 +55,16 @@ export async function searchGlobal(
             return { success: false, error: 'Error al realizar la búsqueda' }
         }
 
-        const clientsWithId = (clients || []).map(c => ({
-            id: c.id,
-            full_name: c.full_name,
-            identification: (Array.isArray(c.identifications) ? (c.identifications[0] as any)?.number : '') || ''
-        }))
+        const clientsWithId = (clients || []).map(c => {
+            const firstIdent = Array.isArray(c.identifications) && c.identifications[0] && typeof c.identifications[0] === 'object'
+                ? (c.identifications[0] as { number?: string }).number
+                : undefined
+            return {
+                id: c.id,
+                full_name: c.full_name,
+                identification: firstIdent || ''
+            }
+        })
 
         // Search tramites by title with org filter
         const { data: tramites, error: tramitesError } = await supabase
