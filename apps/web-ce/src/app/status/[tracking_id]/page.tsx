@@ -52,11 +52,11 @@ export default async function StatusPage({ params }: StatusPageProps) {
         currentPhase = 'Finalizado'
     }
 
-    const requirements = procedure.requirements_snapshot || []
+    const requirements = (Array.isArray(procedure.requirements_snapshot) ? procedure.requirements_snapshot : []) as any[]
     // Si no hay snapshot, podríamos intentar usar los del template si tuviéramos acceso, 
     // pero para seguridad solo mostramos lo que está en el procedure.
 
-    const checklist = procedure.checklist_progress || {}
+    const checklist = (procedure.checklist_progress as Record<string, boolean>) || {}
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-8">

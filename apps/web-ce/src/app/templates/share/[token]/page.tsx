@@ -49,15 +49,16 @@ export default async function ShareTemplatePage({ params }: SharePageProps) {
 
     await trackView(template.id)
 
+    const publicSettingsObj = template.public_settings as { allow_copy?: boolean; show_fees?: boolean; show_requirements?: boolean; show_steps?: boolean } | null
     const publicSettings = {
-        allow_copy: template.public_settings?.allow_copy ?? true,
-        show_fees: template.public_settings?.show_fees ?? true,
-        show_requirements: template.public_settings?.show_requirements ?? true,
-        show_steps: template.public_settings?.show_steps ?? true,
+        allow_copy: publicSettingsObj?.allow_copy ?? true,
+        show_fees: publicSettingsObj?.show_fees ?? true,
+        show_requirements: publicSettingsObj?.show_requirements ?? true,
+        show_steps: publicSettingsObj?.show_steps ?? true,
     }
 
-    const steps = Array.isArray(template.steps) ? template.steps : []
-    const requirements = Array.isArray(template.requirements) ? template.requirements : []
+    const steps = (Array.isArray(template.steps) ? template.steps : []) as any[]
+    const requirements = (Array.isArray(template.requirements) ? template.requirements : []) as any[]
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-indigo-500/30">
@@ -81,9 +82,9 @@ export default async function ShareTemplatePage({ params }: SharePageProps) {
                             {template.name}
                         </h1>
                         {/* Author/Organization */}
-                        {template.organizations?.name && (
+                        {(template as any).organizations?.name && (
                             <p className="mt-3 text-sm font-medium tracking-wider text-indigo-400/80 uppercase animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                                Por {template.organizations.name}
+                                Por {(template as any).organizations.name}
                             </p>
                         )}
                         <p className="mt-6 text-lg leading-8 text-slate-400 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
@@ -210,7 +211,7 @@ export default async function ShareTemplatePage({ params }: SharePageProps) {
                                         <div className="flex items-center justify-between pb-4 border-b border-dashed border-slate-700/60">
                                             <span className="text-sm text-slate-400">Honorarios Profesionales</span>
                                             <span className="font-bold text-white text-lg font-mono">
-                                                {template.currency} {template.fees_professional}
+                                                {template.currency} {((template as any).fees_professional ?? template.fees ?? 0)}
                                             </span>
                                         </div>
                                         <div className="flex items-center justify-between pb-4">
@@ -219,14 +220,14 @@ export default async function ShareTemplatePage({ params }: SharePageProps) {
                                                 <Badge variant="outline" className="text-[10px] h-5 border-slate-600 text-slate-400 bg-slate-800/50">Gov</Badge>
                                             </span>
                                             <span className="font-medium text-slate-200 font-mono">
-                                                {template.currency} {template.fees_official}
+                                                {template.currency} {((template as any).fees_official ?? template.government_fee ?? 0)}
                                             </span>
                                         </div>
 
                                         <div className="rounded-xl bg-indigo-500/10 border border-indigo-500/20 p-5 text-center shadow-inner">
                                             <p className="text-xs text-indigo-400 mb-1 font-bold uppercase tracking-widest">Total Estimado</p>
                                             <p className="text-4xl font-bold text-white tracking-tight drop-shadow-sm">
-                                                {template.currency} {(Number(template.fees_professional) + Number(template.fees_official))}
+                                                {template.currency} {(Number((template as any).fees_professional ?? template.fees ?? 0) + Number((template as any).fees_official ?? template.government_fee ?? 0))}
                                             </p>
                                         </div>
                                     </CardContent>

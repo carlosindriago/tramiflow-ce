@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
             if (ip !== 'unknown') {
                 // Update last_ip, and conditionally set registration_ip if it's the first time
-                await supabase.rpc('update_user_ip', {
+                await (supabase.rpc as any)('update_user_ip', {
                     p_user_id: session.user.id,
                     p_ip: ip
                 })

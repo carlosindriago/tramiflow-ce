@@ -108,7 +108,7 @@ export default async function SettingsPage() {
                 </Card>
 
                 <div className="max-w-3xl">
-                    <SettingsForm organization={org} />
+                    <SettingsForm organization={{ ...org, slug: org.slug || '' }} />
                 </div>
             </div>
         </div>

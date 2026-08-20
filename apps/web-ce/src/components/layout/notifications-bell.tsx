@@ -21,10 +21,10 @@ interface Notification {
     id: string
     title: string
     message: string
-    type: 'info' | 'success' | 'warning' | 'error'
-    link?: string
-    is_read: boolean
-    created_at: string
+    type: 'info' | 'success' | 'warning' | 'error' | string
+    link?: string | null
+    is_read: boolean | null
+    created_at: string | null
 }
 
 export function NotificationsBell() {
@@ -218,7 +218,7 @@ export function NotificationsBell() {
                                             {notification.message}
                                         </p>
                                         <p className="text-xs text-muted-foreground pt-1">
-                                            {formatDistanceToNow(new Date(notification.created_at), {
+                                            {notification.created_at && formatDistanceToNow(new Date(notification.created_at), {
                                                 addSuffix: true,
                                                 locale: es,
                                             })}

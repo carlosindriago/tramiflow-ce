@@ -37,5 +37,5 @@ export default async function TemplatesPage() {
         .eq('is_archived', false)
         .order('created_at', { ascending: false })
 
-    return <TemplatesView templates={templates || []} />
+    return <TemplatesView templates={(templates as any) || []} />
 }

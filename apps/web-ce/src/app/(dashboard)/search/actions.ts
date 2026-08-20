@@ -58,7 +58,7 @@ export async function searchGlobal(
         const clientsWithId = (clients || []).map(c => ({
             id: c.id,
             full_name: c.full_name,
-            identification: c.identifications?.[0]?.number || ''
+            identification: (Array.isArray(c.identifications) ? (c.identifications[0] as any)?.number : '') || ''
         }))
 
         // Search tramites by title with org filter
@@ -77,7 +77,7 @@ export async function searchGlobal(
         return {
             success: true,
             clients: clientsWithId,
-            tramites: tramites || [],
+            tramites: (tramites || []).map(t => ({ id: t.id, title: t.title, status: t.status || undefined })),
         }
     } catch (error) {
         if (error instanceof z.ZodError) {

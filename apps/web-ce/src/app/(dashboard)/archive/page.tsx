@@ -4,7 +4,7 @@ import { Procedure } from '@carlosindriago/core'
 
 export default async function ArchivePage() {
     const res = await getProceduresAction(true)
-    const procedures = res.success ? (res.data as Procedure[]) : []
+    const procedures = res.success ? (res.data as unknown as Procedure[]) : []
     const error = res.success ? null : res.error
 
     return (

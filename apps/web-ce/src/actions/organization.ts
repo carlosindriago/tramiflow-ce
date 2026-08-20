@@ -117,7 +117,7 @@ export async function createOrganizationAction(formData: FormData): Promise<Onbo
         const { data: orgData, error: orgError } = await supabase.rpc('create_organization_with_owner', {
             p_name: name,
             p_slug: slug,
-            p_logo_url: logoUrl,
+            p_logo_url: logoUrl || undefined,
             p_plan: 'free',
         })
 
