@@ -17,3 +17,4 @@ export {
   type UpdateProcedureStatusInput
 } from './types/procedure-status';
 export * from './types/template';
+export * from './types/action';
