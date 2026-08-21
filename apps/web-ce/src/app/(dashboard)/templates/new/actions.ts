@@ -10,39 +10,46 @@ export const saveTemplateAction = createOrgAction(
         // Validate input
         const parsed = templateSchema.safeParse(input)
         if (!parsed.success) {
+            console.error('Validation error on saveTemplateAction:', parsed.error.flatten())
             return actionError('Validación fallida', parsed.error.flatten().fieldErrors)
         }
 
-        // Prepare data
-        const stepsWithOrder = parsed.data.steps.map((step, index) => ({
+        // Prepare steps with sequential order index
+        const stepsWithOrder = (parsed.data.steps || []).map((step, index) => ({
             ...step,
             order_index: index,
         }))
+
+        // Consolidate rich configuration in public_settings JSONB
+        const publicSettings = {
+            ...(parsed.data.public_settings || {}),
+            currency: parsed.data.currency || 'PEN',
+            duration_work: parsed.data.durationWork ?? 5,
+            duration_resolution: parsed.data.durationResolution ?? 0,
+            is_custom_category: parsed.data.isCustomCategory ?? false,
+            requires_renewal: parsed.data.requiresRenewal ?? false,
+            renewal_frequency: parsed.data.renewalFrequency ?? null,
+            allow_copy: parsed.data.public_settings?.allow_copy ?? true,
+            show_fees: parsed.data.public_settings?.show_fees ?? true,
+            show_requirements: parsed.data.public_settings?.show_requirements ?? true,
+            show_steps: parsed.data.public_settings?.show_steps ?? true,
+        }
 
         const templateData = {
             organization_id: orgId,
             created_by: user.id, // Required by RLS policy
             name: parsed.data.name,
+            category: parsed.data.category || null,
 
-            // Fees
             fees: parsed.data.feesProfessional ?? 0,
             government_fee: parsed.data.feesOfficial ?? 0,
-            currency: parsed.data.currency,
-            payment_terms: parsed.data.paymentTerms,
+            payment_terms: parsed.data.paymentTerms || 'upfront',
 
-            // Duration
-            duration_work: parsed.data.durationWork,
-            duration_resolution: parsed.data.durationResolution ?? 0,
-
-            // Category & Config
-            category: parsed.data.category || null,
-            is_custom_category: parsed.data.isCustomCategory,
-            requires_renewal: parsed.data.requiresRenewal,
-            renewal_frequency: parsed.data.renewalFrequency || null,
-
-            is_active: parsed.data.isActive,
-            requirements: parsed.data.requirements,
+            is_active: parsed.data.isActive ?? true,
+            requirements: parsed.data.requirements || [],
             steps: stepsWithOrder,
+            visibility: parsed.data.visibility || 'private',
+            public_settings: publicSettings,
         }
 
         let result
@@ -54,7 +61,7 @@ export const saveTemplateAction = createOrgAction(
                 .eq('id', input.id)
                 .eq('organization_id', orgId)
                 .select('id')
-                .single()
+                .maybeSingle()
             result = { data, error }
         } else {
             // INSERT
@@ -62,12 +69,12 @@ export const saveTemplateAction = createOrgAction(
                 .from('procedure_templates')
                 .insert(templateData)
                 .select('id')
-                .single()
+                .maybeSingle()
             result = { data, error }
         }
 
         if (result.error || !result.data) {
-            console.error('Supabase error:', result.error)
+            console.error('Supabase error saving template:', result.error)
             return actionError(result.error?.message || 'Error al guardar plantilla')
         }
 
@@ -105,7 +112,7 @@ export const duplicateTemplate = createOrgAction(
             .select('*')
             .eq('id', originalId)
             .eq('organization_id', orgId)
-            .single()
+            .maybeSingle()
 
         if (fetchError || !original) {
             return actionError('Plantilla no encontrada')
@@ -116,22 +123,17 @@ export const duplicateTemplate = createOrgAction(
             organization_id: orgId,
             created_by: user.id,
             name: `${original.name} (Copia)`,
+            category: original.category,
 
             fees: original.fees,
             government_fee: original.government_fee,
-            currency: original.currency,
             payment_terms: original.payment_terms,
 
-            duration_work: original.duration_work,
-            duration_resolution: original.duration_resolution,
-
-            category: original.category,
-            is_custom_category: original.is_custom_category,
-            requires_renewal: original.requires_renewal,
-            renewal_frequency: original.renewal_frequency,
-
             is_active: false, // Default to inactive for safety
+            requirements: original.requirements,
             steps: original.steps,
+            visibility: 'private',
+            public_settings: original.public_settings,
         }
 
         // 3. Insert copy
@@ -139,7 +141,7 @@ export const duplicateTemplate = createOrgAction(
             .from('procedure_templates')
             .insert(copyData)
             .select('id')
-            .single()
+            .maybeSingle()
 
         if (insertError || !newTemplate) {
             return actionError(insertError?.message || 'Error al duplicar plantilla')
@@ -154,7 +156,7 @@ export const toggleTemplateVisibility = createOrgAction(
     async ({ supabase, orgId }, id: string, isPublic: boolean) => {
         const { error } = await supabase
             .from('procedure_templates')
-            .update({ is_publicly_visible: isPublic })
+            .update({ is_publicly_visible: isPublic, visibility: isPublic ? 'public' : 'private' })
             .eq('id', id)
             .eq('organization_id', orgId)
 

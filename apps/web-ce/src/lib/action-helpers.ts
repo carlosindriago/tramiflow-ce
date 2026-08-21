@@ -40,7 +40,7 @@ export function createOrgAction<TArgs extends unknown[], TReturn>(
                 .eq('user_id', user.id)
                 .order('created_at', { ascending: true })
                 .limit(1)
-                .single()
+                .maybeSingle()
 
             if (memberError || !member?.organization_id) {
                 return actionError('No se encontró una organización activa vinculada.')
@@ -84,7 +84,7 @@ export function createAdminAction<TArgs extends unknown[], TReturn>(
                 .from('app_admins')
                 .select('id')
                 .eq('user_id', user.id)
-                .single()
+                .maybeSingle()
 
             if (!adminData) {
                 return actionError('Acceso no autorizado: requiere permisos de administrador.')
