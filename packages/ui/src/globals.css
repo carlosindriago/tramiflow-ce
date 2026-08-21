@@ -52,95 +52,95 @@
 :root {
   --radius: 0.625rem;
 
-  /* TramiFlow Brand: Deep Navy & Emerald (Light Mode) */
-  --background: oklch(0.99 0.002 240);
-  --foreground: oklch(0.18 0.02 250);
+  /* TramiFlow Brand: Neutral Canvas with Vivid Emerald Accent (Light Mode) */
+  --background: oklch(0.985 0.002 240);
+  --foreground: oklch(0.14 0.01 240);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.02 250);
+  --card-foreground: oklch(0.14 0.01 240);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.02 250);
+  --popover-foreground: oklch(0.14 0.01 240);
   --primary: oklch(0.55 0.16 160);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.01 240);
-  --secondary-foreground: oklch(0.25 0.04 250);
-  --muted: oklch(0.95 0.01 240);
-  --muted-foreground: oklch(0.48 0.02 240);
+  --secondary: oklch(0.95 0.005 240);
+  --secondary-foreground: oklch(0.20 0.01 240);
+  --muted: oklch(0.95 0.005 240);
+  --muted-foreground: oklch(0.48 0.01 240);
   --accent: oklch(0.94 0.03 160);
   --accent-foreground: oklch(0.35 0.12 160);
   --destructive: oklch(0.58 0.22 25);
-  --border: oklch(0.90 0.008 240);
-  --input: oklch(0.90 0.008 240);
+  --border: oklch(0.90 0.005 240);
+  --input: oklch(0.90 0.005 240);
   --ring: oklch(0.60 0.16 160);
   --chart-1: oklch(0.65 0.18 160);
-  --chart-2: oklch(0.45 0.13 250);
+  --chart-2: oklch(0.45 0.10 240);
   --chart-3: oklch(0.70 0.15 80);
   --chart-4: oklch(0.60 0.18 30);
   --chart-5: oklch(0.55 0.12 280);
 
-  /* TramiFlow Sidebar - Navy command center with emerald accent */
-  --sidebar: oklch(0.18 0.03 250);
-  --sidebar-foreground: oklch(0.80 0.01 240);
+  /* TramiFlow Sidebar (Light Mode) */
+  --sidebar: oklch(0.15 0.01 240);
+  --sidebar-foreground: oklch(0.85 0.005 240);
   --sidebar-primary: oklch(0.65 0.18 160);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.24 0.03 250);
+  --sidebar-accent: oklch(0.22 0.015 160);
   --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.28 0.03 250);
+  --sidebar-border: oklch(0.24 0.008 240);
   --sidebar-ring: oklch(0.65 0.18 160);
 
-  /* TramiFlow Design System Elevation Tokens */
-  --elevation-base: oklch(0.98 0.005 240);
+  /* Elevation Tokens */
+  --elevation-base: oklch(0.98 0.002 240);
   --elevation-1: oklch(1 0 0);
   --elevation-2: oklch(1 0 0);
-  --border-tramiflow-standard: oklch(0.18 0.02 250 / 0.08);
-  --border-tramiflow-soft: oklch(0.18 0.02 250 / 0.05);
-  --border-tramiflow-emphasis: oklch(0.18 0.02 250 / 0.15);
-  --border-tramiflow-max: oklch(0.18 0.02 250 / 0.25);
+  --border-tramiflow-standard: oklch(0.14 0.01 240 / 0.08);
+  --border-tramiflow-soft: oklch(0.14 0.01 240 / 0.05);
+  --border-tramiflow-emphasis: oklch(0.14 0.01 240 / 0.15);
+  --border-tramiflow-max: oklch(0.14 0.01 240 / 0.25);
 }
 
 .dark {
-  /* TramiFlow Brand: Deep Navy & Emerald (Dark Mode) */
-  --background: oklch(0.13 0.02 250);
-  --foreground: oklch(0.98 0.005 240);
-  --card: oklch(0.18 0.025 250);
-  --card-foreground: oklch(0.98 0.005 240);
-  --popover: oklch(0.18 0.025 250);
-  --popover-foreground: oklch(0.98 0.005 240);
+  /* TramiFlow Brand: Obsidian Neutral Dark Canvas with Vivid Emerald Accent (Dark Mode) */
+  --background: oklch(0.11 0.004 240);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.145 0.006 240);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.145 0.006 240);
+  --popover-foreground: oklch(0.98 0 0);
   --primary: oklch(0.65 0.18 160);
-  --primary-foreground: oklch(0.13 0.02 250);
-  --secondary: oklch(0.22 0.025 250);
-  --secondary-foreground: oklch(0.98 0.005 240);
-  --muted: oklch(0.22 0.025 250);
-  --muted-foreground: oklch(0.70 0.015 240);
-  --accent: oklch(0.24 0.03 160);
-  --accent-foreground: oklch(0.85 0.12 160);
-  --destructive: oklch(0.65 0.20 25);
-  --border: oklch(0.26 0.02 250);
-  --input: oklch(0.26 0.02 250);
+  --primary-foreground: oklch(0.10 0 0);
+  --secondary: oklch(0.18 0.006 240);
+  --secondary-foreground: oklch(0.95 0 0);
+  --muted: oklch(0.17 0.006 240);
+  --muted-foreground: oklch(0.65 0.008 240);
+  --accent: oklch(0.18 0.03 160);
+  --accent-foreground: oklch(0.90 0.12 160);
+  --destructive: oklch(0.62 0.20 25);
+  --border: oklch(0.20 0.006 240);
+  --input: oklch(0.20 0.006 240);
   --ring: oklch(0.65 0.18 160);
   --chart-1: oklch(0.65 0.18 160);
-  --chart-2: oklch(0.55 0.14 250);
+  --chart-2: oklch(0.55 0.10 240);
   --chart-3: oklch(0.75 0.16 80);
   --chart-4: oklch(0.65 0.18 30);
   --chart-5: oklch(0.60 0.14 280);
 
   /* TramiFlow Sidebar (Dark Mode) */
-  --sidebar: oklch(0.15 0.025 250);
-  --sidebar-foreground: oklch(0.70 0.015 240);
+  --sidebar: oklch(0.09 0.003 240);
+  --sidebar-foreground: oklch(0.70 0.005 240);
   --sidebar-primary: oklch(0.65 0.18 160);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.22 0.025 250);
+  --sidebar-primary-foreground: oklch(0.10 0 0);
+  --sidebar-accent: oklch(0.15 0.02 160);
   --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.25 0.02 250);
+  --sidebar-border: oklch(0.16 0.005 240);
   --sidebar-ring: oklch(0.65 0.18 160);
 
-  /* TramiFlow Design System Elevation Tokens (Dark Mode) */
-  --elevation-base: oklch(0.12 0.02 250);
-  --elevation-1: oklch(0.18 0.025 250);
-  --elevation-2: oklch(0.22 0.025 250);
-  --border-tramiflow-standard: oklch(1 0 0 / 0.08);
-  --border-tramiflow-soft: oklch(1 0 0 / 0.05);
-  --border-tramiflow-emphasis: oklch(1 0 0 / 0.15);
-  --border-tramiflow-max: oklch(1 0 0 / 0.25);
+  /* Elevation Tokens (Dark Mode) */
+  --elevation-base: oklch(0.09 0.003 240);
+  --elevation-1: oklch(0.145 0.006 240);
+  --elevation-2: oklch(0.18 0.006 240);
+  --border-tramiflow-standard: oklch(1 0 0 / 0.07);
+  --border-tramiflow-soft: oklch(1 0 0 / 0.04);
+  --border-tramiflow-emphasis: oklch(1 0 0 / 0.12);
+  --border-tramiflow-max: oklch(1 0 0 / 0.20);
 }
 
 @layer base {
@@ -153,13 +153,11 @@
 }
 
 /* ─── Premium Scrollbar Styles ─── */
-/* Standard (Firefox, modern browsers) */
 * {
   scrollbar-width: thin;
-  scrollbar-color: oklch(0.35 0.02 250 / 0.4) transparent;
+  scrollbar-color: oklch(0.30 0.005 240 / 0.5) transparent;
 }
 
-/* Chrome, Edge, Safari */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -170,10 +168,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: oklch(0.35 0.02 250 / 0.4);
+  background: oklch(0.30 0.005 240 / 0.5);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.45 0.02 250 / 0.6);
+  background: oklch(0.40 0.005 240 / 0.7);
 }
