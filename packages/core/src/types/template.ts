@@ -46,10 +46,10 @@ export const templateSchema = z.object({
     durationResolution: z.number().min(0).optional(),
 
     // Category & Alerts
-    category: z.string().optional(),
+    category: z.string().optional().nullable(),
     isCustomCategory: z.boolean(),
     requiresRenewal: z.boolean(),
-    renewalFrequency: z.number().min(1).optional(),
+    renewalFrequency: z.number().min(1).optional().nullable(),
 
     isActive: z.boolean(),
 
@@ -57,7 +57,7 @@ export const templateSchema = z.object({
     requirements: z.array(z.object({
         id: z.string(),
         title: z.string(),
-    })),
+    })).optional(),
 
     steps: z.array(stepSchema).min(1, 'Agrega al menos un paso'),
 

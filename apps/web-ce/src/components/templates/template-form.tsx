@@ -55,9 +55,10 @@ export function TemplateForm({ initialData, permissions = [] }: TemplateFormProp
             renewalFrequency: 365,
 
             isActive: true,
+            requirements: [],
             steps: [
                 {
-                    stepId: 'bdd26912-3408-4e12-b05b-802c632616f4', // Static ID to prevent hydration mismatch
+                    stepId: 'bdd26912-3408-4e12-b05b-802c632616f4',
                     title: 'Paso 1',
                     type: 'document',
                     description: '',
@@ -65,6 +66,13 @@ export function TemplateForm({ initialData, permissions = [] }: TemplateFormProp
                     estimatedDays: 5,
                 },
             ],
+            visibility: 'private',
+            public_settings: {
+                allow_copy: true,
+                show_fees: true,
+                show_requirements: true,
+                show_steps: true,
+            },
         },
     })
 
@@ -83,12 +91,18 @@ export function TemplateForm({ initialData, permissions = [] }: TemplateFormProp
                     router.push('/templates')
                 }
             } else {
-                console.error('[ERROR] Save failed:', result.error)
-                toast.error(result.error || 'Error al guardar la plantilla')
+                console.error('[ERROR] Save failed:', result.error, result.fieldErrors)
+                const fieldErrorMessages = result.fieldErrors
+                    ? Object.entries(result.fieldErrors)
+                        .map(([field, msgs]) => `${field}: ${msgs.join(', ')}`)
+                        .join(' | ')
+                    : null
+                toast.error(fieldErrorMessages || result.error || 'Error al guardar la plantilla')
             }
         } catch (error) {
             console.error('[ERROR] Save error:', error)
-            toast.error('Error inesperado al guardar')
+            const message = error instanceof Error ? error.message : 'Error inesperado al guardar'
+            toast.error(message)
         } finally {
             setIsSaving(false)
         }
@@ -118,70 +132,78 @@ export function TemplateForm({ initialData, permissions = [] }: TemplateFormProp
 
     return (
         <div className="min-h-screen">
-            {/* Header */}
-            <div className="mb-8 flex items-center justify-between">
-                <div>
-                    <Link
-                        href="/templates"
-                        className="mb-2 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                        <ArrowLeft className="h-4 w-4" />
-                        Volver a Plantillas
-                    </Link>
-                    <h1 className="text-2xl font-bold tracking-tight">
-                        {initialData?.id ? 'Editar Plantilla' : 'Nueva Plantilla de Procedimiento'}
-                    </h1>
-                </div>
-                <div className="flex items-center gap-3">
-                    {initialData?.id && (
-                        <ShareModal
-                            templateId={initialData.id}
-                            currentVisibility={initialData.visibility || 'private'}
-                            shareToken={initialData.share_token}
-                            permissions={permissions}
-                            publicSettings={initialData.public_settings}
-                        />
-                    )}
-                    <Button variant="ghost" disabled={isSaving}>
-                        Descartar Cambios
-                    </Button>
-                    <Button
-                        onClick={handleSaveClick}
-                        disabled={isSaving}
-                        className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
-                    >
-                        {isSaving ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Save className="h-4 w-4" />
+            {/* Header Sticky */}
+            <div className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-md px-6 py-4">
+                <div className="mx-auto flex max-w-7xl items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/templates"
+                            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                            <span>Volver</span>
+                        </Link>
+                        <div className="h-4 w-px bg-border" />
+                        <h1 className="text-xl font-semibold text-foreground">
+                            {initialData?.id ? 'Editar Plantilla' : 'Nueva Plantilla'}
+                        </h1>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        {initialData?.id && (
+                            <ShareModal
+                                templateId={initialData.id}
+                                currentVisibility={initialData.visibility || 'private'}
+                                shareToken={initialData.share_token}
+                                permissions={permissions}
+                            />
                         )}
-                        {isSaving ? 'Guardando...' : 'Guardar Plantilla'}
-                    </Button>
+
+                        <Button
+                            type="button"
+                            onClick={handleSaveClick}
+                            disabled={isSaving}
+                            className="gap-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow-sm"
+                        >
+                            {isSaving ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    <span>Guardando...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Save className="h-4 w-4" />
+                                    <span>Guardar Plantilla</span>
+                                </>
+                            )}
+                        </Button>
+                    </div>
                 </div>
             </div>
 
-            {/* Main Grid */}
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[400px_1fr]">
-                {/* Left Panel - Configuration */}
-                <TemplateConfigPanel form={form} />
+            {/* Main Content: Split Screen Layout */}
+            <div className="mx-auto max-w-7xl p-6">
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+                    {/* Left Column: Timeline Builder (7 cols) */}
+                    <div className="lg:col-span-7">
+                        <TemplateTimeline form={form} />
+                    </div>
 
-                {/* Right Panel - Timeline */}
-                <TemplateTimeline form={form} />
+                    {/* Right Column: Config Panel (5 cols) */}
+                    <div className="lg:col-span-5">
+                        <TemplateConfigPanel form={form} />
+                    </div>
+                </div>
             </div>
 
-            {/* Success Modal */}
+            {/* Modal de Éxito al Crear */}
             <AnimatedSuccessModal
                 open={isModalOpen}
                 onOpenChange={setIsModalOpen}
+                title="¡Plantilla Creada con Éxito!"
+                message="Tu procedimiento ha sido configurado. Puedes empezar a usarlo con tus clientes o compartirlo."
                 redirectPath={createdId ? `/templates/${createdId}` : '/templates'}
-                title="¡Plantilla Guardada!"
-                message={initialData?.id
-                    ? 'Los cambios se han guardado correctamente'
-                    : 'Tu plantilla se ha creado correctamente'
-                }
-                redirectInfo="Redirigiendo a la vista de la plantilla..."
-                buttonLabel="Ir Ahora"
-                variant="emerald"
+                buttonLabel="Ver Plantilla"
             />
         </div>
     )
