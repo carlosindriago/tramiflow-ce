@@ -324,22 +324,22 @@ export function KanbanBoard({ initialProcedures, clients, templates, statuses = 
 
                 {/* Global Empty State Overlay */}
                 {procedures.length === 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-slate-950/40 backdrop-blur-[2px] rounded-xl z-10 border border-slate-800/50 my-1">
+                    <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-[2px] rounded-xl z-10 border border-border my-1">
                         <div className="text-center space-y-4 max-w-sm animate-in fade-in zoom-in-95 duration-500">
-                            <div className="mx-auto h-16 w-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 shadow-lg shadow-indigo-500/5">
-                                <ClipboardList className="h-8 w-8 text-indigo-400" />
+                            <div className="mx-auto h-16 w-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-lg shadow-emerald-500/5">
+                                <ClipboardList className="h-8 w-8 text-emerald-500" />
                             </div>
                             <div className="space-y-1.5">
-                                <h3 className="text-xl font-semibold text-slate-100 tracking-tight">
+                                <h3 className="text-xl font-semibold text-foreground tracking-tight">
                                     Tu tablero está listo
                                 </h3>
-                                <p className="text-sm text-slate-400 px-4">
+                                <p className="text-sm text-muted-foreground px-4">
                                     Creá tu primer trámite para empezar a gestionar expedientes y automatizar tu flujo de trabajo.
                                 </p>
                             </div>
                             <button
                                 onClick={() => setIsNewProcedureOpen(true)}
-                                className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-500 transition-all active:scale-95 gap-2"
+                                className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all active:scale-95 gap-2"
                             >
                                 <Plus className="h-4 w-4" />
                                 Crear primer trámite

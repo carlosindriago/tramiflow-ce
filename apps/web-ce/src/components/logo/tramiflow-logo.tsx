@@ -19,7 +19,7 @@ export function TramiFlowLogo({ variant = 'full', className = '' }: TramiFlowLog
                     className="h-10 w-10"
                 >
                     {/* Background circle with border */}
-                    <circle cx="20" cy="20" r="20" fill="#0d4a2e" stroke="#00fd36" strokeWidth="1.5" />
+                    <circle cx="20" cy="20" r="20" fill="#064e3b" stroke="#10b981" strokeWidth="1.5" />
 
                     {/* Document icon */}
                     <rect
@@ -32,15 +32,15 @@ export function TramiFlowLogo({ variant = 'full', className = '' }: TramiFlowLog
                     />
                     <path
                         d="M24 10L24 14L28 14L24 10Z"
-                        fill="#00fd36"
+                        fill="#10b981"
                     />
                     {/* Document lines */}
-                    <line x1="15" y1="16" x2="25" y2="16" stroke="#0d4a2e" strokeWidth="1.5" strokeLinecap="round" />
-                    <line x1="15" y1="19" x2="25" y2="19" stroke="#0d4a2e" strokeWidth="1.5" strokeLinecap="round" />
-                    <line x1="15" y1="22" x2="22" y2="22" stroke="#0d4a2e" strokeWidth="1.5" strokeLinecap="round" />
-                    <line x1="15" y1="25" x2="25" y2="25" stroke="#0d4a2e" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="15" y1="16" x2="25" y2="16" stroke="#064e3b" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="15" y1="19" x2="25" y2="19" stroke="#064e3b" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="15" y1="22" x2="22" y2="22" stroke="#064e3b" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="15" y1="25" x2="25" y2="25" stroke="#064e3b" strokeWidth="1.5" strokeLinecap="round" />
 
-                    {/* Circular arrow - White (left side) - better contrast */}
+                    {/* Circular arrow - White (left side) */}
                     <path
                         d="M 20 5 A 15 15 0 0 1 35 20"
                         stroke="white"
@@ -53,17 +53,17 @@ export function TramiFlowLogo({ variant = 'full', className = '' }: TramiFlowLog
                         fill="white"
                     />
 
-                    {/* Circular arrow - Green (right side) */}
+                    {/* Circular arrow - Emerald (right side) */}
                     <path
                         d="M 20 35 A 15 15 0 0 1 5 20"
-                        stroke="#00fd36"
+                        stroke="#10b981"
                         strokeWidth="2.5"
                         strokeLinecap="round"
                         fill="none"
                     />
                     <polygon
                         points="5,20 9,16 9,24"
-                        fill="#00fd36"
+                        fill="#10b981"
                     />
                 </svg>
             </div>
@@ -72,9 +72,9 @@ export function TramiFlowLogo({ variant = 'full', className = '' }: TramiFlowLog
             {variant === 'full' && (
                 <div className="flex flex-col">
                     <span className="text-base font-bold tracking-tight">
-                        <span className="text-white">Trami</span><span style={{ color: '#00fd36' }}>Flow</span>
+                        <span className="text-foreground">Trami</span><span className="text-emerald-500">Flow</span>
                     </span>
-                    <span className="text-[9px] font-semibold uppercase tracking-wider" style={{ color: '#00fd36' }}>
+                    <span className="text-[9px] font-semibold uppercase tracking-wider text-emerald-500">
                         ENTERPRISE
                     </span>
                 </div>

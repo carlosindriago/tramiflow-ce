@@ -69,10 +69,10 @@ export default async function SettingsPage() {
                     </CardContent>
                 </Card>
 
-                <Card className="max-w-3xl border-indigo-500/20 bg-indigo-500/5">
+                <Card className="max-w-3xl border-emerald-500/20 bg-emerald-500/5">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <ShieldAlert className="h-5 w-5 text-indigo-500" />
+                            <ShieldAlert className="h-5 w-5 text-emerald-500" />
                             Auditoría y Seguridad
                         </CardTitle>
                         <CardDescription>
@@ -80,7 +80,7 @@ export default async function SettingsPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <Button asChild variant="outline" className="border-indigo-500/30 hover:bg-indigo-500/10">
+                        <Button asChild variant="outline" className="border-emerald-500/30 hover:bg-emerald-500/10">
                             <Link href="/settings/audit" className="flex items-center gap-2">
                                 Ver Registros de Auditoría <ArrowRight className="h-4 w-4" />
                             </Link>

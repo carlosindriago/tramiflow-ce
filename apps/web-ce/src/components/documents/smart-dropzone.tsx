@@ -655,7 +655,7 @@ export function SmartDropzone({ clientId, organizationId, procedureId, onUploadC
                                 {fileItem.status === 'ready' && fileItem.file.type === 'application/pdf' && (
                                     <button
                                         type="button"
-                                        className="mt-1 inline-flex items-center gap-1 rounded-md bg-indigo-500/10 px-2 py-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/20 transition-colors"
+                                        className="mt-1 inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-colors"
                                         onClick={e => {
                                             e.stopPropagation()
                                             const idx = files.indexOf(fileItem)

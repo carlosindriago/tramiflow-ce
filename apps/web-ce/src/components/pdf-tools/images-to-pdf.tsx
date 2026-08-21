@@ -51,8 +51,8 @@ function SortableImage({ item, onRemove }: { item: ImageItem; onRemove: (id: str
             ref={setNodeRef}
             style={style}
             className={cn(
-                'relative group rounded-xl border border-slate-700/50 bg-slate-800/50 overflow-hidden transition-all',
-                isDragging && 'z-50 shadow-2xl shadow-indigo-500/20 border-indigo-500/50 scale-105 opacity-90'
+                'relative group rounded-xl border border-border bg-card overflow-hidden transition-all',
+                isDragging && 'z-50 shadow-2xl shadow-emerald-500/20 border-emerald-500/50 scale-105 opacity-90'
             )}
         >
             <img
@@ -261,8 +261,8 @@ export function ImagesToPdf() {
                                 className={cn(
                                     'flex-1 flex items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all',
                                     orientation === 'portrait'
-                                        ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-300'
-                                        : 'border-slate-700 bg-slate-800/30 text-slate-400 hover:bg-slate-800/50 hover:text-slate-300'
+                                        ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-500'
+                                        : 'border-border bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                                 )}
                             >
                                 <div className="w-4 h-5 border-2 border-current rounded-[2px]" />
@@ -274,8 +274,8 @@ export function ImagesToPdf() {
                                 className={cn(
                                     'flex-1 flex items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all',
                                     orientation === 'landscape'
-                                        ? 'border-indigo-500/50 bg-indigo-500/10 text-indigo-300'
-                                        : 'border-slate-700 bg-slate-800/30 text-slate-400 hover:bg-slate-800/50 hover:text-slate-300'
+                                        ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-500'
+                                        : 'border-border bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                                 )}
                             >
                                 <div className="w-5 h-4 border-2 border-current rounded-[2px]" />

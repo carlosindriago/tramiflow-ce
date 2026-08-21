@@ -14,6 +14,8 @@ export interface TemplateStep {
   title: string
   description?: string
   order?: number
+  type?: string
+  stepId?: string
 }
 
 export interface StepsProgress {

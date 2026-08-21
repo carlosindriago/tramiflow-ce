@@ -231,8 +231,8 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
             <Card className="border-border/50 bg-card/80 backdrop-blur">
                 <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/10">
-                            <ClipboardCheck className="h-5 w-5 text-indigo-500" />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10">
+                            <ClipboardCheck className="h-5 w-5 text-emerald-500" />
                         </div>
                         <div className="flex-1">
                             <CardTitle className="text-lg">Requisitos del Trámite</CardTitle>
@@ -279,7 +279,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                                 className="flex items-center justify-between p-2 rounded-md border bg-background/50 group animate-in slide-in-from-left-2"
                             >
                                 <div className="flex items-center gap-2">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                                     <span className="text-sm font-medium">{field.title}</span>
                                 </div>
                                 <Button

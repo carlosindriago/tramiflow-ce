@@ -15,7 +15,7 @@ const PdfCompressor = dynamic(
         ssr: false,
         loading: () => (
             <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-6 w-6 text-indigo-400 animate-spin" />
+                <Loader2 className="h-6 w-6 text-emerald-500 animate-spin" />
             </div>
         ),
     }

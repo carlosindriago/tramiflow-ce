@@ -153,13 +153,13 @@ export function AuditLogsView() {
     return (
         <div className="space-y-6">
             {/* Info Panel for Lawyers */}
-            <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/5 p-4 flex gap-4 items-start">
-                <div className="rounded-full bg-indigo-500/20 p-2 text-indigo-600 shrink-0">
+            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 flex gap-4 items-start">
+                <div className="rounded-full bg-emerald-500/20 p-2 text-emerald-600 dark:text-emerald-400 shrink-0">
                     <Shield className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                    <h3 className="font-semibold text-indigo-900 dark:text-indigo-300">Registro de Cumplimiento e Integridad</h3>
-                    <p className="text-sm text-indigo-700/80 dark:text-indigo-400/80">
+                    <h3 className="font-semibold text-emerald-950 dark:text-emerald-300">Registro de Cumplimiento e Integridad</h3>
+                    <p className="text-sm text-emerald-800/80 dark:text-emerald-400/80">
                         Estos registros son <strong>inmutables</strong> y sirven como prueba legal de quién accedió a la información. 
                         Es una herramienta fundamental para la transparencia y seguridad de tu estudio jurídico.
                     </p>

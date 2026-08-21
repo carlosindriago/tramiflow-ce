@@ -36,23 +36,23 @@ export function ProcessingIndicator({
     const isDone = !isProcessing && progress === 100
 
     return (
-        <div className="rounded-xl border border-slate-800/50 bg-slate-900/40 backdrop-blur-md p-5 space-y-4">
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm">
             {/* Progress Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     {isProcessing ? (
-                        <Loader2 className="h-4 w-4 text-indigo-400 animate-spin" />
+                        <Loader2 className="h-4 w-4 text-emerald-500 animate-spin" />
                     ) : isDone ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                     ) : null}
                     <span className={cn(
                         'text-sm font-medium',
-                        isProcessing ? 'text-indigo-300' : 'text-emerald-300'
+                        isProcessing ? 'text-emerald-600 dark:text-emerald-400' : 'text-emerald-600 dark:text-emerald-400'
                     )}>
                         {isProcessing ? label : '¡Completado!'}
                     </span>
                 </div>
-                <span className="text-xs font-mono text-slate-400">
+                <span className="text-xs font-mono tabular-nums text-muted-foreground">
                     {Math.round(progress)}%
                 </span>
             </div>
@@ -60,31 +60,28 @@ export function ProcessingIndicator({
             {/* Progress Bar */}
             <Progress
                 value={progress}
-                className="h-2 bg-slate-800"
-                indicatorClassName={cn(
-                    'transition-all duration-500',
-                    isProcessing ? 'bg-indigo-500' : 'bg-emerald-500'
-                )}
+                className="h-2 bg-muted"
+                indicatorClassName="transition-all duration-500 bg-emerald-500"
             />
 
             {/* File Size Comparison */}
             {originalSize !== undefined && resultSize !== undefined && isDone && (
-                <div className="flex items-center justify-between rounded-lg bg-slate-800/50 p-3">
+                <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
                     <div className="flex items-center gap-4 text-sm">
                         <div>
-                            <span className="text-slate-500 text-xs">Original</span>
-                            <p className="font-mono text-slate-300">{formatFileSize(originalSize)}</p>
+                            <span className="text-muted-foreground text-xs">Original</span>
+                            <p className="font-mono tabular-nums text-foreground">{formatFileSize(originalSize)}</p>
                         </div>
-                        <span className="text-slate-600">→</span>
+                        <span className="text-muted-foreground">→</span>
                         <div>
-                            <span className="text-slate-500 text-xs">Optimizado</span>
-                            <p className="font-mono text-emerald-400">{formatFileSize(resultSize)}</p>
+                            <span className="text-muted-foreground text-xs">Optimizado</span>
+                            <p className="font-mono tabular-nums text-emerald-500">{formatFileSize(resultSize)}</p>
                         </div>
                     </div>
                     {savings > 0 && (
                         <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1">
-                            <TrendingDown className="h-3.5 w-3.5 text-emerald-400" />
-                            <span className="text-xs font-bold text-emerald-400">-{savings}%</span>
+                            <TrendingDown className="h-3.5 w-3.5 text-emerald-500" />
+                            <span className="text-xs font-bold text-emerald-500 font-mono tabular-nums">-{savings}%</span>
                         </div>
                     )}
                 </div>
