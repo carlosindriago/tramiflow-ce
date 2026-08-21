@@ -181,11 +181,11 @@ export function PdfCompressor({ initialFile, onCompressed }: PdfCompressorProps 
                                 value={quality}
                                 onChange={(e) => setQuality(parseFloat(e.target.value))}
                                 disabled={isProcessing}
-                                className="w-full accent-indigo-500 h-2 rounded-lg appearance-none bg-slate-700 cursor-pointer disabled:opacity-50"
+                                className="w-full accent-emerald-500 h-2 rounded-lg appearance-none bg-muted cursor-pointer disabled:opacity-50"
                             />
-                            <div className="flex justify-between text-xs text-slate-500">
+                            <div className="flex justify-between text-xs text-muted-foreground">
                                 <span>Máxima compresión</span>
-                                <span className="font-mono text-indigo-400">{Math.round(quality * 100)}%</span>
+                                <span className="font-mono tabular-nums text-emerald-500">{Math.round(quality * 100)}%</span>
                                 <span>Máxima calidad</span>
                             </div>
                         </div>
@@ -210,8 +210,8 @@ export function PdfCompressor({ initialFile, onCompressed }: PdfCompressorProps 
                             className={cn(
                                 'flex-1 flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-300',
                                 isProcessing
-                                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                                    : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30'
+                                    ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                                    : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30'
                             )}
                         >
                             Comprimir PDF

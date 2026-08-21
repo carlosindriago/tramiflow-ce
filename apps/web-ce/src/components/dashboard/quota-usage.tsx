@@ -5,8 +5,6 @@ import { Progress } from '@carlosindriago/ui'
 import { Button } from '@carlosindriago/ui'
 import { AlertTriangle, Lock, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
-/* eslint-disable */
-import { cn } from '@carlosindriago/core'
 
 export function QuotaUsage() {
     const { limits, loading } = useLimits()
@@ -46,7 +44,7 @@ export function QuotaUsage() {
                     <span className="font-medium flex items-center gap-1">
                         {label} {statusIcon}
                     </span>
-                    <span className="text-muted-foreground">
+                    <span className="text-muted-foreground font-mono tabular-nums">
                         {usage.currentCount} / {usage.maxLimit}
                         {usage.status === 'grace' && <span className="text-orange-500 ml-1">(+Grace)</span>}
                     </span>
@@ -66,10 +64,6 @@ export function QuotaUsage() {
         )
     }
 
-    // Only show if at least one resource is not 'ok' or if we want to show usage explicitly
-    // Requirement says "En el Dashboard o Sidebar". Let's assume it's always visible or when relevant.
-    // Let's show it always if not unlimited.
-
     return (
         <div className="p-4 border rounded-lg bg-card text-card-foreground shadow-sm">
             <h3 className="font-semibold text-sm mb-3">Uso del Plan</h3>
@@ -77,13 +71,10 @@ export function QuotaUsage() {
             {renderBar('Clientes', limits.clients)}
             {renderBar('Trámites', limits.procedures)}
 
-            {/* Storage is currently mock, maybe skip or show if > 0 */}
-            {/* {renderBar('Almacenamiento', limits.storage)} */}
-
             {limits.planCode === 'free' && (
                 <div className="mt-4 pt-3 border-t">
-                    <Button disabled className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 shadow-md transition-all duration-300 opacity-50 cursor-not-allowed" size="sm">
-                        🚀 Actualizar a PRO (Próximamente)
+                    <Button disabled className="w-full bg-emerald-600 text-white border-0 shadow-md transition-all duration-300 opacity-50 cursor-not-allowed" size="sm">
+                        Actualizar a Pro (Próximamente)
                     </Button>
                 </div>
             )}

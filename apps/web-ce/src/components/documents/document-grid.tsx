@@ -71,7 +71,7 @@ const categoryColors: Record<DocumentCategory, string> = {
 
 const extensionColors: Record<string, string> = {
     pdf: 'bg-red-500/90 text-white',
-    png: 'bg-indigo-500/90 text-white',
+    png: 'bg-emerald-600/90 text-white',
     jpg: 'bg-amber-500/90 text-white',
     jpeg: 'bg-amber-500/90 text-white',
     webp: 'bg-teal-500/90 text-white',
@@ -258,7 +258,7 @@ export function DocumentGrid({
                             <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-8 gap-1.5 border-indigo-500/30 text-indigo-600 hover:bg-indigo-500/10 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-400"
+                                className="h-8 gap-1.5 border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-400"
                                 onClick={() => {
                                     onScanImage(selectedImages[0])
                                     clearSelection()

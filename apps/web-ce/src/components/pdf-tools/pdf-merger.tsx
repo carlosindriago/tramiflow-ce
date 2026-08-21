@@ -54,8 +54,8 @@ function SortablePdfRow({ item, onRemove }: { item: PdfItem; onRemove: (id: stri
             ref={setNodeRef}
             style={style}
             className={cn(
-                'flex items-center gap-3 rounded-lg border border-slate-700/50 bg-slate-800/30 px-4 py-3 transition-all group',
-                isDragging && 'z-50 shadow-xl shadow-indigo-500/10 border-indigo-500/50 scale-[1.02] bg-slate-800/60'
+                'flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3 transition-all group',
+                isDragging && 'z-50 shadow-xl shadow-emerald-500/10 border-emerald-500/50 scale-[1.02] bg-muted/60'
             )}
         >
             <button

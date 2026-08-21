@@ -144,7 +144,7 @@ export function SmartScannerDialog({ open, onOpenChange, doc }: SmartScannerDial
             <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden">
                 <DialogHeader className="px-6 py-4 border-b">
                     <DialogTitle className="flex items-center gap-2">
-                        <ScanText className="h-5 w-5 text-indigo-500" />
+                        <ScanText className="h-5 w-5 text-emerald-500" />
                         Smart Scanner (OCR)
                         {status === 'success' && (
                             <span className="ml-2 text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">

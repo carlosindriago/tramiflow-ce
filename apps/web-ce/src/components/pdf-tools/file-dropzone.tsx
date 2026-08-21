@@ -43,10 +43,10 @@ export function FileDropzone({
             {...getRootProps()}
             className={cn(
                 'relative flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 transition-all duration-300 cursor-pointer group',
-                isDragActive && !isDragReject && 'border-indigo-500 bg-indigo-500/10 scale-[1.02]',
+                isDragActive && !isDragReject && 'border-emerald-500 bg-emerald-500/10 scale-[1.02]',
                 isDragReject && 'border-red-500 bg-red-500/10',
-                !isDragActive && !disabled && 'border-slate-700 bg-slate-900/30 hover:border-slate-500 hover:bg-slate-800/30',
-                disabled && 'opacity-50 cursor-not-allowed border-slate-800 bg-slate-900/20',
+                !isDragActive && !disabled && 'border-border bg-muted/20 hover:border-emerald-500/50 hover:bg-muted/30',
+                disabled && 'opacity-50 cursor-not-allowed border-border bg-muted/10',
                 className
             )}
         >
@@ -54,7 +54,7 @@ export function FileDropzone({
 
             <div className={cn(
                 'flex h-14 w-14 items-center justify-center rounded-2xl transition-all duration-300',
-                isDragActive ? 'bg-indigo-500/20 text-indigo-400 scale-110' : 'bg-slate-800/50 text-slate-500 group-hover:text-slate-400 group-hover:bg-slate-800'
+                isDragActive ? 'bg-emerald-500/20 text-emerald-500 scale-110' : 'bg-muted text-muted-foreground group-hover:text-foreground group-hover:bg-muted/80'
             )}>
                 {isDragActive ? (
                     <FileUp className="h-7 w-7 animate-bounce" />
@@ -66,12 +66,12 @@ export function FileDropzone({
             <div className="text-center">
                 <p className={cn(
                     'text-sm font-medium transition-colors',
-                    isDragActive ? 'text-indigo-300' : 'text-slate-300 group-hover:text-slate-200'
+                    isDragActive ? 'text-emerald-500' : 'text-foreground group-hover:text-foreground'
                 )}>
                     {isDragActive ? 'Suelta los archivos aquí' : label}
                 </p>
                 {sublabel && (
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-muted-foreground">
                         {sublabel}
                     </p>
                 )}

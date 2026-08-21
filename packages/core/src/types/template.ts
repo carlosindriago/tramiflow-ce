@@ -73,4 +73,5 @@ export const templateSchema = z.object({
 })
 
 export type TemplateFormStep = z.infer<typeof stepSchema>
+export type TemplateRequirement = { id: string; title: string }
 export type TemplateFormData = z.infer<typeof templateSchema>

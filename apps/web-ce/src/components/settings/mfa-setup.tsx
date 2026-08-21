@@ -137,7 +137,7 @@ export function MFASetup() {
         return (
             <div className="rounded-lg border p-6 space-y-6">
                 <div className="flex items-center gap-3 border-b pb-4">
-                    <Shield className="h-5 w-5 text-indigo-500" />
+                    <Shield className="h-5 w-5 text-emerald-500" />
                     <h3 className="font-semibold">Configurar Autenticación en 2 Pasos</h3>
                 </div>
 
@@ -145,7 +145,7 @@ export function MFASetup() {
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <h4 className="font-medium flex items-center gap-2">
-                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 text-xs">1</span>
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">1</span>
                                 Descarga una app autenticadora
                             </h4>
                             <p className="text-sm text-muted-foreground pl-8">
@@ -154,7 +154,7 @@ export function MFASetup() {
                         </div>
                         <div className="space-y-2">
                             <h4 className="font-medium flex items-center gap-2">
-                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 text-xs">2</span>
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">2</span>
                                 Escanea el código QR
                             </h4>
                             <p className="text-sm text-muted-foreground pl-8">
@@ -163,7 +163,7 @@ export function MFASetup() {
                         </div>
                         <div className="space-y-2">
                             <h4 className="font-medium flex items-center gap-2">
-                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 text-xs">3</span>
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">3</span>
                                 Ingresa el código
                             </h4>
                             <div className="pl-8 space-y-3 pt-2">
@@ -173,10 +173,10 @@ export function MFASetup() {
                                     placeholder="000000" 
                                     value={verifyCode}
                                     onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, '').substring(0, 6))}
-                                    className="max-w-[200px] text-lg tracking-widest text-center"
+                                    className="max-w-[200px] text-lg tracking-widest text-center font-mono"
                                 />
                                 <div className="flex gap-2">
-                                    <Button onClick={verifyEnrollment} disabled={verifyCode.length !== 6}>
+                                    <Button onClick={verifyEnrollment} disabled={verifyCode.length !== 6} className="bg-emerald-600 hover:bg-emerald-700 text-white">
                                         Verificar y Activar
                                     </Button>
                                     <Button variant="ghost" onClick={() => setIsEnrolling(false)}>
@@ -186,9 +186,9 @@ export function MFASetup() {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col items-center justify-center p-6 bg-slate-50 dark:bg-slate-900 rounded-xl border border-dashed">
+                    <div className="flex flex-col items-center justify-center p-6 bg-muted/40 rounded-xl border border-dashed border-border">
                         {qrCode ? (
-                            <div className="bg-white p-4 rounded-xl shadow-sm border">
+                            <div className="bg-white p-4 rounded-xl shadow-sm border border-border">
                                 <QRCodeSVG value={qrCode} size={180} />
                             </div>
                         ) : (
@@ -204,9 +204,9 @@ export function MFASetup() {
     }
 
     return (
-        <div className="rounded-lg border p-6">
+        <div className="rounded-lg border border-border p-6 bg-card">
             <div className="flex flex-col md:flex-row items-start gap-6">
-                <div className="rounded-full bg-indigo-500/10 p-3 text-indigo-600 dark:text-indigo-400 shrink-0">
+                <div className="rounded-full bg-emerald-500/10 p-3 text-emerald-600 dark:text-emerald-400 shrink-0">
                     <Smartphone className="h-6 w-6" />
                 </div>
                 <div className="space-y-2 flex-1">
