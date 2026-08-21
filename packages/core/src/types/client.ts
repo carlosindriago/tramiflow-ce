@@ -40,9 +40,8 @@ export type ClientActionResult = ClientActionError | { success: true }
  * The identifications field is stored as JSON in the database (could be string or parsed).
  * Returns the first identification number or null if none exists.
  */
-/* eslint-disable */
-export function getPrimaryIdentificationNumber(client: { identifications: any }): string | null {
-  if (!client.identifications) return null
+export function getPrimaryIdentificationNumber(client?: { identifications?: unknown } | null): string | null {
+  if (!client || !client.identifications) return null
   
   try {
     // Handle both stringified and parsed JSON
@@ -52,7 +51,10 @@ export function getPrimaryIdentificationNumber(client: { identifications: any })
     
     // Return the first identification number if it exists
     if (Array.isArray(identifications) && identifications.length > 0) {
-      return identifications[0]?.number || null
+      const first = identifications[0]
+      if (typeof first === 'object' && first !== null && 'number' in first) {
+        return String((first as { number: unknown }).number) || null
+      }
     }
     return null
   } catch (error) {

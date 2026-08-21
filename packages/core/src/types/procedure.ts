@@ -1,10 +1,9 @@
-import { ProcedureStatus as ProcedureStatusConfig } from './procedure-status'
+import { ProcedureStatusConfig } from './procedure-status'
 
 export type ProcedureStatus = string
+export type ProcedureStatusId = string
 
-export const PROCEDURE_STATUS_LABELS: Record<string, string> = {
-  // Legacy support or default mappings if needed
-}
+export const PROCEDURE_STATUS_LABELS: Record<string, string> = {}
 
 export interface ProcedureChecklistProgress {
   [requirementId: string]: boolean
@@ -27,8 +26,8 @@ export interface Procedure {
   client_id: string
   template_id: string | null
   title: string
-  status: string // Now a UUID
-  status_id?: string // For compatibility/clarity
+  status: string // UUID
+  status_id?: string
 
   // Joined status details
   status_details?: ProcedureStatusConfig
@@ -51,6 +50,8 @@ export interface Procedure {
     id: string
     full_name: string
     email: string | null
+    phone?: string | null
+    identifications?: unknown[]
   }
   template?: {
     id: string

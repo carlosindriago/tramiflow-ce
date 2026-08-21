@@ -17,11 +17,11 @@ export interface Document {
     procedure_id: string | null
     name: string
     storage_path: string
-    url: string
-    size: number
-    category: DocumentCategory
+    url?: string
+    size: number | null
+    category: string | null
     mime_type: string | null
-    created_at: string
+    created_at: string | null
 }
 
 // Upload validation schema

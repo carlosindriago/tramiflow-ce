@@ -46,7 +46,10 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
         isLoading: clientLoading,
     } = useQuery<Client | null>({
         queryKey: ['client', clientId],
-        queryFn: () => getClientById(clientId),
+        queryFn: async () => {
+            const res = await getClientById(clientId)
+            return res.success ? res.data : null
+        },
     })
 
     // Fetch documents
@@ -56,19 +59,25 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
         refetch: refetchDocs,
     } = useQuery<Document[]>({
         queryKey: ['documents', clientId],
-        queryFn: () => getClientDocuments(clientId),
+        queryFn: async () => {
+            const res = await getClientDocuments(clientId)
+            return res.success ? res.data : []
+        },
     })
 
     // Fetch procedures
     const { data: procedures = [], refetch: refetchProcedures } = useQuery<Procedure[]>({
         queryKey: ['procedures', clientId],
-        queryFn: () => getClientProcedures(clientId) as unknown as Promise<Procedure[]>,
+        queryFn: async () => {
+            const res = await getClientProcedures(clientId)
+            return res.success ? (res.data as unknown as Procedure[]) : []
+        },
     })
 
     // Fetch templates for the dropdown
     const { data: templates = [] } = useQuery({
         queryKey: ['procedure-templates'],
-        queryFn: () => getTemplatesAction().then(res => res.data || []),
+        queryFn: () => getTemplatesAction().then(res => (res.success ? res.data : [])),
     })
 
     if (clientLoading) {

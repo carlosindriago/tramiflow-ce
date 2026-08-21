@@ -38,8 +38,8 @@ export const templateSchema = z.object({
     // Fees
     feesProfessional: z.number().min(0).optional(),
     feesOfficial: z.number().min(0).optional(),
-    currency: z.string().default('PEN'),
-    paymentTerms: z.enum(['upfront', 'split_50_50', 'on_completion']).default('upfront'),
+    currency: z.string(),
+    paymentTerms: z.enum(['upfront', 'split_50_50', 'on_completion']),
 
     // Duration
     durationWork: z.number().min(1, 'Mínimo 1 día'),
@@ -47,8 +47,8 @@ export const templateSchema = z.object({
 
     // Category & Alerts
     category: z.string().optional(),
-    isCustomCategory: z.boolean().default(false),
-    requiresRenewal: z.boolean().default(false),
+    isCustomCategory: z.boolean(),
+    requiresRenewal: z.boolean(),
     renewalFrequency: z.number().min(1).optional(),
 
     isActive: z.boolean(),
@@ -57,26 +57,20 @@ export const templateSchema = z.object({
     requirements: z.array(z.object({
         id: z.string(),
         title: z.string(),
-    })).default([]),
+    })),
 
     steps: z.array(stepSchema).min(1, 'Agrega al menos un paso'),
 
     // Sharing
-    visibility: z.enum(['private', 'public', 'restricted']).default('private'),
+    visibility: z.enum(['private', 'public', 'restricted']).optional(),
     share_token: z.string().nullable().optional(),
     public_settings: z.object({
-        allow_copy: z.boolean().default(true),
-        show_fees: z.boolean().default(true),
-        show_requirements: z.boolean().default(true),
-        show_steps: z.boolean().default(true),
-    }).default({
-        allow_copy: true,
-        show_fees: true,
-        show_requirements: true,
-        show_steps: true,
-    }),
+        allow_copy: z.boolean().optional(),
+        show_fees: z.boolean().optional(),
+        show_requirements: z.boolean().optional(),
+        show_steps: z.boolean().optional(),
+    }).optional(),
 })
-
 
 export type TemplateFormStep = z.infer<typeof stepSchema>
 export type TemplateFormData = z.infer<typeof templateSchema>

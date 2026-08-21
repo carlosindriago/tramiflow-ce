@@ -1,8 +1,6 @@
-// @ts-nocheck
 'use client'
 
-import { Procedure, ProcedureStatus, PROCEDURE_STATUS_LABELS } from '@carlosindriago/core'
-import { ProcedureStatus as ProcedureStatusConfig } from '@carlosindriago/core'
+import { Procedure, ProcedureStatusConfig, getPrimaryIdentificationNumber } from '@carlosindriago/core'
 import {
     updateProcedureChecklistAction,
     updateProcedureStatusAction,
@@ -31,32 +29,12 @@ import { Button } from '@carlosindriago/ui'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@carlosindriago/ui'
 import { Separator } from '@carlosindriago/ui'
 import {
-/* eslint-disable */
-    LayoutDashboard,
     ArrowLeft,
     CheckCircle2,
     Clock,
     CreditCard,
     FileText,
-/* eslint-disable */
-    Calendar,
-/* eslint-disable */
-    ChevronRight,
-/* eslint-disable */
-    Search,
-/* eslint-disable */
-    Filter,
-/* eslint-disable */
-    MoreVertical,
     User,
-/* eslint-disable */
-    Building2,
-/* eslint-disable */
-    CalendarDays,
-/* eslint-disable */
-    AlertCircle,
-/* eslint-disable */
-    Check,
     Phone,
     Link2,
     Unlink2,
@@ -102,7 +80,7 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
         queryFn: async () => {
             const res = await getProcedureStatusesAction()
             if (!res.success) return []
-            return res.data as ProcedureStatusConfig[]
+            return res.data
         }
     })
 
@@ -112,22 +90,23 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
         queryFn: async () => {
             const res = await getProcedureByIdAction(procedureId)
             if (!res.success) throw new Error(res.error)
-            return res.data as Procedure
+            return res.data as unknown as Procedure
         }
     })
 
     // Fetch client documents (dependent on procedure)
-    const { data: clientDocuments, isLoading: isClientDocsLoading } = useQuery({
+    const { data: clientDocuments = [], isLoading: isClientDocsLoading } = useQuery({
         queryKey: ['client-documents', procedure?.client?.id],
         queryFn: async () => {
             if (!procedure?.client?.id) return []
-            return await getClientDocuments(procedure.client.id)
+            const res = await getClientDocuments(procedure.client.id)
+            return res.success ? res.data : []
         },
         enabled: !!procedure?.client?.id
     })
 
     // Fetch procedure documents
-    const { data: procedureDocuments, isLoading: isProcedureDocsLoading, refetch: refetchProcedureDocs } = useQuery({
+    const { data: procedureDocuments = [], isLoading: isProcedureDocsLoading, refetch: refetchProcedureDocs } = useQuery({
         queryKey: ['procedure-documents', procedureId],
         queryFn: async () => {
             const res = await getProcedureDocumentsAction(procedureId)
@@ -147,7 +126,7 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
             toast.success('Documento vinculado correctamente')
             refetchProcedureDocs()
         },
-        onError: (err) => {
+        onError: (err: Error) => {
             toast.error('Error al vincular documento: ' + err.message)
         }
     })
@@ -163,7 +142,7 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
             toast.success('Documento desvinculado correctamente')
             refetchProcedureDocs()
         },
-        onError: (err) => {
+        onError: (err: Error) => {
             toast.error('Error al desvincular documento: ' + err.message)
         }
     })
@@ -191,64 +170,43 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
         )
     }
 
-    // Helper to get status color/name
-    const currentStatusConfig = statuses.find(s => s.id === procedure?.status) || procedure?.status_details
-
-    const getStatusColorStyle = (statusId: string) => {
-        const config = statuses.find(s => s.id === statusId)
-        if (!config) return {}
-        return {
-            backgroundColor: `${config.color}20`, // 20 hex opacity ~ 12%
-            color: config.color,
-            borderColor: `${config.color}40`
-        }
-    }
-
     // Determine state
     const checklist = procedure.checklist_progress || {}
     const paymentStatus = procedure.payment_status || 'pending'
     const currentStep = procedure.current_step_index || 0
     const requirements = procedure.requirements_snapshot || []
     const totalReqs = requirements.length
-/* eslint-disable */
-    const completedReqs = requirements.filter((r: any) => checklist[r.id || r]).length
+    const completedReqs = requirements.filter((r) => {
+        const key = typeof r === 'object' && r !== null && 'id' in r ? String((r as { id: string }).id) : String(r)
+        return Boolean(checklist[key])
+    }).length
     const progress = totalReqs > 0 ? Math.round((completedReqs / totalReqs) * 100) : 0
     const steps = procedure.template?.steps || []
     const totalSteps = steps.length
 
     // Handlers
     const handleChecklistChange = async (reqId: string, checked: boolean) => {
-        // Optimistic update logic if needed, but react-query refetch is safer for consistency
-        // For better UX, we can mutate local cache or just rely on fast revalidation
-        // Let's do optimistic purely for UI feels, but we need full object refetch to be sure
-
         const newChecklist = { ...checklist, [reqId]: checked }
-        // We can't easily mutate the query cache deeply here without complex logic
-        // So we will just fire the action and refetch. 
-        // To avoid UI lag, we could set a local state? 
-        // But ProcedurePage is reading from `procedure` prop from useQuery.
-        // Let's implement optimistic update via queryClient.setQueryData later if needed.
-        // For now, let's just wait for action and refetch.
 
         try {
             const result = await updateProcedureChecklistAction(procedureId, newChecklist)
             if (!result.success) throw new Error(result.error)
             refetch()
-/* eslint-disable */
         } catch (error) {
+            console.error('Checklist update error:', error)
             toast.error('Error actualizando checklist')
         }
     }
 
-    const handleStatusChange = async (status: ProcedureStatus) => {
+    const handleStatusChange = async (status: string) => {
         setIsLoading(true)
         try {
-            const result = await updateProcedureStatusAction(procedureId, status as any)
+            const result = await updateProcedureStatusAction(procedureId, status)
             if (!result.success) throw new Error(result.error)
             refetch()
             toast.success('Estado actualizado')
-/* eslint-disable */
         } catch (error) {
+            console.error('Status change error:', error)
             toast.error('Error actualizando estado')
         } finally {
             setIsLoading(false)
@@ -261,8 +219,8 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
             if (!result.success) throw new Error(result.error)
             refetch()
             toast.success('Estado de pago actualizado')
-/* eslint-disable */
         } catch (error) {
+            console.error('Payment change error:', error)
             toast.error('Error actualizando pago')
         }
     }
@@ -277,8 +235,8 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
             if (!result.success) throw new Error(result.error)
             refetch()
             toast.success('Progreso actualizado')
-/* eslint-disable */
         } catch (error) {
+            console.error('Step complete error:', error)
             toast.error('Error actualizando paso')
         }
     }
@@ -290,129 +248,115 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
             if (!result.success) throw new Error(result.error)
             refetch()
             toast.success('Paso corregido')
-/* eslint-disable */
         } catch (error) {
+            console.error('Step revert error:', error)
             toast.error('Error corrigiendo paso')
         }
     }
 
-
     return (
-        <div className="space-y-6 max-w-7xl mx-auto p-6 md:p-8">
+        <div className="space-y-6 max-w-7xl mx-auto p-4 md:p-6 pb-24">
             {/* Header / Breadcrumb */}
-            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                <div className="space-y-1.5">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Link href="/procedures" className="hover:text-primary transition-colors">Trámites</Link>
-                        <span>/</span>
-                        <span className="text-foreground font-medium truncate max-w-[200px]">{procedure.title}</span>
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b pb-6">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                        <Link href="/procedures" className="text-muted-foreground hover:text-foreground">
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                                <ArrowLeft className="h-4 w-4" />
+                            </Button>
+                        </Link>
+                        <h1 className="text-2xl font-bold tracking-tight">{procedure.title}</h1>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <h1 className="text-3xl font-bold tracking-tight text-foreground">{procedure.title}</h1>
-                        <Select
-                            disabled={isLoading}
-                            value={procedure.status}
-                            onValueChange={(val) => handleStatusChange(val as any as ProcedureStatus)}
-                        >
-                            <SelectTrigger
-                                className="w-[180px] h-8 text-xs font-medium border-transparent transition-colors"
-                                style={getStatusColorStyle(procedure.status)}
-                            >
-                                <SelectValue>
-                                    {currentStatusConfig?.name || PROCEDURE_STATUS_LABELS[procedure.status] || procedure.status}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                {statuses.length > 0 ? (
-                                    statuses.map((status) => (
-                                        <SelectItem key={status.id} value={status.id}>
-                                            <div className="flex items-center gap-2">
-                                                <div
-                                                    className="w-2 h-2 rounded-full"
-                                                    style={{ backgroundColor: status.color }}
-                                                />
-                                                {status.name}
-                                            </div>
-                                        </SelectItem>
-                                    ))
-                                ) : (
-                                    Object.entries(PROCEDURE_STATUS_LABELS).map(([key, label]) => (
-                                        <SelectItem key={key} value={key}>
-                                            {label}
-                                        </SelectItem>
-                                    ))
-                                )}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                    <p className="text-sm text-muted-foreground pl-9">
+                        Cliente: <span className="font-semibold text-foreground">{procedure.client?.full_name}</span> &bull; {procedure.template?.name || 'Trámite Personalizado'}
+                    </p>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => refetch()}>
-                        <Loader2 className={cn("h-4 w-4 mr-2", isFetching ? "animate-spin" : "")} />
-                        Actualizar
-                    </Button>
+
+                {/* Status selector & Actions */}
+                <div className="flex items-center gap-3 pl-9 md:pl-0">
+                    <Select
+                        value={procedure.status}
+                        onValueChange={handleStatusChange}
+                        disabled={isLoading}
+                    >
+                        <SelectTrigger className="w-[180px] h-9">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {statuses.map((status) => (
+                                <SelectItem key={status.id} value={status.id}>
+                                    <div className="flex items-center gap-2">
+                                        <div
+                                            className="h-2.5 w-2.5 rounded-full"
+                                            style={{ backgroundColor: status.color }}
+                                        />
+                                        <span>{status.name}</span>
+                                    </div>
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
 
-            {/* Main Layout */}
+            {/* Quick Metrics Bar */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Card className="p-4 flex items-center gap-4">
+                    <div className="p-3 bg-primary/10 rounded-lg text-primary">
+                        <CheckCircle2 className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <p className="text-xs font-medium text-muted-foreground">Progreso Pasos</p>
+                        <h4 className="text-xl font-bold">{currentStep} / {totalSteps}</h4>
+                    </div>
+                </Card>
+                <Card className="p-4 flex items-center gap-4">
+                    <div className="p-3 bg-emerald-500/10 rounded-lg text-emerald-600">
+                        <ListChecks className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <p className="text-xs font-medium text-muted-foreground">Requisitos Listos</p>
+                        <h4 className="text-xl font-bold">{completedReqs} / {totalReqs} ({progress}%)</h4>
+                    </div>
+                </Card>
+                <Card className="p-4 flex items-center gap-4">
+                    <div className="p-3 bg-blue-500/10 rounded-lg text-blue-600">
+                        <Clock className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <p className="text-xs font-medium text-muted-foreground">Fase Actual</p>
+                        <h4 className="text-sm font-bold truncate max-w-[150px]">
+                            {steps[currentStep]?.title || (currentStep >= totalSteps ? 'Finalizado' : 'Sin iniciar')}
+                        </h4>
+                    </div>
+                </Card>
+                <Card className="p-4 flex items-center gap-4">
+                    <div className="p-3 bg-amber-500/10 rounded-lg text-amber-600">
+                        <CreditCard className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <p className="text-xs font-medium text-muted-foreground">Estado Pago</p>
+                        <h4 className="text-sm font-bold capitalize">
+                            {paymentStatus === 'paid' ? 'Pagado' : paymentStatus === 'partial' ? 'Parcial' : 'Pendiente'}
+                        </h4>
+                    </div>
+                </Card>
+            </div>
+
+            {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                {/* Left Column: Workflow */}
+                {/* Left Column: Timeline & Requirements & Documents (2 cols) */}
                 <div className="lg:col-span-2 space-y-6">
-
-                    {/* Progress Overview */}
-                    <Card className="overflow-hidden border-l-4 border-l-primary/40">
-                        <CardContent className="p-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <div>
-                                    <h3 className="font-semibold text-lg">Progreso General</h3>
-                                    <p className="text-sm text-muted-foreground">Basado en requisitos y pasos completados</p>
-                                </div>
-                                <div className="text-right">
-                                    <span className="text-2xl font-bold text-primary">{Math.round((progress + (totalSteps > 0 ? currentStep / totalSteps * 100 : 0)) / 2)}%</span>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                    <div className="flex justify-between text-xs">
-                                        <span>Requisitos</span>
-                                        <span className="font-medium">{completedReqs}/{totalReqs}</span>
-                                    </div>
-                                    <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                                        <div className="h-full bg-blue-500 transition-all duration-500" style={{ width: `${progress}%` }} />
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <div className="flex justify-between text-xs">
-                                        <span>Pasos</span>
-                                        <span className="font-medium">{currentStep}/{totalSteps}</span>
-                                    </div>
-                                    <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                                        <div className="h-full bg-orange-500 transition-all duration-500" style={{ width: `${totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0}%` }} />
-                                    </div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Tabs defaultValue="steps" className="w-full">
-                        <TabsList className="grid w-full grid-cols-3 h-12">
-                            <TabsTrigger value="steps" className="text-sm gap-2">
-                                <ListChecks className="h-4 w-4" />
-                                Pasos del Proceso
-                            </TabsTrigger>
-                            <TabsTrigger value="requirements" className="text-sm gap-2">
-                                <CheckSquare className="h-4 w-4" />
-                                Requisitos
-                            </TabsTrigger>
-                            <TabsTrigger value="documents" className="text-sm gap-2">
-                                <FileText className="h-4 w-4" />
-                                Documentos
-                            </TabsTrigger>
+                    <Tabs defaultValue="timeline" className="w-full">
+                        <TabsList className="grid w-full grid-cols-3">
+                            <TabsTrigger value="timeline">Línea de Tiempo ({totalSteps})</TabsTrigger>
+                            <TabsTrigger value="requirements">Requisitos ({completedReqs}/{totalReqs})</TabsTrigger>
+                            <TabsTrigger value="documents">Expediente ({procedureDocuments.length})</TabsTrigger>
                         </TabsList>
 
-                        {/* STEPS CONTENT */}
-                        <TabsContent value="steps" className="mt-6 space-y-4 animate-in fade-in-50">
+                        {/* TIMELINE CONTENT */}
+                        <TabsContent value="timeline" className="mt-6 animate-in fade-in-50">
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="text-base flex items-center gap-2">
@@ -426,8 +370,7 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
                                         <div className="text-center py-8 text-muted-foreground">No hay pasos definidos.</div>
                                     ) : (
                                         <div className="relative pl-6 border-l-2 border-muted space-y-8 my-2 ml-2">
-/* eslint-disable */
-                                            {steps.map((step: any, index: number) => {
+                                            {steps.map((step, index: number) => {
                                                 const isCompleted = index < currentStep
                                                 const isCurrent = index === currentStep
                                                 const stepTitle = typeof step === 'string' ? step : step.title
@@ -515,10 +458,9 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
                                             Este trámite no tiene requisitos definidos.
                                         </p>
                                     )}
-/* eslint-disable */
-                                    {requirements.map((req: any, index: number) => {
-                                        const reqId = req.id || req
-                                        const reqTitle = req.title || req
+                                    {requirements.map((req, index: number) => {
+                                        const reqId = typeof req === 'object' && req !== null && 'id' in req ? String(req.id) : String(req)
+                                        const reqTitle = typeof req === 'object' && req !== null && 'title' in req ? String(req.title) : String(req)
                                         const isChecked = !!checklist[reqId]
 
                                         return (
@@ -529,15 +471,15 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
                                                 <Checkbox
                                                     id={`req-${index}`}
                                                     checked={isChecked}
-                                                    onCheckedChange={(checked) => handleChecklistChange(reqId, checked as boolean)}
-                                                    className="mt-1"
+                                                    onCheckedChange={(checked) => handleChecklistChange(reqId, !!checked)}
+                                                    className="mt-0.5"
                                                 />
-                                                <div className="grid gap-1.5 leading-none w-full">
+                                                <div className="space-y-1 leading-none">
                                                     <Label
                                                         htmlFor={`req-${index}`}
                                                         className={cn(
-                                                            "text-sm font-medium leading-none cursor-pointer select-none py-1 block w-full",
-                                                            isChecked ? "line-through text-muted-foreground" : "text-foreground"
+                                                            "text-sm font-medium cursor-pointer",
+                                                            isChecked && "line-through text-muted-foreground"
                                                         )}
                                                     >
                                                         {reqTitle}
@@ -550,81 +492,69 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
                             </Card>
                         </TabsContent>
 
-                        <TabsContent value="documents" className="mt-6 animate-in fade-in-50 space-y-8">
+                        {/* DOCUMENTS EXPEDIENTE CONTENT */}
+                        <TabsContent value="documents" className="mt-6 animate-in fade-in-50 space-y-6">
+                            {/* Upload Area */}
+                            {procedure.client && (
+                                <Card>
+                                    <CardHeader className="pb-3">
+                                        <CardTitle className="text-base">Subir Documentos al Expediente</CardTitle>
+                                        <CardDescription>
+                                            Los documentos se asociarán automáticamente a este trámite y al cliente.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <SmartDropzone
+                                            clientId={procedure.client.id}
+                                            organizationId={procedure.organization_id}
+                                            procedureId={procedureId}
+                                            onUploadComplete={() => {
+                                                refetchProcedureDocs()
+                                                queryClient.invalidateQueries({
+                                                    queryKey: ['client-documents', procedure.client?.id]
+                                                })
+                                            }}
+                                        />
+                                    </CardContent>
+                                </Card>
+                            )}
+
+                            {/* Linked Documents Grid */}
                             <Card>
-                                <CardHeader>
-                                    <CardTitle className="text-base flex items-center gap-2">
-                                        <FileText className="h-4 w-4 text-primary" />
-                                        Documentos del Trámite
+                                <CardHeader className="pb-3">
+                                    <CardTitle className="text-base flex items-center justify-between">
+                                        <span>Documentos del Trámite ({procedureDocuments.length})</span>
                                     </CardTitle>
-                                    <CardDescription>
-                                        Archivos vinculados específicamente a este procedimiento.
-                                    </CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    {procedure.client?.id ? (
-                                        <>
-                                            <SmartDropzone
-                                                clientId={procedure.client.id}
-                                                organizationId={procedure.organization_id}
-                                                procedureId={procedureId}
-                                                onUploadComplete={() => {
-                                                    queryClient.invalidateQueries({
-                                                        queryKey: ['client-documents', procedure.client?.id]
-                                                    })
-                                                    refetchProcedureDocs()
-                                                }}
-                                            />
-                                            <div className="mt-6">
-                                                {isProcedureDocsLoading ? (
-                                                    <div className="flex justify-center py-8">
-                                                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                                                    </div>
-                                                ) : (
-                                                    <div className="space-y-4">
-                                                        <h4 className="text-sm font-medium text-muted-foreground">Documentos Vinculados ({procedureDocuments?.length || 0})</h4>
-                                                        <DocumentGrid
-                                                            documents={(procedureDocuments || []) as Document[]}
-                                                            clientId={procedure.client.id}
-                                                            allowDelete={false}
-                                                            customAction={{
-                                                                icon: Unlink2,
-                                                                label: "Desvincular del trámite",
-                                                                onClick: (doc) => unlinkDocumentMutation.mutate(doc.id)
-                                                            }}
-                                                            onCreatePdfFromImages={(docs) => setImagesToPdfDocs(docs)}
-                                                            onMergePdfs={(docs) => setMergePdfDocs(docs)}
-                                                            onScanImage={(doc) => setScannerDoc(doc)}
-                                                        />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className="text-center py-8 text-muted-foreground">
-                                            No se puede cargar la zona de carga (Falta cliente).
+                                    {isProcedureDocsLoading ? (
+                                        <div className="flex justify-center py-8">
+                                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                                         </div>
+                                    ) : (
+                                        <DocumentGrid
+                                            documents={procedureDocuments}
+                                            clientId={procedure.client?.id || ''}
+                                            customAction={{
+                                                icon: Unlink2,
+                                                label: "Desvincular del trámite",
+                                                onClick: (doc) => unlinkDocumentMutation.mutate(doc.id)
+                                            }}
+                                        />
                                     )}
                                 </CardContent>
                             </Card>
 
-                            <div className="space-y-4">
-                                <h3 className="text-lg font-semibold flex items-center gap-2">
-                                    <User className="h-4 w-4 text-muted-foreground" />
-                                    Biblioteca de Documentos del Cliente
-                                </h3>
-                                <p className="text-sm text-muted-foreground">
-                                    Documentos generales del cliente. Puedes vincularlos a este trámite.
-                                </p>
-                                <Separator />
+                            {/* Available Client Documents to Link */}
+                            <div className="pt-4">
+                                <h4 className="text-sm font-semibold mb-3">Otros documentos disponibles del cliente</h4>
                                 {isClientDocsLoading ? (
                                     <div className="flex justify-center py-12">
                                         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                                     </div>
                                 ) : (
                                     <DocumentGrid
-/* eslint-disable */
-                                        documents={clientDocuments?.filter((doc: any) => !procedureDocuments?.some((pDoc: any) => pDoc.id === doc.id)) || []}
+                                        documents={clientDocuments.filter((doc) => !procedureDocuments.some((pDoc) => pDoc.id === doc.id))}
                                         clientId={procedure.client?.id || ''}
                                         customAction={{
                                             icon: Link2,
@@ -699,18 +629,15 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
                                 </div>
                                 <Separator />
                                 <div className="space-y-2 text-sm">
-/* eslint-disable */
-                                    {procedure.client && (procedure.client as any).phone ? (
+                                    {procedure.client.phone ? (
                                         <div className="flex items-center gap-2">
                                             <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-/* eslint-disable */
-                                            <PhoneAction phone={(procedure.client as any).phone} />
+                                            <PhoneAction phone={procedure.client.phone} />
                                         </div>
                                     ) : null}
                                     <div className="flex items-center gap-2 text-muted-foreground">
                                         <CreditCard className="h-3.5 w-3.5" />
-/* eslint-disable */
-                                        <span>{(procedure.client as any).document_number || 'No ID'}</span>
+                                        <span>{getPrimaryIdentificationNumber(procedure.client) || 'No ID'}</span>
                                     </div>
                                 </div>
                             </CardContent>
@@ -745,8 +672,7 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
                                 <Label className="text-xs font-medium uppercase text-muted-foreground">Estado del Pago</Label>
                                 <Select
                                     value={paymentStatus}
-/* eslint-disable */
-                                    onValueChange={(val: any) => handlePaymentChange(val)}
+                                    onValueChange={(val: 'pending' | 'partial' | 'paid') => handlePaymentChange(val)}
                                 >
                                     <SelectTrigger>
                                         <SelectValue />

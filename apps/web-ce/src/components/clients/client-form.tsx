@@ -70,29 +70,23 @@ export function ClientForm({ defaultValues, onSuccess, onCancel, isDialog = fals
             
             const result = await createClientAction(cleanData)
 
-            if ('error' in result) {
-                if (result.error._form) {
-                    if (result.error._form[0] === 'UNVERIFIED_BLOCKED') {
-                        window.dispatchEvent(new CustomEvent('open-verification-modal', {
-                            detail: { message: 'Has alcanzado el límite de clientes de tu plan no verificado. Verifica tu correo para continuar.' }
-                        }))
-                        return
-                    }
-                    toast.error(result.error._form[0])
-                } else {
-                    toast.error('Revisa los campos del formulario')
+            if (!result.success) {
+                if (result.error === 'UNVERIFIED_BLOCKED') {
+                    window.dispatchEvent(new CustomEvent('open-verification-modal', {
+                        detail: { message: 'Has alcanzado el límite de clientes de tu plan no verificado. Verifica tu correo para continuar.' }
+                    }))
+                    return
                 }
+                toast.error(result.error)
                 return
             }
 
-            if (result.success) {
-                toast.success('Cliente creado correctamente')
-                if (onSuccess) onSuccess()
-                else if (redirectOnSuccess) router.push(redirectOnSuccess)
-                else router.refresh()
-            }
-/* eslint-disable */
+            toast.success('Cliente creado correctamente')
+            if (onSuccess) onSuccess()
+            else if (redirectOnSuccess) router.push(redirectOnSuccess)
+            else router.refresh()
         } catch (error) {
+            console.error('Submit client error:', error)
             toast.error('Ocurrió un error inesperado')
         } finally {
             setIsPending(false)

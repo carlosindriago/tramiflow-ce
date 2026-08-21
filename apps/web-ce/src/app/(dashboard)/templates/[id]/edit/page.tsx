@@ -1,8 +1,7 @@
-// @ts-nocheck
 import { createClient } from '@carlosindriago/database/server'
 import { notFound, redirect } from 'next/navigation'
 import { TemplateForm } from '@/components/templates/template-form'
-import { TemplateFormData } from '@carlosindriago/core'
+import { TemplateFormData, StepType } from '@carlosindriago/core'
 
 interface EditTemplatePageProps {
     params: Promise<{
@@ -60,35 +59,39 @@ export default async function EditTemplatePage({ params }: EditTemplatePageProps
         renewalFrequency: template.renewal_frequency ?? undefined,
 
         isActive: template.is_active ?? true,
-/* eslint-disable */
-        steps: Array.isArray(template.steps) ? template.steps.map((s: any) => ({
-            stepId: s.stepId || s.id || crypto.randomUUID(),
-            title: s.title,
-            type: s.type,
-            description: s.description,
-            isRequired: s.isRequired,
-            estimatedDays: s.estimatedDays,
-        })) : [],
+        steps: Array.isArray(template.steps) ? template.steps.map((s) => {
+            const stepObj = typeof s === 'object' && s !== null ? (s as Record<string, unknown>) : {}
+            return {
+                stepId: typeof stepObj.stepId === 'string' ? stepObj.stepId : (typeof stepObj.id === 'string' ? stepObj.id : crypto.randomUUID()),
+                title: typeof stepObj.title === 'string' ? stepObj.title : '',
+                type: (typeof stepObj.type === 'string' ? stepObj.type : 'document') as StepType,
+                description: typeof stepObj.description === 'string' ? stepObj.description : '',
+                isRequired: typeof stepObj.isRequired === 'boolean' ? stepObj.isRequired : true,
+                estimatedDays: typeof stepObj.estimatedDays === 'number' ? stepObj.estimatedDays : 5,
+            }
+        }) : [],
 
-        // Fix: Map requirements from DB (strings or objects) to expected Form format
+        // Map requirements from DB (strings or objects) to expected Form format
         requirements: Array.isArray(template.requirements)
-/* eslint-disable */
-            ? template.requirements.map((r: any) => {
+            ? template.requirements.map((r) => {
                 if (typeof r === 'string') {
                     return { id: crypto.randomUUID(), title: r }
                 }
-                return { id: r.id || crypto.randomUUID(), title: r.title || '' }
+                const rObj = typeof r === 'object' && r !== null ? (r as Record<string, unknown>) : {}
+                return {
+                    id: typeof rObj.id === 'string' ? rObj.id : crypto.randomUUID(),
+                    title: typeof rObj.title === 'string' ? rObj.title : ''
+                }
             })
             : [],
 
         visibility: template.visibility || 'private',
         share_token: template.share_token || undefined,
-/* eslint-disable */
-        public_settings: (template.public_settings as any) || {
+        public_settings: (typeof template.public_settings === 'object' && template.public_settings !== null ? (template.public_settings as Record<string, unknown>) : {
             allow_copy: true,
             show_fees: true,
             show_requirements: true,
-        },
+        }),
     } as TemplateFormData & { id: string }
 
     const { data: permissions } = await supabase

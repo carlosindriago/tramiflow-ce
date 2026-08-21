@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import * as React from 'react'
@@ -65,18 +64,21 @@ export default function ClientsPage() {
     const { isModalOpen, setIsModalOpen, handleSuccess } = useFormSuccess()
 
     // Fetch clients
-    const { data: clients = [], isLoading } = useQuery({
+    const { data: clients = [], isLoading } = useQuery<Client[]>({
         queryKey: ['clients'],
-        queryFn: getClients,
+        queryFn: async () => {
+            const res = await getClients()
+            return res.success ? res.data : []
+        },
     })
 
-// Delete mutation
-  const deleteMutation = useMutation({
-    mutationFn: async (clientId: string) => {
-      const result = await deleteClientAction(clientId)
-      if (!result.success) throw new Error(result.error?._form?.[0] || 'Error al eliminar')
-      return result
-    },
+    // Delete mutation
+    const deleteMutation = useMutation({
+        mutationFn: async (clientId: string) => {
+            const result = await deleteClientAction(clientId)
+            if (!result.success) throw new Error(result.error || 'Error al eliminar')
+            return result
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['clients'] })
             setShowDeleteDialog(false)

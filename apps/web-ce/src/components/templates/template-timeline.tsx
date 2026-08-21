@@ -1,7 +1,6 @@
-// @ts-nocheck
 'use client'
 
-import { useForm, useFieldArray } from 'react-hook-form'
+import { UseFormReturn, useFieldArray } from 'react-hook-form'
 import {
     DndContext,
     closestCenter,
@@ -23,7 +22,7 @@ import { Badge } from '@carlosindriago/ui'
 import { SortableStepCard } from './template-step-card'
 
 interface TemplateTimelineProps {
-    form: ReturnType<typeof useForm<TemplateFormData>>
+    form: UseFormReturn<TemplateFormData>
 }
 
 export function TemplateTimeline({ form }: TemplateTimelineProps) {
@@ -54,7 +53,9 @@ export function TemplateTimeline({ form }: TemplateTimelineProps) {
         if (over && active.id !== over.id) {
             const oldIndex = fields.findIndex((f) => f.stepId === active.id)
             const newIndex = fields.findIndex((f) => f.stepId === over.id)
-            move(oldIndex, newIndex)
+            if (oldIndex !== -1 && newIndex !== -1) {
+                move(oldIndex, newIndex)
+            }
         }
     }
 

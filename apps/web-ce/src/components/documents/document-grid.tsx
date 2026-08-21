@@ -407,12 +407,12 @@ export function DocumentGrid({
                                     <div className="mt-1.5 flex items-center gap-2">
                                         <Badge
                                             variant="outline"
-                                            className={categoryColors[doc.category]}
+                                            className={doc.category ? categoryColors[doc.category as DocumentCategory] : ''}
                                         >
-                                            {DOCUMENT_CATEGORIES[doc.category].label}
+                                            {doc.category && doc.category in DOCUMENT_CATEGORIES ? DOCUMENT_CATEGORIES[doc.category as DocumentCategory].label : (doc.category || 'General')}
                                         </Badge>
                                         <span className="text-xs text-muted-foreground">
-                                            {formatFileSize(doc.size)}
+                                            {formatFileSize(doc.size ?? 0)}
                                         </span>
                                     </div>
                                 </div>
@@ -489,20 +489,18 @@ export function DocumentGrid({
                                         <td className="px-4 py-3">
                                             <Badge
                                                 variant="outline"
-                                                className={categoryColors[doc.category]}
+                                                className={doc.category ? categoryColors[doc.category as DocumentCategory] : ''}
                                             >
-                                                {DOCUMENT_CATEGORIES[doc.category].label}
+                                                {doc.category && doc.category in DOCUMENT_CATEGORIES ? DOCUMENT_CATEGORIES[doc.category as DocumentCategory].label : (doc.category || 'General')}
                                             </Badge>
                                         </td>
                                         <td className="px-4 py-3 text-sm text-muted-foreground">
-                                            {formatFileSize(doc.size)}
+                                            {formatFileSize(doc.size ?? 0)}
                                         </td>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                                 <Calendar className="h-3 w-3" />
-                                                {new Date(doc.created_at).toLocaleDateString(
-                                                    'es-PE'
-                                                )}
+                                                {doc.created_at ? new Date(doc.created_at).toLocaleDateString('es-PE') : '-'}
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
