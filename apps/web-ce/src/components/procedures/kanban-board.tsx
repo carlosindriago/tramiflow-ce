@@ -100,14 +100,14 @@ function KanbanColumn({
     const procedureIds = useMemo(() => procedures.map((p) => p.id), [procedures])
 
     return (
-        <div className="flex flex-col h-full min-w-[225px] w-[225px] bg-slate-900/50 backdrop-blur-sm rounded-xl border border-slate-700/30 shadow-lg shadow-black/10 transition-colors duration-200">
-            <div className="px-4 py-3 font-medium text-sm flex items-center justify-between bg-slate-800/30 rounded-t-xl">
-                <span className="text-slate-200 tracking-tight">{title}</span>
-                <span className="bg-slate-700/50 text-slate-300 text-xs font-semibold px-2.5 py-0.5 rounded-full min-w-[24px] text-center tabular-nums">
+        <div className="flex flex-col h-full min-w-[225px] w-[225px] bg-card/60 backdrop-blur-sm rounded-xl border border-border shadow-sm transition-colors duration-200">
+            <div className="px-4 py-3 font-medium text-sm flex items-center justify-between bg-muted/40 rounded-t-xl">
+                <span className="text-foreground tracking-tight">{title}</span>
+                <span className="bg-muted text-muted-foreground text-xs font-semibold px-2.5 py-0.5 rounded-full min-w-[24px] text-center tabular-nums">
                     {procedures.length}
                 </span>
             </div>
-            <div className="h-px bg-gradient-to-r from-transparent via-slate-600/30 to-transparent" />
+            <div className="h-px bg-border" />
 
             <div ref={setNodeRef} className="flex-1 p-2.5 space-y-2.5 overflow-y-auto min-h-[100px] scrollbar-thin">
                 <SortableContext items={procedureIds} strategy={verticalListSortingStrategy}>
@@ -121,11 +121,11 @@ function KanbanColumn({
                     ))}
                 </SortableContext>
                 {procedures.length === 0 && (
-                    <div className="h-full flex flex-col items-center justify-center gap-1.5 py-8 opacity-40">
-                        <div className="h-8 w-8 rounded-lg border-2 border-dashed border-slate-600 flex items-center justify-center">
-                            <Plus className="h-3.5 w-3.5 text-slate-500" />
+                    <div className="h-full flex flex-col items-center justify-center gap-1.5 py-8 opacity-50">
+                        <div className="h-8 w-8 rounded-lg border-2 border-dashed border-border flex items-center justify-center">
+                            <Plus className="h-3.5 w-3.5 text-muted-foreground" />
                         </div>
-                        <span className="text-[11px] text-slate-500 font-medium tracking-tight">
+                        <span className="text-[11px] text-muted-foreground font-medium tracking-tight">
                             Sin trámites
                         </span>
                     </div>

@@ -60,13 +60,13 @@ function SortableImage({ item, onRemove }: { item: ImageItem; onRemove: (id: str
                 alt={item.file.name}
                 className="w-full h-32 object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
             {/* Drag handle */}
             <button
                 {...attributes}
                 {...listeners}
-                className="absolute top-2 left-2 rounded-md bg-slate-900/80 p-1.5 text-slate-400 hover:text-slate-200 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-2 left-2 rounded-md bg-background/80 p-1.5 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
             >
                 <GripVertical className="h-3.5 w-3.5" />
             </button>
@@ -81,8 +81,8 @@ function SortableImage({ item, onRemove }: { item: ImageItem; onRemove: (id: str
 
             {/* File info */}
             <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                <p className="text-[10px] text-slate-300 truncate">{item.file.name}</p>
-                <p className="text-[10px] text-slate-500">{formatFileSize(item.file.size)}</p>
+                <p className="text-[10px] text-foreground truncate">{item.file.name}</p>
+                <p className="text-[10px] text-muted-foreground">{formatFileSize(item.file.size)}</p>
             </div>
         </div>
     )
@@ -221,12 +221,12 @@ export function ImagesToPdf() {
                     {/* Image Grid with DnD */}
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                            <p className="text-sm text-slate-400">
-                                <span className="font-medium text-slate-300">{images.length}</span> imágenes • Arrastra para reordenar
+                            <p className="text-sm text-muted-foreground">
+                                <span className="font-medium text-foreground">{images.length}</span> imágenes • Arrastra para reordenar
                             </p>
                             <button
                                 onClick={handleClear}
-                                className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                                className="text-xs text-destructive hover:underline transition-colors"
                             >
                                 Limpiar todo
                             </button>
@@ -252,8 +252,8 @@ export function ImagesToPdf() {
                     </div>
 
                     {/* Orientation Selector */}
-                    <div className="rounded-xl border border-slate-800/50 bg-slate-900/40 backdrop-blur-md p-4">
-                        <p className="text-sm font-medium text-slate-300 mb-3">Orientación del PDF</p>
+                    <div className="rounded-xl border border-border bg-card shadow-sm p-4">
+                        <p className="text-sm font-medium text-foreground mb-3">Orientación del PDF</p>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setOrientation('portrait')}
@@ -261,8 +261,8 @@ export function ImagesToPdf() {
                                 className={cn(
                                     'flex-1 flex items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all',
                                     orientation === 'portrait'
-                                        ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-500'
-                                        : 'border-border bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                                        ? 'border-primary/50 bg-primary/10 text-primary'
+                                        : 'border-border bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground'
                                 )}
                             >
                                 <div className="w-4 h-5 border-2 border-current rounded-[2px]" />
@@ -274,8 +274,8 @@ export function ImagesToPdf() {
                                 className={cn(
                                     'flex-1 flex items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all',
                                     orientation === 'landscape'
-                                        ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-500'
-                                        : 'border-border bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                                        ? 'border-primary/50 bg-primary/10 text-primary'
+                                        : 'border-border bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground'
                                 )}
                             >
                                 <div className="w-5 h-4 border-2 border-current rounded-[2px]" />
@@ -300,8 +300,8 @@ export function ImagesToPdf() {
                         className={cn(
                             'w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all duration-300',
                             isProcessing || images.length === 0
-                                ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                                : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30'
+                                ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                                : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm'
                         )}
                     >
                         <FileOutput className="h-4 w-4" />

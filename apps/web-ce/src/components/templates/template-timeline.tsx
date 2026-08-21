@@ -74,12 +74,12 @@ export function TemplateTimeline({ form }: TemplateTimelineProps) {
         <div>
             {/* Timeline Header */}
             <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-lg font-semibold">Flujo del Procedimiento</h2>
+                <h2 className="text-lg font-semibold text-foreground">Flujo del Procedimiento</h2>
                 <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs border-border bg-muted/40 text-muted-foreground">
                         {fields.length} Etapas
                     </Badge>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs border-border bg-muted/40 text-muted-foreground">
                         ~{totalDays} Días Est.
                     </Badge>
                 </div>
@@ -88,7 +88,7 @@ export function TemplateTimeline({ form }: TemplateTimelineProps) {
             {/* Timeline with Drag & Drop */}
             <div className="relative">
                 {/* Vertical Line */}
-                <div className="absolute left-5 top-6 bottom-20 w-0.5 bg-gradient-to-b from-emerald-500 via-emerald-500/50 to-transparent" />
+                <div className="absolute left-5 top-6 bottom-20 w-0.5 bg-border" />
 
                 <DndContext
                     id="template-builder-dnd"
@@ -118,7 +118,7 @@ export function TemplateTimeline({ form }: TemplateTimelineProps) {
                     <Button
                         type="button"
                         variant="outline"
-                        className="w-full border-dashed border-border hover:border-emerald-500/50 hover:bg-emerald-500/5"
+                        className="w-full border-dashed border-border hover:border-primary/50 hover:bg-muted/50 text-muted-foreground hover:text-foreground"
                         onClick={addStep}
                     >
                         <Plus className="mr-2 h-4 w-4" />

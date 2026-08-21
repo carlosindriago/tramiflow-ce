@@ -61,23 +61,23 @@ function SortablePdfRow({ item, onRemove }: { item: PdfItem; onRemove: (id: stri
             <button
                 {...attributes}
                 {...listeners}
-                className="text-slate-600 hover:text-slate-400 cursor-grab active:cursor-grabbing transition-colors"
+                className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing transition-colors"
             >
                 <GripVertical className="h-4 w-4" />
             </button>
 
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 flex-shrink-0">
-                <FileText className="h-4 w-4 text-red-400" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive/10 flex-shrink-0">
+                <FileText className="h-4 w-4 text-destructive" />
             </div>
 
             <div className="flex-1 min-w-0">
-                <p className="text-sm text-slate-200 truncate">{item.file.name}</p>
-                <p className="text-xs text-slate-500">{formatFileSize(item.file.size)}</p>
+                <p className="text-sm text-foreground truncate">{item.file.name}</p>
+                <p className="text-xs text-muted-foreground">{formatFileSize(item.file.size)}</p>
             </div>
 
             <button
                 onClick={() => onRemove(item.id)}
-                className="rounded-md p-1.5 text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100"
+                className="rounded-md p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all opacity-0 group-hover:opacity-100"
             >
                 <X className="h-3.5 w-3.5" />
             </button>
@@ -197,16 +197,16 @@ export function PdfMerger({ initialFiles }: PdfMergerProps = {}) {
                     {/* PDF List */}
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                            <p className="text-sm text-slate-400">
-                                <span className="font-medium text-slate-300">{pdfs.length}</span> documentos
-                                <span className="text-slate-600 mx-1">•</span>
+                            <p className="text-sm text-muted-foreground">
+                                <span className="font-medium text-foreground">{pdfs.length}</span> documentos
+                                <span className="text-border mx-1">•</span>
                                 <span className="font-mono text-xs">{formatFileSize(totalSize)}</span>
-                                <span className="text-slate-600 mx-1">•</span>
+                                <span className="text-border mx-1">•</span>
                                 Arrastra para reordenar
                             </p>
                             <button
                                 onClick={handleClear}
-                                className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                                className="text-xs text-destructive hover:underline transition-colors"
                             >
                                 Limpiar todo
                             </button>
@@ -249,8 +249,8 @@ export function PdfMerger({ initialFiles }: PdfMergerProps = {}) {
                         className={cn(
                             'w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all duration-300',
                             isProcessing || pdfs.length < 2
-                                ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                                : 'bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30'
+                                ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                                : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm'
                         )}
                     >
                         <Merge className="h-4 w-4" />
@@ -258,7 +258,7 @@ export function PdfMerger({ initialFiles }: PdfMergerProps = {}) {
                     </button>
 
                     {pdfs.length < 2 && (
-                        <p className="text-center text-xs text-slate-500">
+                        <p className="text-center text-xs text-muted-foreground">
                             Necesitas al menos 2 PDFs para unirlos
                         </p>
                     )}

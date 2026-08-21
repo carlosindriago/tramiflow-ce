@@ -106,41 +106,23 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
         fetchCategories()
     }, [])
 
-    // Handle creating a new category
     const handleCreateCategory = async () => {
         if (!newCategoryName.trim()) return
-
         try {
             setIsCreatingCategory(true)
             const response = await fetch('/api/categories', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: newCategoryName.trim(),
-                    slug: newCategoryName.trim()
-                        .toLowerCase()
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .replace(/[^a-z0-9]+/g, '-')
-                        .replace(/-+/g, '-')
-                        .trim(),
-                }),
+                body: JSON.stringify({ name: newCategoryName.trim() }),
             })
-
             if (!response.ok) throw new Error('Failed to create category')
-
             const data = await response.json()
-            const newCategory = data.category
-
-            // Add to categories list
-            setCategories((prev) => [...prev, newCategory])
-
-            // Select the new category
-            updateField('category', newCategory.slug)
-
-            // Close dialog and reset
-            setIsCreateCategoryOpen(false)
-            setNewCategoryName('')
+            if (data.category) {
+                setCategories((prev) => [...prev, data.category])
+                updateField('category', data.category.slug)
+                setIsCreateCategoryOpen(false)
+                setNewCategoryName('')
+            }
         } catch (error) {
             console.error('Error creating category:', error)
         } finally {
@@ -154,9 +136,8 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
 
     return (
         <div className="space-y-6">
-
             {/* 1. General Info */}
-            <Card className="border-border/50 bg-slate-900/40 backdrop-blur-sm">
+            <Card className="border-border bg-card shadow-sm">
                 <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
@@ -173,7 +154,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                         <Input
                             id="name"
                             placeholder="Ej: Prórroga de Residencia"
-                            className="bg-background/50"
+                            className="bg-muted/40 border-border"
                             {...form.register('name')}
                         />
                         {form.formState.errors.name && (
@@ -190,7 +171,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                                 value={currentCategory}
                                 disabled={categoriesLoading}
                             >
-                                <SelectTrigger className="bg-background/50 flex-1">
+                                <SelectTrigger className="bg-muted/40 border-border flex-1">
                                     {categoriesLoading ? (
                                         <div className="flex items-center gap-2">
                                             <Loader2 className="h-4 w-4 animate-spin" />
@@ -218,7 +199,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                                 variant="outline"
                                 size="icon"
                                 onClick={() => setIsCreateCategoryOpen(true)}
-                                className="shrink-0"
+                                className="shrink-0 border-border"
                             >
                                 <Plus className="h-4 w-4" />
                             </Button>
@@ -227,12 +208,12 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                 </CardContent>
             </Card>
 
-            {/* 2. Requirements Builder (Workflow Engine) */}
-            <Card className="border-border/50 bg-card/80 backdrop-blur">
+            {/* 2. Requirements Builder */}
+            <Card className="border-border bg-card shadow-sm">
                 <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10">
-                            <ClipboardCheck className="h-5 w-5 text-emerald-500" />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                            <ClipboardCheck className="h-5 w-5 text-primary" />
                         </div>
                         <div className="flex-1">
                             <CardTitle className="text-lg">Requisitos del Trámite</CardTitle>
@@ -254,7 +235,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                                     handleAddRequirement()
                                 }
                             }}
-                            className="bg-background/50"
+                            className="bg-muted/40 border-border"
                         />
                         <Button
                             type="button"
@@ -269,17 +250,17 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
 
                     <div className="space-y-2">
                         {fields.length === 0 && (
-                            <div className="text-sm text-muted-foreground text-center py-4 border border-dashed rounded-lg">
+                            <div className="text-sm text-muted-foreground text-center py-4 border border-dashed border-border rounded-lg">
                                 No hay requisitos definidos.
                             </div>
                         )}
                         {fields.map((field, index) => (
                             <div
                                 key={field.id}
-                                className="flex items-center justify-between p-2 rounded-md border bg-background/50 group animate-in slide-in-from-left-2"
+                                className="flex items-center justify-between p-2 rounded-md border border-border bg-muted/40 group animate-in slide-in-from-left-2"
                             >
                                 <div className="flex items-center gap-2">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
                                     <span className="text-sm font-medium">{field.title}</span>
                                 </div>
                                 <Button
@@ -297,17 +278,17 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                 </CardContent>
             </Card>
 
-            {/* 2. Costs & Fees */}
-            <Card className="border-border/50 bg-card/80 backdrop-blur">
+            {/* 3. Costs & Fees */}
+            <Card className="border-border bg-card shadow-sm">
                 <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10">
-                            <DollarSign className="h-5 w-5 text-emerald-500" />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                            <DollarSign className="h-5 w-5 text-primary" />
                         </div>
                         <div className="flex-1">
                             <CardTitle className="text-lg">Costos y Honorarios</CardTitle>
                         </div>
-                        <Badge variant="outline" className="text-emerald-500 border-emerald-500/30">
+                        <Badge variant="outline" className="text-primary border-primary/30">
                             Total: {currency} {totalCost.toFixed(2)}
                         </Badge>
                     </div>
@@ -319,7 +300,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                             <Input
                                 type="number"
                                 placeholder="0.00"
-                                className="bg-background/50"
+                                className="bg-muted/40 border-border"
                                 {...form.register('feesProfessional', { valueAsNumber: true })}
                                 onChange={(e) => {
                                     const value = parseFloat(e.target.value) || 0
@@ -334,7 +315,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                             <Input
                                 type="number"
                                 placeholder="0.00"
-                                className="bg-background/50"
+                                className="bg-muted/40 border-border"
                                 {...form.register('feesOfficial', { valueAsNumber: true })}
                                 onChange={(e) => {
                                     const value = parseFloat(e.target.value) || 0
@@ -352,7 +333,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                                 value={currency}
                                 onValueChange={(val) => updateField('currency', val)}
                             >
-                                <SelectTrigger className="bg-background/50">
+                                <SelectTrigger className="bg-muted/40 border-border">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -367,7 +348,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                                 value={form.watch('paymentTerms')}
                                 onValueChange={(val) => updateField('paymentTerms', val as TemplateFormData['paymentTerms'])}
                             >
-                                <SelectTrigger className="bg-background/50">
+                                <SelectTrigger className="bg-muted/40 border-border">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -381,12 +362,12 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                 </CardContent>
             </Card>
 
-            {/* 3. Timelines */}
-            <Card className="border-border/50 bg-card/80 backdrop-blur">
+            {/* 4. Timelines */}
+            <Card className="border-border bg-card shadow-sm">
                 <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10">
-                            <Clock className="h-5 w-5 text-blue-500" />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                            <Clock className="h-5 w-5 text-primary" />
                         </div>
                         <CardTitle className="text-lg">Tiempos Estimados</CardTitle>
                     </div>
@@ -399,7 +380,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                                 <Input
                                     type="number"
                                     placeholder="5"
-                                    className="bg-background/50 pl-8"
+                                    className="bg-muted/40 border-border pl-8"
                                     {...form.register('durationWork', { valueAsNumber: true })}
                                 />
                                 <Settings2 className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -412,7 +393,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                                 <Input
                                     type="number"
                                     placeholder="30"
-                                    className="bg-background/50 pl-8"
+                                    className="bg-muted/40 border-border pl-8"
                                     {...form.register('durationResolution', { valueAsNumber: true })}
                                 />
                                 <Building2 className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -423,12 +404,12 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                 </CardContent>
             </Card>
 
-            {/* 4. Renewal & Settings */}
-            <Card className="border-border/50 bg-card/80 backdrop-blur">
+            {/* 5. Renewal & Settings */}
+            <Card className="border-border bg-card shadow-sm">
                 <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10">
-                            <AlertCircle className="h-5 w-5 text-amber-500" />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                            <AlertCircle className="h-5 w-5 text-primary" />
                         </div>
                         <CardTitle className="text-lg">Vencimientos y Alertas</CardTitle>
                     </div>
@@ -456,7 +437,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                             <Input
                                 type="number"
                                 placeholder="365"
-                                className="bg-background/50"
+                                className="bg-muted/40 border-border"
                                 {...form.register('renewalFrequency', { valueAsNumber: true })}
                             />
                             <p className="text-[10px] text-muted-foreground">
@@ -465,7 +446,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                         </div>
                     )}
 
-                    <div className="border-t border-border/50 pt-4 mt-4">
+                    <div className="border-t border-border pt-4 mt-4">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="font-medium">Estado Activo</p>
@@ -483,11 +464,11 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
             </Card>
 
             {/* Pro Tip */}
-            <Card className="border-emerald-500/20 bg-emerald-500/5">
+            <Card className="border-border bg-muted/30">
                 <CardContent className="flex gap-3 pt-6">
-                    <Lightbulb className="h-5 w-5 shrink-0 text-emerald-500" />
+                    <Lightbulb className="h-5 w-5 shrink-0 text-primary" />
                     <div>
-                        <p className="font-medium text-emerald-400">Tip Pro</p>
+                        <p className="font-medium text-foreground">Tip Pro</p>
                         <p className="text-sm text-muted-foreground">
                             Arrastra las etapas desde el icono{' '}
                             <GripVertical className="inline h-4 w-4" /> para reordenar el

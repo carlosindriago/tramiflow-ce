@@ -111,12 +111,12 @@ export function TemplatesView({ templates, isLoading }: TemplatesViewProps) {
             <div className="space-y-8 p-4 md:p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Plantillas</h1>
+                        <h1 className="text-2xl font-bold tracking-tight text-foreground">Plantillas</h1>
                         <p className="text-muted-foreground">
                             Gestiona los flujos de trabajo de tus trámites.
                         </p>
                     </div>
-                    <Button asChild className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+                    <Button asChild className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground">
                         <Link href="/templates/new">
                             <Plus className="h-4 w-4" />
                             Nueva Plantilla
@@ -137,12 +137,12 @@ export function TemplatesView({ templates, isLoading }: TemplatesViewProps) {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Plantillas</h1>
+                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Plantillas</h1>
                     <p className="text-muted-foreground">
                         Gestiona los flujos de trabajo de tus trámites.
                     </p>
                 </div>
-                <Button asChild className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+                <Button asChild className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground">
                     <Link href="/templates/new">
                         <Plus className="h-4 w-4" />
                         Nueva Plantilla
@@ -154,7 +154,7 @@ export function TemplatesView({ templates, isLoading }: TemplatesViewProps) {
             {templates && templates.length > 0 && (
                 <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
                     <div className="flex items-center justify-between">
-                        <TabsList className="bg-muted/20 border-border-standard">
+                        <TabsList className="bg-muted/40 border-border">
                             <TabsTrigger value="grid" className="gap-2 data-[state=active]:bg-background">
                                 <LayoutGrid className="h-4 w-4" />
                                 Grid
@@ -172,29 +172,29 @@ export function TemplatesView({ templates, isLoading }: TemplatesViewProps) {
                             {templates.map((template) => (
                                 <Card
                                     key={template.id}
-                                    className="group relative flex flex-col transition-all duration-300 hover:scale-[1.01] hover:shadow-xl border-slate-800/50 bg-slate-900/40 backdrop-blur-md overflow-hidden"
+                                    className="group relative flex flex-col transition-all duration-300 hover:scale-[1.01] hover:shadow-xl border-border bg-card shadow-sm overflow-hidden"
                                 >
                                     {/* Header with status badge */}
-                                    <CardHeader className="pb-4 border-b border-slate-800/50">
+                                    <CardHeader className="pb-4 border-b border-border">
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="flex-1 space-y-2">
                                                 <div className="flex items-center gap-2 flex-wrap">
                                                     <Badge
                                                         variant={template.is_active ? 'default' : 'secondary'}
-                                                        className={`${template.is_active
-                                                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                                            : 'bg-slate-800 text-slate-400 border-slate-700'
-                                                            }`}
+                                                        className={template.is_active
+                                                            ? 'bg-primary/10 text-primary border-primary/20'
+                                                            : 'bg-muted text-muted-foreground border-border'
+                                                        }
                                                     >
                                                         {template.is_active ? 'Activo' : 'Borrador'}
                                                     </Badge>
                                                     {template.category && (
-                                                        <Badge variant="outline" className="border-slate-700 text-slate-400">
+                                                        <Badge variant="outline" className="border-border text-muted-foreground">
                                                             {template.category}
                                                         </Badge>
                                                     )}
                                                 </div>
-                                                <CardTitle className="line-clamp-2 text-xl leading-tight text-slate-100 group-hover:text-emerald-400 transition-colors">
+                                                <CardTitle className="line-clamp-2 text-xl leading-tight text-foreground group-hover:text-primary transition-colors">
                                                     {template.name}
                                                 </CardTitle>
                                             </div>
@@ -203,14 +203,14 @@ export function TemplatesView({ templates, isLoading }: TemplatesViewProps) {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800/50"
+                                                        className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
                                                     >
                                                         <MoreVertical className="h-4 w-4" />
                                                         <span className="sr-only">Abrir menú</span>
                                                     </Button>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="bg-slate-900 border-slate-800">
-                                                    <DropdownMenuItem asChild className="cursor-pointer text-slate-300 focus:bg-slate-800 focus:text-white">
+                                                <DropdownMenuContent align="end" className="bg-popover border-border">
+                                                    <DropdownMenuItem asChild className="cursor-pointer text-popover-foreground focus:bg-muted">
                                                         <Link href={`/templates/${template.id}/edit`}>
                                                             <Pencil className="mr-2 h-4 w-4" />
                                                             Editar
@@ -218,18 +218,18 @@ export function TemplatesView({ templates, isLoading }: TemplatesViewProps) {
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
                                                         onClick={() => handleDuplicate(template.id)}
-                                                        className="cursor-pointer text-slate-300 focus:bg-slate-800 focus:text-white"
+                                                        className="cursor-pointer text-popover-foreground focus:bg-muted"
                                                     >
                                                         <Copy className="mr-2 h-4 w-4" />
                                                         Duplicar
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuSeparator className="bg-slate-800" />
+                                                    <DropdownMenuSeparator className="bg-border" />
                                                     <DropdownMenuItem
                                                         onClick={() => {
                                                             setTemplateToDelete(template.id)
                                                             setShowDeleteDialog(true)
                                                         }}
-                                                        className="cursor-pointer text-red-400 focus:text-red-300 focus:bg-red-500/10"
+                                                        className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
                                                     >
                                                         <Trash2 className="mr-2 h-4 w-4" />
                                                         Eliminar
@@ -243,39 +243,39 @@ export function TemplatesView({ templates, isLoading }: TemplatesViewProps) {
                                     <CardContent className="flex-1 py-6 space-y-4">
                                         {/* Fees and Duration - Highlighted */}
                                         <div className="grid grid-cols-2 gap-3">
-                                            <div className="rounded-lg border border-slate-800/50 bg-slate-900/40 p-3">
-                                                <div className="flex items-center gap-2 text-emerald-400 mb-1">
+                                            <div className="rounded-lg border border-border bg-muted/40 p-3">
+                                                <div className="flex items-center gap-2 text-primary mb-1">
                                                     <DollarSign className="h-4 w-4" />
                                                     <span className="text-xs font-medium uppercase tracking-wide">Costo Total</span>
                                                 </div>
-                                                <p className="text-lg font-bold text-slate-200">
+                                                <p className="text-lg font-bold text-foreground">
                                                     {template.currency} {template.fees_professional + template.fees_official}
                                                 </p>
                                             </div>
-                                            <div className="rounded-lg border border-slate-800/50 bg-slate-900/40 p-3">
-                                                <div className="flex items-center gap-2 text-blue-400 mb-1">
+                                            <div className="rounded-lg border border-border bg-muted/40 p-3">
+                                                <div className="flex items-center gap-2 text-muted-foreground mb-1">
                                                     <Clock className="h-4 w-4" />
                                                     <span className="text-xs font-medium uppercase tracking-wide">Duración</span>
                                                 </div>
-                                                <p className="text-lg font-bold text-slate-200">
+                                                <p className="text-lg font-bold text-foreground">
                                                     {template.duration_work + template.duration_resolution} días
                                                 </p>
                                             </div>
                                         </div>
 
                                         {/* Steps indicator */}
-                                        <div className="flex items-center gap-3 text-sm text-slate-400">
-                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800/50">
-                                                <FileText className="h-4 w-4" />
+                                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                                                <FileText className="h-4 w-4 text-foreground" />
                                             </div>
                                             <div className="flex-1">
-                                                <p className="font-medium text-slate-300">
+                                                <p className="font-medium text-foreground">
                                                     {Array.isArray(template.steps)
                                                         ? template.steps.length
                                                         : 0}{' '}
                                                     {Array.isArray(template.steps) && template.steps.length === 1 ? 'etapa' : 'etapas'} definidas
                                                 </p>
-                                                <p className="text-xs text-slate-500">
+                                                <p className="text-xs text-muted-foreground">
                                                     Última edición: {format(new Date(template.created_at), 'dd MMM, yyyy', { locale: es })}
                                                 </p>
                                             </div>
@@ -283,10 +283,11 @@ export function TemplatesView({ templates, isLoading }: TemplatesViewProps) {
                                     </CardContent>
 
                                     {/* Footer with CTA button */}
-                                    <CardFooter className="pt-4 border-t border-slate-800/50 bg-slate-900/20">
+                                    <CardFooter className="pt-4 border-t border-border bg-muted/20">
                                         <Button
                                             asChild
-                                            className="w-full gap-2 bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/20 hover:shadow-emerald-900/40 transition-all font-medium"
+                                            variant="outline"
+                                            className="w-full gap-2 border-border hover:bg-muted font-medium text-foreground"
                                         >
                                             <Link href={`/templates/${template.id}`}>
                                                 <FileText className="h-4 w-4" />
@@ -308,18 +309,18 @@ export function TemplatesView({ templates, isLoading }: TemplatesViewProps) {
 
             {/* Empty State */}
             {templates?.length === 0 && (
-                <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed border-border-standard text-center">
+                <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed border-border text-center">
                     <div className="mb-4 rounded-full bg-muted p-4">
                         <FileText className="h-8 w-8 text-muted-foreground" />
                     </div>
-                    <h3 className="mb-2 text-lg font-semibold">
+                    <h3 className="mb-2 text-lg font-semibold text-foreground">
                         No hay plantillas creadas
                     </h3>
                     <p className="mb-4 max-w-sm text-muted-foreground">
                         Crea tu primera plantilla para estandarizar los procesos de tus
                         trámites y ahorrar tiempo.
                     </p>
-                    <Button asChild className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+                    <Button asChild className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground">
                         <Link href="/templates/new">
                             <Plus className="h-4 w-4" />
                             Crear Primera Plantilla
