@@ -1,19 +1,17 @@
 'use server'
 
-import { createClient } from '@carlosindriago/database/server'
 import { revalidatePath } from 'next/cache'
-import type { Database } from '@carlosindriago/database/types'
+import { type Document } from '@carlosindriago/core'
+import { actionSuccess, actionError } from '@carlosindriago/core'
+import { createOrgAction } from '@/lib/action-helpers'
 
-type Document = Database['public']['Tables']['documents']['Row']
 type ProcedureDocumentJoin = {
   document: Document | Document[] | null
 }
 
 // Link a document to a procedure
-export async function linkDocumentToProcedureAction(procedureId: string, documentId: string) {
-  try {
-    const supabase = await createClient()
-
+export const linkDocumentToProcedureAction = createOrgAction(
+  async ({ supabase }, procedureId: string, documentId: string) => {
     // Check if link exists
     const { data: existing } = await supabase
       .from('procedure_documents')
@@ -23,7 +21,7 @@ export async function linkDocumentToProcedureAction(procedureId: string, documen
       .maybeSingle()
 
     if (existing) {
-      return { success: true, message: 'Already linked' } // Idempotent
+      return actionSuccess(null) // Idempotent
     }
 
     const { error } = await supabase
@@ -33,43 +31,36 @@ export async function linkDocumentToProcedureAction(procedureId: string, documen
         document_id: documentId
       })
 
-    if (error) throw error
+    if (error) {
+      return actionError(error.message)
+    }
 
     revalidatePath(`/procedures/${procedureId}`)
-    return { success: true }
-  } catch (error) {
-    console.error('Error linking document:', error)
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+    return actionSuccess(null)
   }
-}
+)
 
 // Unlink a document from a procedure
-export async function unlinkDocumentFromProcedureAction(procedureId: string, documentId: string) {
-  try {
-    const supabase = await createClient()
-
+export const unlinkDocumentFromProcedureAction = createOrgAction(
+  async ({ supabase }, procedureId: string, documentId: string) => {
     const { error } = await supabase
       .from('procedure_documents')
       .delete()
       .eq('procedure_id', procedureId)
       .eq('document_id', documentId)
 
-    if (error) throw error
+    if (error) {
+      return actionError(error.message)
+    }
 
     revalidatePath(`/procedures/${procedureId}`)
-    return { success: true }
-  } catch (error) {
-    console.error('Error unlinking document:', error)
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+    return actionSuccess(null)
   }
-}
+)
 
 // Get documents for a specific procedure (via junction table)
-export async function getProcedureDocumentsAction(procedureId: string) {
-  try {
-    const supabase = await createClient()
-
-    // We fetch from procedure_documents joined with documents
+export const getProcedureDocumentsAction = createOrgAction(
+  async ({ supabase }, procedureId: string) => {
     const { data, error } = await supabase
       .from('procedure_documents')
       .select(`
@@ -77,38 +68,35 @@ export async function getProcedureDocumentsAction(procedureId: string) {
       `)
       .eq('procedure_id', procedureId)
 
-    if (error) throw error
+    if (error) {
+      return actionError(error.message)
+    }
 
     // Transform result to array of documents
-    const docs = data.map((item: ProcedureDocumentJoin) => {
-      const doc = Array.isArray(item.document) ? item.document[0] : item.document
+    const docs = (data || []).map((item: unknown) => {
+      const joinItem = item as ProcedureDocumentJoin
+      const doc = Array.isArray(joinItem.document) ? joinItem.document[0] : joinItem.document
       return doc
     }).filter(Boolean) as Document[]
 
-    // Generate signed URLs for all documents
+    // Generate signed URLs for all documents with 60s ephemeral expiry
     if (docs.length > 0) {
       const { data: signedUrls, error: signedUrlError } = await supabase
         .storage
         .from('client-docs')
         .createSignedUrls(
           docs.map((d) => d.storage_path),
-          60 * 60 // 1 hour expiry
+          60 // 60s ephemeral expiry
         )
 
       if (!signedUrlError && signedUrls) {
-        return {
-          success: true,
-          data: docs.map((doc, index) => ({
-            ...doc,
-            url: signedUrls[index]?.signedUrl || ''
-          }))
-        }
+        return actionSuccess(docs.map((doc, index) => ({
+          ...doc,
+          url: signedUrls[index]?.signedUrl || ''
+        })))
       }
     }
 
-    return { success: true, data: docs }
-  } catch (error) {
-    console.error('Error fetching procedure documents:', error)
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
+    return actionSuccess(docs)
   }
-}
+)

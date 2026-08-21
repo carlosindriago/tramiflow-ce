@@ -396,10 +396,10 @@ export function SmartDropzone({ clientId, organizationId, procedureId, onUploadC
             return
         }
 
-        // Get signed URL (private bucket)
+        // Get ephemeral signed URL (private bucket)
         const { data: urlData } = await supabase.storage
             .from('client-docs')
-            .createSignedUrl(storagePath, 60 * 60 * 24 * 365) // 1 year
+            .createSignedUrl(storagePath, 60) // 60s ephemeral TTL
 
         const url = urlData?.signedUrl ?? ''
 

@@ -414,10 +414,10 @@ export function ImagesToPdfDialog({
 
             if (uploadError) throw uploadError
 
-            // Get signed URL
+            // Get ephemeral signed URL
             const { data: urlData } = await supabase.storage
                 .from('client-docs')
-                .createSignedUrl(storagePath, 60 * 60 * 24 * 365)
+                .createSignedUrl(storagePath, 60) // 60s ephemeral TTL
 
             const url = urlData?.signedUrl ?? ''
 

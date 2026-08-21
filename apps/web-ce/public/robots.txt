@@ -1,0 +1,12 @@
+# TramiFlow CE Robots Configuration
+User-agent: *
+Allow: /
+Allow: /templates/share/
+Disallow: /api/
+Disallow: /procedures/
+Disallow: /clients/
+Disallow: /settings/
+Disallow: /tools/
+Disallow: /onboarding/
+
+Sitemap: https://tramiflow.app/sitemap.xml

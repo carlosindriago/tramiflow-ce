@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@carlosindriago/database/server'
-import { headers } from 'next/headers'
+import { headers, cookies } from 'next/headers'
 
 export async function signInWithGoogle() {
     const supabase = await createClient()
@@ -22,8 +22,7 @@ export async function signInWithGoogle() {
         } else if (data.url) {
             redirectUrl = data.url
         }
-/* eslint-disable */
-    } catch (e) {
+    } catch {
         errorOccurred = true
     }
 
@@ -52,14 +51,32 @@ export async function signInWithEmail(email: string, password: string) {
             errorOccurred = true
             errorMessage = 'Credenciales inválidas'
         } else if (data.session) {
-            // Update last_ip silently
+            // Update last_ip and Edge security metadata silently
             const headersList = await headers()
             const forwardedFor = headersList.get('x-forwarded-for')
             const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : (headersList.get('x-real-ip') || 'unknown')
+            const country = headersList.get('x-vercel-ip-country') || headersList.get('cf-ipcountry') || 'LOCAL'
             
             if (ip !== 'unknown') {
                 await supabase.from('profiles').update({ last_ip: ip }).eq('id', data.session.user.id)
             }
+
+            // Generate single session UUID
+            const sessionUuid = crypto.randomUUID()
+            await supabase.auth.updateUser({
+                data: {
+                    session_uuid: sessionUuid,
+                    last_country: country,
+                }
+            })
+
+            const cookieStore = await cookies()
+            cookieStore.set('tf_session_id', sessionUuid, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 7,
+            })
 
             // Check if MFA is required
             const { data: factors } = await supabase.auth.mfa.listFactors()
@@ -72,8 +89,7 @@ export async function signInWithEmail(email: string, password: string) {
                 }
             }
         }
-/* eslint-disable */
-    } catch (e) {
+    } catch {
         errorOccurred = true
         errorMessage = 'Error inesperado al iniciar sesión'
     }
@@ -101,6 +117,8 @@ export async function signUpWithEmail(email: string, password: string) {
         const headersList = await headers()
         const forwardedFor = headersList.get('x-forwarded-for')
         const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : (headersList.get('x-real-ip') || '')
+        const country = headersList.get('x-vercel-ip-country') || headersList.get('cf-ipcountry') || 'LOCAL'
+        const sessionUuid = crypto.randomUUID()
 
         const { data, error } = await supabase.auth.signUp({
             email,
@@ -108,14 +126,15 @@ export async function signUpWithEmail(email: string, password: string) {
             options: {
                 emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
                 data: {
-                    registration_ip: ip
+                    registration_ip: ip,
+                    session_uuid: sessionUuid,
+                    last_country: country,
                 }
             },
         })
 
         if (error) {
             errorOccurred = true
-            // Check for common errors and map to generic messages
             if (error.message.includes('already registered') || error.message.includes('already exists')) {
                 errorMessage = 'Ya existe una cuenta con este correo electrónico'
             } else {
@@ -124,11 +143,16 @@ export async function signUpWithEmail(email: string, password: string) {
         } else if (data.user && !data.session) {
             infoMessage = 'Por favor, revisa tu email para confirmar tu cuenta.'
         } else if (data.session) {
+            const cookieStore = await cookies()
+            cookieStore.set('tf_session_id', sessionUuid, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 7,
+            })
             success = true
         }
-/* eslint-disable */
-    } catch (e) {
-        // Only catch true unexpected errors, not NEXT_REDIRECT (though we aren't calling it here)
+    } catch {
         errorOccurred = true
         errorMessage = 'Error inesperado al crear la cuenta'
     }
@@ -155,10 +179,7 @@ export async function resetPassword(email: string) {
         redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/settings`,
     })
 
-    // Always return success to prevent email enumeration
-    // Even if the email doesn't exist, we show the same message
     if (error) {
-        // Log the error internally but don't expose to user
         console.error('Password reset error:', error.message)
     }
 
@@ -189,8 +210,20 @@ export async function verifyMfaAction(code: string) {
         })
 
         if (verify.error) throw verify.error
-/* eslint-disable */
-    } catch (e: any) {
+
+        // Set session UUID on verified MFA
+        const sessionUuid = crypto.randomUUID()
+        await supabase.auth.updateUser({
+            data: { session_uuid: sessionUuid }
+        })
+        const cookieStore = await cookies()
+        cookieStore.set('tf_session_id', sessionUuid, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 7,
+        })
+    } catch {
         errorOccurred = true
         errorMessage = 'Código incorrecto. Intenta de nuevo.'
     }
