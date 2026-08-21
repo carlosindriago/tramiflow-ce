@@ -33,15 +33,14 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
     }
 
     return (
-        <SidebarProvider className="bg-slate-950">
+        <SidebarProvider className="bg-background">
             <HeartbeatProvider />
             <AppSidebar />
-            <SidebarInset className="bg-transparent">
+            <SidebarInset className="bg-background">
                 <Header />
-                <main className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-950/80">
+                <main className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
                     <VerificationBanner emailVerified={emailVerified} className="rounded-none border-x-0 border-t-0" />
                     <ErrorBoundary>
-                        {/* Check onboarding before showing dashboard content */}
                         <OnboardingGuard>
                             {children}
                         </OnboardingGuard>
