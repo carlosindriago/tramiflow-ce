@@ -4,7 +4,6 @@ import { createClient } from '@carlosindriago/database/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
-/* eslint-disable */
 const shareSchema = z.object({
     templateId: z.string(),
     visibility: z.enum(['private', 'public', 'restricted']),
@@ -16,24 +15,29 @@ const shareSchema = z.object({
     }).optional(),
 })
 
-/* eslint-disable */
 const permissionSchema = z.object({
     templateId: z.string(),
     email: z.string().email(),
 })
 
 export async function updateTemplateVisibilityAction(input: z.infer<typeof shareSchema>) {
+    const parsed = shareSchema.safeParse(input)
+    if (!parsed.success) {
+        return { success: false, error: 'Datos de configuración inválidos' }
+    }
+    const data = parsed.data
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { success: false, error: 'Unauthorized' }
 
     // Generate token if public and doesn't exist
     let share_token = undefined
-    if (input.visibility === 'public') {
+    if (data.visibility === 'public') {
         const { data: current } = await supabase
             .from('procedure_templates')
             .select('share_token')
-            .eq('id', input.templateId)
+            .eq('id', data.templateId)
             .single()
 
         if (!current?.share_token) {
@@ -44,20 +48,26 @@ export async function updateTemplateVisibilityAction(input: z.infer<typeof share
     const { error } = await supabase
         .from('procedure_templates')
         .update({
-            visibility: input.visibility,
-            is_publicly_visible: input.visibility === 'public',
+            visibility: data.visibility,
+            is_publicly_visible: data.visibility === 'public',
             ...(share_token ? { share_token } : {}),
-            ...(input.public_settings ? { public_settings: input.public_settings } : {})
+            ...(data.public_settings ? { public_settings: data.public_settings } : {})
         })
-        .eq('id', input.templateId)
+        .eq('id', data.templateId)
 
     if (error) return { success: false, error: error.message }
 
-    revalidatePath(`/templates/${input.templateId}`)
+    revalidatePath(`/templates/${data.templateId}`)
     return { success: true }
 }
 
 export async function inviteUserAction(input: z.infer<typeof permissionSchema>) {
+    const parsed = permissionSchema.safeParse(input)
+    if (!parsed.success) {
+        return { success: false, error: 'Email o ID de plantilla inválidos' }
+    }
+    const data = parsed.data
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { success: false, error: 'Unauthorized' }
@@ -65,8 +75,8 @@ export async function inviteUserAction(input: z.infer<typeof permissionSchema>) 
     const { error } = await supabase
         .from('template_permissions')
         .insert({
-            template_id: input.templateId,
-            email: input.email,
+            template_id: data.templateId,
+            email: data.email,
         })
 
     if (error) {
@@ -74,7 +84,7 @@ export async function inviteUserAction(input: z.infer<typeof permissionSchema>) 
         return { success: false, error: error.message }
     }
 
-    revalidatePath(`/templates/${input.templateId}`)
+    revalidatePath(`/templates/${data.templateId}`)
     return { success: true }
 }
 

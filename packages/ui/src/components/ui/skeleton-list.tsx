@@ -1,5 +1,5 @@
-import { Skeleton } from '@carlosindriago/ui'
-import { TableCell, TableRow } from '@carlosindriago/ui'
+import { Skeleton } from './skeleton'
+import { TableCell, TableRow } from './table'
 
 interface SkeletonListProps {
     rows?: number

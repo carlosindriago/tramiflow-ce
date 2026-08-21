@@ -2,8 +2,8 @@
 
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
-import { Button } from '@carlosindriago/ui'
-import { Input } from '@carlosindriago/ui'
+import { Button } from '../button'
+import { Input } from '../input'
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -11,7 +11,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@carlosindriago/ui'
+} from '../dropdown-menu'
 import { Settings2 } from 'lucide-react'
 
 interface DataTableToolbarProps<TData> {
