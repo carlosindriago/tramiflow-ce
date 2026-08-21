@@ -29,7 +29,11 @@ export async function middleware(request: NextRequest) {
         }
     )
 
-    // 3. User verification and Zero-Latency Check
+    // Forward Edge Country header
+    const country = request.headers.get('x-vercel-ip-country') || request.headers.get('cf-ipcountry') || 'LOCAL'
+    supabaseResponse.headers.set('x-user-country', country)
+
+    // User verification and Zero-Latency Check
     const { data: { user } } = await supabase.auth.getUser()
 
     // Public routes that don't depend on auth
@@ -37,26 +41,41 @@ export async function middleware(request: NextRequest) {
     const publicRoutes = ['/login', '/auth/callback', '/shared', '/u/', '/templates/share', '/terms', '/privacy', '/help']
     const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
 
-    // 3.1. Auth Enforcement
+    // 1. Auth Enforcement
     if (!user && !isPublicRoute) {
-        // Security: Ensure setup cookie is cleared if session is invalid
         if (request.cookies.has('tramiflow_setup_complete')) {
             supabaseResponse.cookies.delete('tramiflow_setup_complete')
+        }
+        if (request.cookies.has('tf_session_id')) {
+            supabaseResponse.cookies.delete('tf_session_id')
         }
 
         const loginUrl = new URL('/login', request.url)
         return NextResponse.redirect(loginUrl)
     }
 
-    // 3.2. Redirect Logged-in users away from Login
+    // 2. Single Session Enforcement (Zero-latency Edge verification)
+    if (user && !isPublicRoute) {
+        const expectedSessionId = user.user_metadata?.session_uuid
+        const clientSessionId = request.cookies.get('tf_session_id')?.value
+
+        if (expectedSessionId && clientSessionId && expectedSessionId !== clientSessionId) {
+            // Concurrent session detected: user logged in on another device
+            const loginUrl = new URL('/login?reason=concurrent_session', request.url)
+            const response = NextResponse.redirect(loginUrl)
+            response.cookies.delete('tf_session_id')
+            response.cookies.delete('tramiflow_setup_complete')
+            return response
+        }
+    }
+
+    // 3. Redirect Logged-in users away from Login
     if (user && pathname === '/login') {
         return NextResponse.redirect(new URL('/', request.url))
     }
 
-    // 3.3. Organization Check (Only for protected routes)
+    // 4. Organization Check (Only for protected dashboard routes)
     if (user && !isPublicRoute && !pathname.startsWith('/onboarding')) {
-        // SECURITY: never trust a client-controlled cookie as proof that onboarding
-        // was completed. Always validate the membership in the database.
         const { data: organizations } = await supabase
             .from('organization_members')
             .select('organization_id')
@@ -66,7 +85,6 @@ export async function middleware(request: NextRequest) {
         const hasOrganization = organizations && organizations.length > 0
 
         if (hasOrganization) {
-            // Keep the cookie only as a server-issued hint for future optimizations.
             supabaseResponse.cookies.set('tramiflow_setup_complete', 'true', {
                 maxAge: 31536000, // 1 year
                 httpOnly: true,
@@ -75,7 +93,6 @@ export async function middleware(request: NextRequest) {
             })
             return supabaseResponse
         } else {
-            // BLOCK: User has NO org, must onboard
             const onboardingUrl = new URL('/onboarding', request.url)
             return NextResponse.redirect(onboardingUrl)
         }

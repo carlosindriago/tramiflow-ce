@@ -10,11 +10,12 @@ object-src 'none';
 base-uri 'none';
 form-action 'self' https://*.supabase.co https://accounts.google.com;
 frame-ancestors 'none';
+frame-src 'self' blob:;
 connect-src 'self' https://*.supabase.co https://api.resend.com;
 `.replace(/\n/g, ' ').trim();
 
 const securityHeaders = [
-  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
@@ -24,7 +25,6 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   transpilePackages: ['@carlosindriago/ui', '@carlosindriago/core', '@carlosindriago/database', '@carlosindriago/pdf-kit'],
-  /* config options here */
   reactCompiler: true,
   async headers() {
     return [

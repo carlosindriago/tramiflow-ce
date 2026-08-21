@@ -19,7 +19,24 @@ export async function GET(request: NextRequest) {
             return new NextResponse('Unauthorized: No active session found', { status: 401 })
         }
 
-        // 2. Fetch the document from Supabase Storage
+        // 2. Extract orgId from path (expected format: orgId/clientId/filename)
+        const pathSegments = path.split('/')
+        const orgIdFromPath = pathSegments[0]
+
+        if (orgIdFromPath) {
+            const { data: membership } = await supabase
+                .from('organization_members')
+                .select('organization_id')
+                .eq('organization_id', orgIdFromPath)
+                .eq('user_id', user.id)
+                .maybeSingle()
+
+            if (!membership) {
+                return new NextResponse('Forbidden: Access denied to this organization', { status: 403 })
+            }
+        }
+
+        // 3. Fetch the document from Supabase Storage
         const { data, error } = await supabase.storage.from('client-docs').download(path)
 
         if (error || !data) {
@@ -27,18 +44,15 @@ export async function GET(request: NextRequest) {
             return new NextResponse('Not Found or Forbidden', { status: 404 })
         }
 
-        // 3. Determine the correct Content-Type based on the blob
+        // 4. Determine Content-Type
         const mimeType = data.type || 'application/octet-stream'
 
-        // 4. Return the document as a stream with the proper headers
-/* eslint-disable */
-        return new NextResponse(data as any, {
+        // 5. Return the document stream with caching headers
+        return new NextResponse(data, {
             status: 200,
             headers: {
                 'Content-Type': mimeType,
-                'Cache-Control': 'private, max-age=3600',
-                // Optional: add Content-Disposition if you want to force download instead of inline view
-                // 'Content-Disposition': `inline; filename="${path.split('/').pop()}"`
+                'Cache-Control': 'private, no-transform, max-age=60',
             },
         })
 

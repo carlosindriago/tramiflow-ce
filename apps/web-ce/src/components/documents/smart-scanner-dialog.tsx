@@ -81,7 +81,7 @@ export function SmartScannerDialog({ open, onOpenChange, doc }: SmartScannerDial
             const supabase = createClient()
             const { data } = await supabase.storage
                 .from('client-docs')
-                .createSignedUrl(doc.storage_path, 60 * 10) // 10 min token
+                .createSignedUrl(doc.storage_path, 60) // 60s ephemeral token
 
             if (data?.signedUrl) {
                 setImageUrl(data.signedUrl)

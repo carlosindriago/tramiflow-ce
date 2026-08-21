@@ -41,13 +41,13 @@ export const getClientDocuments = createOrgAction(
             return actionSuccess([] as Document[])
         }
 
-        // Generate signed URLs for all documents
+        // Generate signed URLs with 60s ephemeral expiry
         const { data: signedUrls, error: signedUrlError } = await supabase
             .storage
             .from('client-docs')
             .createSignedUrls(
                 docs.map(d => d.storage_path),
-                60 * 60 // 1 hour expiry
+                60 // 60s ephemeral expiry
             )
 
         if (signedUrlError) {
@@ -62,6 +62,31 @@ export const getClientDocuments = createOrgAction(
         }))
 
         return actionSuccess(documentsWithUrls as Document[])
+    }
+)
+
+export const getDocumentSignedUrlAction = createOrgAction(
+    async ({ supabase, orgId }, documentId: string) => {
+        const { data: doc, error: docError } = await supabase
+            .from('documents')
+            .select('storage_path, organization_id')
+            .eq('id', documentId)
+            .eq('organization_id', orgId)
+            .single()
+
+        if (docError || !doc) {
+            return actionError('Documento no encontrado o no autorizado')
+        }
+
+        const { data, error } = await supabase.storage
+            .from('client-docs')
+            .createSignedUrl(doc.storage_path, 60) // 60s ephemeral TTL
+
+        if (error || !data) {
+            return actionError(error?.message || 'Error al generar URL firmada')
+        }
+
+        return actionSuccess({ signedUrl: data.signedUrl })
     }
 )
 

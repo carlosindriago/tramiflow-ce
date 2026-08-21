@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -37,21 +38,26 @@ type ResetFormData = z.infer<typeof resetSchema>
 
 type AuthMode = 'login' | 'signup' | 'reset' | 'mfa'
 
-export default function LoginPage() {
+function LoginFormContent() {
+    const searchParams = useSearchParams()
+    const reason = searchParams.get('reason')
+    const authError = searchParams.get('error')
+
     const [mode, setMode] = useState<AuthMode>('login')
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
     const [signupSuccess, setSignupSuccess] = useState(false)
     const [resetSuccess, setResetSuccess] = useState(false)
-/* eslint-disable */
-    const [mounted, setMounted] = useState(false)
     const [mfaCode, setMfaCode] = useState('')
 
-    // Prevent hydration mismatch
     useEffect(() => {
-        setMounted(true)
-    }, [])
+        if (reason === 'concurrent_session') {
+            setError('Tu sesión se cerró porque iniciaste sesión en otro dispositivo o navegador.')
+        } else if (authError === 'auth') {
+            setError('Error de autenticación. Por favor, intenta de nuevo.')
+        }
+    }, [reason, authError])
 
     const loginForm = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -574,5 +580,17 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex min-h-screen items-center justify-center bg-background">
+                <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+            </div>
+        }>
+            <LoginFormContent />
+        </Suspense>
     )
 }

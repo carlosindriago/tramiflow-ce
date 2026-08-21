@@ -16,9 +16,18 @@ export async function GET(request: Request) {
         const { data: { session }, error } = await supabase.auth.exchangeCodeForSession(code)
 
         if (!error && session) {
-            // Track IP Address
+            // Track IP Address & Country
             const forwardedFor = request.headers.get('x-forwarded-for')
             const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown'
+            const country = request.headers.get('x-vercel-ip-country') || request.headers.get('cf-ipcountry') || 'LOCAL'
+            const sessionUuid = crypto.randomUUID()
+
+            await supabase.auth.updateUser({
+                data: {
+                    session_uuid: sessionUuid,
+                    last_country: country,
+                }
+            })
 
             if (ip !== 'unknown') {
                 const { data: profile } = await supabase
@@ -38,7 +47,15 @@ export async function GET(request: Request) {
                     .eq('id', session.user.id)
             }
 
-            return NextResponse.redirect(new URL(next, request.url))
+            const response = NextResponse.redirect(new URL(next, request.url))
+            response.cookies.set('tf_session_id', sessionUuid, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 7,
+            })
+
+            return response
         }
     }
 
