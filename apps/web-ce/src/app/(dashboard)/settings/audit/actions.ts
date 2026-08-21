@@ -1,8 +1,6 @@
 'use server'
 
 import { createClient } from '@carlosindriago/database/server'
-/* eslint-disable */
-import { type AuditAction } from '@carlosindriago/core/server'
 
 export interface AuditLog {
     id: string
@@ -11,8 +9,7 @@ export interface AuditLog {
     action: string
     resource_id: string | null
     resource_type: string | null
-/* eslint-disable */
-    details: any
+    details: Record<string, unknown> | null
     ip_address: string | null
     created_at: string
     user?: {

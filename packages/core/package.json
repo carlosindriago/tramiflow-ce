@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@carlosindriago/database": "*",
+    "@supabase/supabase-js": "^2.95.3",
     "@upstash/redis": "^1.37.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.563.0",

@@ -110,5 +110,3 @@ export const toast = {
         return sonnerToast.promise(promise, messages) as unknown as Promise<T>
     },
 }
-
-export default toast

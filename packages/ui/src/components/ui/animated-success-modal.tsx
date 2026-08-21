@@ -10,8 +10,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@carlosindriago/ui'
-import { Button } from '@carlosindriago/ui'
+} from './dialog'
+import { Button } from './button'
 
 /**
  * Animated Success Modal Component

@@ -6,13 +6,13 @@ import { es } from 'date-fns/locale'
 import { Calendar as CalendarIcon } from 'lucide-react'
 
 import { cn } from '@carlosindriago/core'
-import { Button } from '@carlosindriago/ui'
-import { Calendar } from '@carlosindriago/ui'
+import { Button } from './button'
+import { Calendar } from './calendar'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from '@carlosindriago/ui'
+} from './popover'
 
 /**
  * Professional DatePicker Component

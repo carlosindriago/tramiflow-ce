@@ -22,7 +22,6 @@ const passwordSchema = z.object({
 
 export async function updateProfileName(fullName: string): Promise<{ success: boolean; message?: string; error?: string }> {
     try {
-        // Validate input using safeParse
         const result = nameSchema.safeParse(fullName)
         
         if (!result.success) {
@@ -34,8 +33,7 @@ export async function updateProfileName(fullName: string): Promise<{ success: bo
         
         const supabase = await createClient()
         
-/* eslint-disable */
-        const { data, error } = await supabase.auth.updateUser({
+        const { error } = await supabase.auth.updateUser({
             data: { full_name: result.data }
         })
 
@@ -47,8 +45,7 @@ export async function updateProfileName(fullName: string): Promise<{ success: bo
         }
 
         return { success: true, message: 'Nombre actualizado correctamente' }
-/* eslint-disable */
-    } catch (error) {
+    } catch {
         return { success: false, error: 'Error inesperado al actualizar el nombre' }
     }
 }
@@ -59,7 +56,6 @@ export async function updateUserPassword(
     confirmPassword: string
 ): Promise<{ success: boolean; message?: string; error?: string }> {
     try {
-        // Validate input using safeParse
         const result = passwordSchema.safeParse({
             currentPassword,
             newPassword,
@@ -75,8 +71,7 @@ export async function updateUserPassword(
         
         const supabase = await createClient()
         
-/* eslint-disable */
-        const { data, error } = await supabase.auth.updateUser({
+        const { error } = await supabase.auth.updateUser({
             password: result.data.newPassword
         })
 
@@ -88,8 +83,7 @@ export async function updateUserPassword(
         }
 
         return { success: true, message: 'Contraseña actualizada correctamente' }
-/* eslint-disable */
-    } catch (error) {
+    } catch {
         return { success: false, error: 'Error inesperado al actualizar la contraseña' }
     }
 }

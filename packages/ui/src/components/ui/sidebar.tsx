@@ -7,23 +7,23 @@ import { Slot } from "radix-ui"
 
 import { useIsMobile } from "../../hooks/use-mobile"
 import { cn } from "@carlosindriago/core"
-import { Button } from "@carlosindriago/ui"
-import { Input } from "@carlosindriago/ui"
-import { Separator } from "@carlosindriago/ui"
+import { Button } from "./button"
+import { Input } from "./input"
+import { Separator } from "./separator"
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@carlosindriago/ui"
-import { Skeleton } from "@carlosindriago/ui"
+} from "./sheet"
+import { Skeleton } from "./skeleton"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@carlosindriago/ui"
+} from "./tooltip"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
