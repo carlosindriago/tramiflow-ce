@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import * as React from 'react'
@@ -67,23 +66,27 @@ export function TemplatesTable({ templates, isLoading }: TemplatesTableProps) {
         if (!templateToDelete) return
 
         try {
-            await deleteTemplate(templateToDelete)
-            toast.success('Plantilla eliminada')
-            // Refresh the page
-            window.location.reload()
-/* eslint-disable */
+            const res = await deleteTemplate(templateToDelete)
+            if (res.success) {
+                toast.success('Plantilla eliminada')
+                window.location.reload()
+            } else {
+                toast.error(res.error || 'Error al eliminar la plantilla')
+            }
         } catch (error) {
+            console.error('Delete template error:', error)
             toast.error('Error al eliminar la plantilla')
         }
     }
 
     const handleDuplicate = async (templateId: string) => {
         try {
-            await duplicateTemplate(templateId)
-            toast.success('Plantilla duplicada')
-            window.location.reload()
-/* eslint-disable */
+            const res = await duplicateTemplate(templateId)
+            if (res && !res.success) {
+                toast.error(res.error || 'Error al duplicar la plantilla')
+            }
         } catch (error) {
+            console.error('Duplicate template error:', error)
             toast.error('Error al duplicar la plantilla')
         }
     }

@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState } from 'react'
@@ -8,7 +7,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '@carlosindriago/ui'
+} from './dropdown-menu'
 import { toast } from '@carlosindriago/core'
 
 interface PhoneActionProps {

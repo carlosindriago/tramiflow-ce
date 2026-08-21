@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
@@ -25,8 +24,7 @@ import {
     useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-/* eslint-disable */
-import { Procedure, ProcedureStatus, PROCEDURE_STATUS_LABELS } from '@carlosindriago/core'
+import { Procedure, ProcedureStatusConfig } from '@carlosindriago/core'
 import { updateProcedureStatusAction } from '@/app/(dashboard)/procedures/actions'
 import { ProcedureCard } from './procedure-card'
 import { NewProcedureDialog } from './new-procedure-dialog'
@@ -35,8 +33,6 @@ import { createPortal } from 'react-dom'
 import { Plus, ClipboardList } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
-import { ProcedureStatus as ProcedureStatusConfig } from '@carlosindriago/core'
-
 // --- Sortable Item Wrapper ---
 function SortableProcedureCard({
     procedure,
@@ -44,7 +40,7 @@ function SortableProcedureCard({
     statuses
 }: {
     procedure: Procedure
-    onStatusChange: (id: string, newStatus: ProcedureStatus) => void
+    onStatusChange: (id: string, newStatus: string) => void
     statuses?: ProcedureStatusConfig[]
 }) {
     const {
@@ -90,7 +86,7 @@ function KanbanColumn({
     id: string
     title: string
     procedures: Procedure[]
-    onStatusChange: (id: string, newStatus: ProcedureStatus) => void
+    onStatusChange: (id: string, newStatus: string) => void
     statuses?: ProcedureStatusConfig[]
 }) {
     const { setNodeRef } = useDroppable({
@@ -238,15 +234,15 @@ export function KanbanBoard({ initialProcedures, clients, templates, statuses = 
         if (isActiveProcedure && isOverColumn) {
             setProcedures((items) => {
                 const activeIndex = items.findIndex((p) => p.id === activeId)
-                const newStatus = over.data.current?.status as ProcedureStatus
+                const newStatus = (over.data.current?.status as string) || ''
 
-                if (items[activeIndex].status !== (newStatus as any)) {
+                if (items[activeIndex].status !== newStatus) {
                     const newItems = [...items]
                     newItems[activeIndex] = {
                         ...newItems[activeIndex],
-                        status: newStatus as any,
+                        status: newStatus,
                     }
-                    return arrayMove(newItems, activeIndex, activeIndex) // Position doesn't matter much here
+                    return arrayMove(newItems, activeIndex, activeIndex)
                 }
                 return items
             })
@@ -271,33 +267,32 @@ export function KanbanBoard({ initialProcedures, clients, templates, statuses = 
                 toast.error('Error al mover trámite. Revirtiendo...')
                 setProcedures(previousProcedures)
             }
-/* eslint-disable */
         } catch (error) {
+            console.error('Drag end error:', error)
             toast.error('Error de conexión. Revirtiendo...')
             setProcedures(previousProcedures)
         }
     }
 
-    const handleStatusChange = async (procedureId: string, newStatus: ProcedureStatus) => {
+    const handleStatusChange = async (procedureId: string, newStatus: string) => {
         const procedure = procedures.find(p => p.id === procedureId)
-        if (!procedure || procedure.status === (newStatus as any)) return
+        if (!procedure || procedure.status === newStatus) return
 
         const previousProcedures = [...procedures] // Capture for revert
 
         // Optimistic update
         setProcedures(prev => prev.map(p =>
-            p.id === procedureId ? { ...p, status: newStatus as any } : p
+            p.id === procedureId ? { ...p, status: newStatus } : p
         ))
 
         try {
-            const result = await updateProcedureStatusAction(procedureId, newStatus as any)
+            const result = await updateProcedureStatusAction(procedureId, newStatus)
             if (!result.success) {
                 toast.error('Error al actualizar estado. Revirtiendo...')
                 setProcedures(previousProcedures)
             }
-            // toast.success removed for premium quiet UI experience
-/* eslint-disable */
         } catch (error) {
+            console.error('Status change error:', error)
             toast.error('Error de conexión. Revirtiendo...')
             setProcedures(previousProcedures)
         }

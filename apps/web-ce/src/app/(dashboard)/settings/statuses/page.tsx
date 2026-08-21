@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { getProcedureStatusesAction } from '@/app/(dashboard)/procedures/actions'
 import { StatusesManager } from '@/components/settings/statuses-manager'
-import { ProcedureStatus as ProcedureStatusConfig } from '@carlosindriago/core'
+import { ProcedureStatusConfig } from '@carlosindriago/core'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@carlosindriago/ui'
 import { Loader2 } from 'lucide-react'
 

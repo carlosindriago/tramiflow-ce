@@ -1,7 +1,6 @@
-// @ts-nocheck
 'use client'
 
-import { Procedure, ProcedureStatus, PROCEDURE_STATUS_LABELS } from '@carlosindriago/core'
+import { Procedure, ProcedureStatusConfig } from '@carlosindriago/core'
 import { Card, CardContent } from '@carlosindriago/ui'
 import { Progress } from '@carlosindriago/ui'
 import { Button } from '@carlosindriago/ui'
@@ -18,16 +17,15 @@ import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import Link from 'next/link'
 
-import { ProcedureStatus as ProcedureStatusConfig } from '@carlosindriago/core'
 import { cn } from '@carlosindriago/core'
 
 interface ProcedureCardProps {
     procedure: Procedure
     onClick?: () => void
     hideClient?: boolean
-    onStatusChange?: (status: ProcedureStatus) => void
+    onStatusChange?: (status: string) => void
     statuses?: ProcedureStatusConfig[]
-  onOpenDrawer?: (procedureId: string) => void
+    onOpenDrawer?: (procedureId: string) => void
 }
 
 export function ProcedureCard({ procedure, onClick, hideClient, onStatusChange, statuses, onOpenDrawer }: ProcedureCardProps) {
@@ -37,12 +35,14 @@ export function ProcedureCard({ procedure, onClick, hideClient, onStatusChange, 
     const checklist = procedure.checklist_progress || {}
     const totalReqs = Array.isArray(requirements) ? requirements.length : 0
     const completedReqs = Array.isArray(requirements)
-/* eslint-disable */
-        ? requirements.filter((r: any) => checklist[r.id || r]).length
+        ? requirements.filter((r) => {
+            const key = typeof r === 'object' && r !== null && 'id' in r ? String((r as { id: string }).id) : String(r)
+            return Boolean(checklist[key])
+        }).length
         : 0
-  const steps = procedure.template?.steps ?? []
-  const hasSteps = steps.length > 0
-  const completedStepsCount = hasSteps ? steps.filter(s => procedure.steps_progress?.[s.id] === true).length : 0
+    const steps = procedure.template?.steps ?? []
+    const hasSteps = steps.length > 0
+    const completedStepsCount = hasSteps ? steps.filter(s => procedure.steps_progress?.[s.id] === true).length : 0
 
     const progress = totalReqs > 0 ? (completedReqs / totalReqs) * 100 : 0
 
@@ -50,26 +50,9 @@ export function ProcedureCard({ procedure, onClick, hideClient, onStatusChange, 
     const statusConfig = statuses?.find(s => s.id === procedure.status) || procedure.status_details
     const statusColor = statusConfig?.color || '#3b82f6' // Default Blue
 
-    // Styling
-    // We use a very light opacity for background to work on both light and dark modes
-    // Dark mode usually ignores low opacity light backgrounds or blends them.
-    // For reliable dark mode, we might want to use CSS variables or `bg-opacity`.
-    // But since we have arbitrary hex colors, we use inline styles with opacity.
-
-    // Hex transparency: 0D = ~5%, 1A = ~10%
-    // We'll use a very subtle fill
-
     const cardStyle = {
         borderLeftColor: statusColor,
-        // Dynamic background tint
-        // Using a linear gradient to make it look "premium" and subtle
         backgroundImage: `linear-gradient(to right, ${statusColor}08, ${statusColor}00)`,
-    }
-
-/* eslint-disable */
-    const progressStyle = {
-        // You can also color the progress bar if you want
-        // backgroundColor: statusColor
     }
 
     const Content = (
@@ -103,38 +86,22 @@ export function ProcedureCard({ procedure, onClick, hideClient, onStatusChange, 
                             <DropdownMenuContent align="end" className="w-40 z-50">
                                 <DropdownMenuLabel className="text-xs">Mover a...</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                {statuses ? (
-                                    statuses.map((status) => {
-                                        if (status.id === procedure.status) return null
-                                        return (
-                                            <DropdownMenuItem
-                                                key={status.id}
-                                                onClick={() => onStatusChange(status.id as any)}
-                                                className="text-xs gap-2"
-                                            >
-                                                <div
-                                                    className="h-2 w-2 rounded-full"
-                                                    style={{ backgroundColor: status.color }}
-                                                />
-                                                {status.name}
-                                            </DropdownMenuItem>
-                                        )
-                                    })
-                                ) : (
-                                    // Fallback for legacy
-                                    Object.entries(PROCEDURE_STATUS_LABELS).map(([status, label]) => {
-                                        if (status === procedure.status) return null
-                                        return (
-                                            <DropdownMenuItem
-                                                key={status}
-                                                onClick={() => onStatusChange(status as any)}
-                                                className="text-xs"
-                                            >
-                                                {label}
-                                            </DropdownMenuItem>
-                                        )
-                                    })
-                                )}
+                                {statuses?.map((status) => {
+                                    if (status.id === procedure.status) return null
+                                    return (
+                                        <DropdownMenuItem
+                                            key={status.id}
+                                            onClick={() => onStatusChange(status.id)}
+                                            className="text-xs gap-2"
+                                        >
+                                            <div
+                                                className="h-2 w-2 rounded-full"
+                                                style={{ backgroundColor: status.color }}
+                                            />
+                                            {status.name}
+                                        </DropdownMenuItem>
+                                    )
+                                })}
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
@@ -250,4 +217,3 @@ export function ProcedureCard({ procedure, onClick, hideClient, onStatusChange, 
         </Link>
     )
 }
-

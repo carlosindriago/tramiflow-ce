@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState } from 'react'
@@ -26,11 +25,9 @@ interface TemplateFormProps {
         id?: string
         visibility?: 'private' | 'public' | 'restricted'
         share_token?: string | null
-/* eslint-disable */
-        public_settings?: any // Add this
+        public_settings?: Record<string, unknown> | null
     }
-/* eslint-disable */
-    permissions?: any[]
+    permissions?: unknown[]
 }
 
 export function TemplateForm({ initialData, permissions = [] }: TemplateFormProps) {
@@ -41,8 +38,7 @@ export function TemplateForm({ initialData, permissions = [] }: TemplateFormProp
     const { isModalOpen, setIsModalOpen, createdId, handleSuccess } = useFormSuccess()
 
     const form = useForm<TemplateFormData>({
-/* eslint-disable */
-        resolver: zodResolver(templateSchema) as any,
+        resolver: zodResolver(templateSchema),
         defaultValues: initialData || {
             name: '',
             feesProfessional: 0,
@@ -79,19 +75,16 @@ export function TemplateForm({ initialData, permissions = [] }: TemplateFormProp
             const payload = initialData?.id ? { ...data, id: initialData.id } : data
             const result = await saveTemplateAction(payload)
 
-            if (result.success && result.id) {
-                // Show success modal with auto-redirect
-                handleSuccess(result.id)
-            } else if (result.success) {
-                // Fallback for backwards compatibility
-                toast.success(initialData?.id ? 'Plantilla actualizada' : 'Plantilla creada')
-                router.push('/templates')
+            if (result.success) {
+                if (result.data?.id) {
+                    handleSuccess(result.data.id)
+                } else {
+                    toast.success(initialData?.id ? 'Plantilla actualizada' : 'Plantilla creada')
+                    router.push('/templates')
+                }
             } else {
                 console.error('[ERROR] Save failed:', result.error)
-                const errorMessage = typeof result.error === 'string'
-                    ? result.error
-                    : JSON.stringify(result.error)
-                toast.error(errorMessage || 'Error al guardar la plantilla')
+                toast.error(result.error || 'Error al guardar la plantilla')
             }
         } catch (error) {
             console.error('[ERROR] Save error:', error)

@@ -9,8 +9,7 @@ import { Input } from '@carlosindriago/ui'
 import { Label } from '@carlosindriago/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@carlosindriago/ui'
 import { Switch } from '@carlosindriago/ui'
-/* eslint-disable */
-import { Share2, Copy, Check, Lock, Globe, Users, Trash2 } from 'lucide-react'
+import { Share2, Copy, Check, Lock, Users, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
     updateTemplateVisibilityAction,
@@ -22,13 +21,12 @@ interface ShareModalProps {
     templateId: string
     currentVisibility: 'private' | 'public' | 'restricted'
     shareToken?: string | null
-/* eslint-disable */
-    permissions?: any[]
+    permissions?: unknown[]
     publicSettings?: {
-        allow_copy: boolean
-        show_fees: boolean
-        show_requirements: boolean
-        show_steps: boolean
+        allow_copy?: boolean
+        show_fees?: boolean
+        show_requirements?: boolean
+        show_steps?: boolean
     }
 }
 
@@ -178,8 +176,7 @@ export function ShareModal({
                                     <div className="flex flex-col space-y-0.5">
                                         <Label htmlFor="allow-copy" className="text-sm">Permitir Copiar</Label>
                                         <span className="text-xs text-muted-foreground">
-/* eslint-disable */
-                                            Habilitar botón "Importar Plantilla"
+                                            Habilitar botón &quot;Importar Plantilla&quot;
                                         </span>
                                     </div>
                                     <Switch
@@ -284,23 +281,27 @@ export function ShareModal({
 
                         <div className="space-y-2 mt-4 max-h-[200px] overflow-y-auto">
                             {permissions && permissions.length > 0 ? (
-/* eslint-disable */
-                                permissions.map((p: any) => (
-                                    <div key={p.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 text-sm">
-                                        <div className="flex items-center gap-2">
-                                            <Users className="h-3 w-3 opacity-50" />
-                                            <span>{p.email}</span>
+                                permissions.map((p, index) => {
+                                    const perm = typeof p === 'object' && p !== null ? (p as { id?: string; email?: string }) : {}
+                                    return (
+                                        <div key={perm.id || index} className="flex items-center justify-between p-2 rounded-md bg-muted/50 text-sm">
+                                            <div className="flex items-center gap-2">
+                                                <Users className="h-3 w-3 opacity-50" />
+                                                <span>{perm.email || ''}</span>
+                                            </div>
+                                            {perm.id && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                                                    onClick={() => handleRemovePermission(perm.id!)}
+                                                >
+                                                    <Trash2 className="h-3 w-3" />
+                                                </Button>
+                                            )}
                                         </div>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-6 w-6 text-muted-foreground hover:text-destructive"
-                                            onClick={() => handleRemovePermission(p.id)}
-                                        >
-                                            <Trash2 className="h-3 w-3" />
-                                        </Button>
-                                    </div>
-                                ))
+                                    )
+                                })
                             ) : (
                                 <p className="text-xs text-center text-muted-foreground py-2">
                                     No hay usuarios invitados.

@@ -53,9 +53,9 @@ export function TemplateAnalytics({ templateId }: TemplateAnalyticsProps) {
         const res = await getTemplateClones(templateId, nextPage, 10)
 
         if (res.success && res.data) {
-            setAllClones(prev => [...prev, ...res.data])
+            setAllClones(prev => [...prev, ...res.data.clones])
             setPage(nextPage)
-            if (res.data.length < 10) setHasMore(false)
+            if (res.data.clones.length < 10) setHasMore(false)
         } else {
             setHasMore(false)
         }

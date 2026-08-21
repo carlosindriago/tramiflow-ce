@@ -1,4 +1,4 @@
-export interface ProcedureStatus {
+export interface ProcedureStatusConfig {
     id: string
     organization_id: string
     name: string

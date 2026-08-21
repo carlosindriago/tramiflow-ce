@@ -75,7 +75,7 @@ describe('ProcedureStepsDrawer', () => {
 
   it('calls updateProcedureStepsProgressAction when checkbox toggled', async () => {
     const mockAction = vi.mocked(actions.updateProcedureStepsProgressAction)
-    mockAction.mockResolvedValue({ success: true })
+    mockAction.mockResolvedValue({ success: true, data: undefined })
 
     render(
       <ProcedureStepsDrawer
@@ -120,7 +120,7 @@ describe('ProcedureStepsDrawer', () => {
 
   it('calls onStepsUpdate with updated procedure when action succeeds', async () => {
     const mockAction = vi.mocked(actions.updateProcedureStepsProgressAction)
-    mockAction.mockResolvedValue({ success: true })
+    mockAction.mockResolvedValue({ success: true, data: undefined })
     const onStepsUpdate = vi.fn()
 
     render(

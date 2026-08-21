@@ -1,231 +1,169 @@
-// @ts-nocheck
 'use server'
 
-import { createClient } from '@carlosindriago/database/server'
-import { templateSchema, type TemplateFormData } from '@carlosindriago/core'
+import { templateSchema, type TemplateFormData, actionSuccess, actionError } from '@carlosindriago/core'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { createOrgAction } from '@/lib/action-helpers'
 
-export async function saveTemplateAction(input: TemplateFormData & { id?: string }) {
-    const supabase = await createClient()
+export const saveTemplateAction = createOrgAction(
+    async ({ supabase, orgId, user }, input: TemplateFormData & { id?: string }) => {
+        // Validate input
+        const parsed = templateSchema.safeParse(input)
+        if (!parsed.success) {
+            return actionError('Validación fallida', parsed.error.flatten().fieldErrors)
+        }
 
-    // Auth check
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) {
-        return { success: false, error: 'Unauthorized' }
+        // Prepare data
+        const stepsWithOrder = parsed.data.steps.map((step, index) => ({
+            ...step,
+            order_index: index,
+        }))
+
+        const templateData = {
+            organization_id: orgId,
+            created_by: user.id, // Required by RLS policy
+            name: parsed.data.name,
+
+            // Fees
+            fees: parsed.data.feesProfessional ?? 0,
+            government_fee: parsed.data.feesOfficial ?? 0,
+            currency: parsed.data.currency,
+            payment_terms: parsed.data.paymentTerms,
+
+            // Duration
+            duration_work: parsed.data.durationWork,
+            duration_resolution: parsed.data.durationResolution ?? 0,
+
+            // Category & Config
+            category: parsed.data.category || null,
+            is_custom_category: parsed.data.isCustomCategory,
+            requires_renewal: parsed.data.requiresRenewal,
+            renewal_frequency: parsed.data.renewalFrequency || null,
+
+            is_active: parsed.data.isActive,
+            requirements: parsed.data.requirements,
+            steps: stepsWithOrder,
+        }
+
+        let result
+        if (input.id) {
+            // UPDATE
+            const { data, error } = await supabase
+                .from('procedure_templates')
+                .update(templateData)
+                .eq('id', input.id)
+                .eq('organization_id', orgId)
+                .select('id')
+                .single()
+            result = { data, error }
+        } else {
+            // INSERT
+            const { data, error } = await supabase
+                .from('procedure_templates')
+                .insert(templateData)
+                .select('id')
+                .single()
+            result = { data, error }
+        }
+
+        if (result.error || !result.data) {
+            console.error('Supabase error:', result.error)
+            return actionError(result.error?.message || 'Error al guardar plantilla')
+        }
+
+        revalidatePath('/templates')
+        return actionSuccess({ id: result.data.id })
     }
+)
 
-    // Get organization from member
-    const { data: member } = await supabase
-        .from('organization_members')
-        .select('organization_id')
-        .eq('user_id', user.id)
-        .limit(1)
-        .single()
-
-    if (!member?.organization_id) {
-        return { success: false, error: 'No organization found' }
-    }
-
-    // Validate input
-    const parsed = templateSchema.safeParse(input)
-    if (!parsed.success) {
-        return { success: false, error: parsed.error.flatten().fieldErrors }
-    }
-
-    // Prepare data
-    const stepsWithOrder = parsed.data.steps.map((step, index) => ({
-        ...step,
-        order_index: index,
-    }))
-
-    const templateData = {
-        organization_id: member.organization_id,
-        created_by: user.id, // Required by RLS policy
-        name: parsed.data.name,
-
-        // Fees
-        fees: parsed.data.feesProfessional ?? 0,
-        government_fee: parsed.data.feesOfficial ?? 0,
-        currency: parsed.data.currency,
-        payment_terms: parsed.data.paymentTerms,
-
-        // Duration
-        duration_work: parsed.data.durationWork,
-        duration_resolution: parsed.data.durationResolution ?? 0,
-
-        // Category & Config
-        category: parsed.data.category || null,
-        is_custom_category: parsed.data.isCustomCategory,
-        requires_renewal: parsed.data.requiresRenewal,
-        renewal_frequency: parsed.data.renewalFrequency || null,
-
-        is_active: parsed.data.isActive,
-        requirements: parsed.data.requirements,
-        steps: stepsWithOrder,
-    }
-
-    let result
-    if (input.id) {
-        // UPDATE
-        const { data, error } = await supabase
+export const deleteTemplate = createOrgAction(
+    async ({ supabase, orgId }, id: string) => {
+        const { error } = await supabase
             .from('procedure_templates')
-            .update(templateData)
-            .eq('id', input.id)
-            .eq('organization_id', member.organization_id) // Security check
+            .update({ is_archived: true })
+            .eq('id', id)
+            .eq('organization_id', orgId)
+
+        if (error) {
+            console.error('Archive error:', error)
+            return actionError(error.message)
+        }
+
+        const { logAudit } = await import('@carlosindriago/core/server')
+        await logAudit(orgId, 'TEMPLATE_ARCHIVED', id, 'template')
+
+        revalidatePath('/templates')
+        return actionSuccess(undefined)
+    }
+)
+
+export const duplicateTemplate = createOrgAction(
+    async ({ supabase, orgId, user }, originalId: string) => {
+        // 1. Get original template
+        const { data: original, error: fetchError } = await supabase
+            .from('procedure_templates')
+            .select('*')
+            .eq('id', originalId)
+            .eq('organization_id', orgId)
+            .single()
+
+        if (fetchError || !original) {
+            return actionError('Plantilla no encontrada')
+        }
+
+        // 2. Create copy data
+        const copyData = {
+            organization_id: orgId,
+            created_by: user.id,
+            name: `${original.name} (Copia)`,
+
+            fees: original.fees,
+            government_fee: original.government_fee,
+            currency: original.currency,
+            payment_terms: original.payment_terms,
+
+            duration_work: original.duration_work,
+            duration_resolution: original.duration_resolution,
+
+            category: original.category,
+            is_custom_category: original.is_custom_category,
+            requires_renewal: original.requires_renewal,
+            renewal_frequency: original.renewal_frequency,
+
+            is_active: false, // Default to inactive for safety
+            steps: original.steps,
+        }
+
+        // 3. Insert copy
+        const { data: newTemplate, error: insertError } = await supabase
+            .from('procedure_templates')
+            .insert(copyData)
             .select('id')
             .single()
-        result = { data, error }
-    } else {
-        // INSERT
-        const { data, error } = await supabase
+
+        if (insertError || !newTemplate) {
+            return actionError(insertError?.message || 'Error al duplicar plantilla')
+        }
+
+        revalidatePath('/templates')
+        redirect(`/templates/${newTemplate.id}`)
+    }
+)
+
+export const toggleTemplateVisibility = createOrgAction(
+    async ({ supabase, orgId }, id: string, isPublic: boolean) => {
+        const { error } = await supabase
             .from('procedure_templates')
-            .insert(templateData)
-            .select('id')
-            .single()
-        result = { data, error }
+            .update({ is_publicly_visible: isPublic })
+            .eq('id', id)
+            .eq('organization_id', orgId)
+
+        if (error) {
+            return actionError(error.message)
+        }
+
+        revalidatePath(`/templates/${id}`)
+        revalidatePath(`/shared/templates/${id}`)
+        return actionSuccess(undefined)
     }
-
-    if (result.error || !result.data) {
-        console.error('Supabase error:', result.error)
-        return { success: false, error: result.error?.message || 'Unknown error' }
-    }
-
-    revalidatePath('/templates')
-    return { success: true, id: result.data.id }
-}
-
-export async function deleteTemplate(id: string) {
-    const supabase = await createClient()
-
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) throw new Error('Unauthorized')
-
-    const { data: member } = await supabase
-        .from('organization_members')
-        .select('organization_id')
-        .eq('user_id', user.id)
-        .limit(1)
-        .single()
-
-    if (!member?.organization_id) throw new Error('No organization')
-
-    const { logAudit } = await import('@carlosindriago/core/server')
-    const { error } = await supabase
-        .from('procedure_templates')
-        .update({ is_archived: true })
-        .eq('id', id)
-        .eq('organization_id', member.organization_id)
-
-    if (error) {
-        console.error('Archive error:', error)
-        return { success: false, error: error.message }
-    }
-
-    await logAudit(member.organization_id, 'TEMPLATE_ARCHIVED', id, 'template')
-
-    revalidatePath('/templates')
-    return { success: true }
-}
-
-export async function duplicateTemplate(originalId: string) {
-    const supabase = await createClient()
-
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) throw new Error('Unauthorized')
-
-    const { data: member } = await supabase
-        .from('organization_members')
-        .select('organization_id')
-        .eq('user_id', user.id)
-        .limit(1)
-        .single()
-
-    if (!member?.organization_id) throw new Error('No organization')
-
-    // 1. Get original template
-    const { data: original, error: fetchError } = await supabase
-        .from('procedure_templates')
-        .select('*')
-        .eq('id', originalId)
-        .eq('organization_id', member.organization_id)
-        .single()
-
-    if (fetchError || !original) {
-        return { success: false, error: 'Template not found' }
-    }
-
-    // 2. Create copy data
-    const copyData = {
-        organization_id: member.organization_id,
-        name: `${original.name} (Copia)`,
-
-        fees: original.fees,
-        government_fee: original.government_fee,
-        currency: original.currency,
-        payment_terms: original.payment_terms,
-
-        duration_work: original.duration_work,
-        duration_resolution: original.duration_resolution,
-
-        category: original.category,
-        is_custom_category: original.is_custom_category,
-        requires_renewal: original.requires_renewal,
-        renewal_frequency: original.renewal_frequency,
-
-        is_active: false, // Default to inactive for safety
-        steps: original.steps,
-    }
-
-    // 3. Insert copy
-    const { data: newTemplate, error: insertError } = await supabase
-        .from('procedure_templates')
-        .insert(copyData)
-        .select('id')
-        .single()
-
-    if (insertError) {
-        return { success: false, error: insertError.message }
-    }
-
-    revalidatePath('/templates')
-    redirect(`/templates/${newTemplate.id}`)
-}
-
-export async function toggleTemplateVisibility(id: string, isPublic: boolean) {
-    const supabase = await createClient()
-
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) throw new Error('Unauthorized')
-
-    const { data: member } = await supabase
-        .from('organization_members')
-        .select('organization_id')
-        .eq('user_id', user.id)
-        .limit(1)
-        .single()
-
-    if (!member?.organization_id) throw new Error('No organization')
-
-    const { error } = await supabase
-        .from('procedure_templates')
-        .update({ is_publicly_visible: isPublic })
-        .eq('id', id)
-        .eq('organization_id', member.organization_id)
-
-    if (error) {
-        return { success: false, error: error.message }
-    }
-
-    revalidatePath(`/templates/${id}`)
-    revalidatePath(`/shared/templates/${id}`)
-    return { success: true }
-}
+)

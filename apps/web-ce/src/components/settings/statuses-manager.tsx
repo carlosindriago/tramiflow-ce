@@ -1,8 +1,7 @@
-// @ts-nocheck
 'use client'
 
 import { useState } from 'react'
-import { ProcedureStatus as ProcedureStatusConfig } from '@carlosindriago/core'
+import { ProcedureStatusConfig } from '@carlosindriago/core'
 import { Button } from '@carlosindriago/ui'
 import { Plus, Pencil, Trash2, GripVertical } from 'lucide-react'
 import {
@@ -12,8 +11,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-/* eslint-disable */
-    DialogTrigger,
 } from '@carlosindriago/ui'
 import { Input } from '@carlosindriago/ui'
 import { Label } from '@carlosindriago/ui'
@@ -38,10 +35,6 @@ export function StatusesManager({ statuses }: StatusesManagerProps) {
         const color = formData.get('color') as string
         const isFinal = formData.get('is_final') === 'on'
 
-        // Simple order handling: if new, put at end
-        // If editing, keep existing order or allowing manual edit? 
-        // For now let's keep it simple.
-
         try {
             if (editingStatus) {
                 const result = await updateProcedureStatusConfigAction({
@@ -50,7 +43,7 @@ export function StatusesManager({ statuses }: StatusesManagerProps) {
                     color,
                     is_final: isFinal
                 })
-                if (!result?.success) throw new Error(result?.error)
+                if (!result.success) throw new Error(result.error)
                 toast.success('Estado actualizado')
             } else {
                 const maxOrder = Math.max(...statuses.map(s => s.order_index), 0)
@@ -60,15 +53,15 @@ export function StatusesManager({ statuses }: StatusesManagerProps) {
                     is_final: isFinal,
                     order_index: maxOrder + 1
                 })
-                if (!result?.success) throw new Error(result?.error)
+                if (!result.success) throw new Error(result.error)
                 toast.success('Estado creado')
             }
             setIsDialogOpen(false)
             setEditingStatus(null)
             router.refresh()
-/* eslint-disable */
         } catch (error) {
-            toast.error('Error al guardar estado')
+            console.error('Save status error:', error)
+            toast.error(error instanceof Error ? error.message : 'Error al guardar estado')
         }
     }
 
@@ -77,12 +70,12 @@ export function StatusesManager({ statuses }: StatusesManagerProps) {
 
         try {
             const result = await deleteProcedureStatusAction(id)
-            if (!result?.success) throw new Error(result?.error)
+            if (!result.success) throw new Error(result.error)
             toast.success('Estado eliminado')
             router.refresh()
-/* eslint-disable */
         } catch (error) {
-            toast.error('Error al eliminar estado')
+            console.error('Delete status error:', error)
+            toast.error(error instanceof Error ? error.message : 'Error al eliminar estado')
         }
     }
 
@@ -172,7 +165,7 @@ export function StatusesManager({ statuses }: StatusesManagerProps) {
                                     className="w-12 h-10 padding-0 cursor-pointer"
                                 />
                                 <Input
-                                    value={editingStatus?.color || '#3b82f6'} // Just for display/edit if needed, or let user type hex
+                                    value={editingStatus?.color || '#3b82f6'}
                                     readOnly
                                     className="flex-1 bg-muted font-mono"
                                 />

@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import * as React from 'react'
@@ -23,8 +22,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@carlosindriago/ui'
 import {
     Card,
     CardContent,
-/* eslint-disable */
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
@@ -84,22 +81,27 @@ export function TemplatesView({ templates, isLoading }: TemplatesViewProps) {
         if (!templateToDelete) return
 
         try {
-            await deleteTemplate(templateToDelete)
-            toast.success('Plantilla eliminada')
-            window.location.reload()
-/* eslint-disable */
+            const res = await deleteTemplate(templateToDelete)
+            if (res.success) {
+                toast.success('Plantilla eliminada')
+                window.location.reload()
+            } else {
+                toast.error(res.error || 'Error al eliminar la plantilla')
+            }
         } catch (error) {
+            console.error('Delete template error:', error)
             toast.error('Error al eliminar la plantilla')
         }
     }
 
     const handleDuplicate = async (templateId: string) => {
         try {
-            await duplicateTemplate(templateId)
-            toast.success('Plantilla duplicada')
-            window.location.reload()
-/* eslint-disable */
+            const res = await duplicateTemplate(templateId)
+            if (res && !res.success) {
+                toast.error(res.error || 'Error al duplicar la plantilla')
+            }
         } catch (error) {
+            console.error('Duplicate template error:', error)
             toast.error('Error al duplicar la plantilla')
         }
     }

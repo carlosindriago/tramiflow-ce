@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -16,7 +15,7 @@ import {
     Trash2,
     Loader2,
 } from 'lucide-react'
-import { useForm, useFieldArray } from 'react-hook-form'
+import { UseFormReturn, useFieldArray } from 'react-hook-form'
 import { type TemplateFormData } from '@carlosindriago/core'
 
 import { Label } from '@carlosindriago/ui'
@@ -43,7 +42,7 @@ import {
 import { type Category } from '@carlosindriago/core'
 
 interface TemplateConfigPanelProps {
-    form: ReturnType<typeof useForm<TemplateFormData>>
+    form: UseFormReturn<TemplateFormData>
 }
 
 export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
@@ -85,9 +84,8 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
     const totalCost = Number(displayFeesProfessional || 0) + Number(displayFeesOfficial || 0)
 
     // Handler to update values and force re-render
-/* eslint-disable */
-    const updateField = (field: keyof TemplateFormData, value: any) => {
-        form.setValue(field, value, { shouldDirty: true })
+    const updateField = <K extends keyof TemplateFormData>(field: K, value: TemplateFormData[K]) => {
+        form.setValue(field, value as unknown as never, { shouldDirty: true })
     }
 
     // Fetch categories from API on mount
@@ -367,7 +365,7 @@ export function TemplateConfigPanel({ form }: TemplateConfigPanelProps) {
                             <Label className="text-xs uppercase text-muted-foreground">Condiciones de Pago</Label>
                             <Select
                                 value={form.watch('paymentTerms')}
-                                onValueChange={(val) => updateField('paymentTerms', val)}
+                                onValueChange={(val) => updateField('paymentTerms', val as TemplateFormData['paymentTerms'])}
                             >
                                 <SelectTrigger className="bg-background/50">
                                     <SelectValue />

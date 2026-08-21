@@ -1,9 +1,8 @@
-// @ts-nocheck
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ProcedureCard } from '../procedure-card'
 import type { Procedure, TemplateStep } from '@carlosindriago/core'
-import type { ProcedureStatus } from '@carlosindriago/core'
+import type { ProcedureStatusConfig } from '@carlosindriago/core'
 
 // Factory pattern for creating test procedures
 const createMockProcedure = (overrides: Partial<Procedure> = {}): Procedure => ({
@@ -36,7 +35,7 @@ const createMockProcedure = (overrides: Partial<Procedure> = {}): Procedure => (
   ...overrides,
 })
 
-const mockStatuses: ProcedureStatus[] = [
+const mockStatuses: ProcedureStatusConfig[] = [
   {
     id: 'pending-status-id',
     organization_id: 'test-org-id',

@@ -1,12 +1,7 @@
-// @ts-nocheck
 'use client'
 
-import { useForm } from 'react-hook-form'
-import {
-    useSortable,
-/* eslint-disable */
-    type UseSortableArguments,
-} from '@dnd-kit/sortable'
+import { UseFormReturn } from 'react-hook-form'
+import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Trash2 } from 'lucide-react'
 import { type TemplateFormData, type StepType, stepTypeOptions, stepTypeIconMap } from '@carlosindriago/core'
@@ -29,7 +24,7 @@ import {
 interface SortableStepCardProps {
     stepId: string
     index: number
-    form: ReturnType<typeof useForm<TemplateFormData>>
+    form: UseFormReturn<TemplateFormData>
     onRemove: () => void
     canRemove: boolean
 }
@@ -58,7 +53,7 @@ export function SortableStepCard({
     }
 
     const stepType = form.watch(`steps.${index}.type`) as StepType
-    const IconComponent = stepTypeIconMap[stepType]
+    const IconComponent = stepTypeIconMap[stepType] || stepTypeIconMap.document
 
     return (
         <div

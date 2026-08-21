@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { createClient } from '@carlosindriago/database/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
@@ -72,8 +71,14 @@ export default async function TemplateDetailPage({ params }: TemplateDetailPageP
         .select('*')
         .eq('template_id', template.id)
 
-/* eslint-disable */
-    const steps = (template.steps as any[]) || []
+    const steps = (Array.isArray(template.steps) ? template.steps : []) as {
+        stepId?: string
+        title?: string
+        type?: StepType
+        description?: string
+        isRequired?: boolean
+        estimatedDays?: number
+    }[]
 
     return (
         <div className="mx-auto max-w-6xl space-y-8">
@@ -109,7 +114,7 @@ export default async function TemplateDetailPage({ params }: TemplateDetailPageP
                                 {template.category || 'General'}
                             </Badge>
                             <span className="text-sm">
-                                Creado el {new Date(template.created_at).toLocaleDateString()}
+                                Creado el {template.created_at ? new Date(template.created_at).toLocaleDateString() : '-'}
                             </span>
                         </div>
                     </div>
@@ -118,7 +123,7 @@ export default async function TemplateDetailPage({ params }: TemplateDetailPageP
                     <div className="flex items-center gap-2">
                         <ShareModal
                             templateId={template.id}
-                            currentVisibility={template.visibility || 'private'}
+                            currentVisibility={(template.visibility as 'private' | 'public' | 'restricted') || 'private'}
                             shareToken={template.share_token}
                             permissions={permissions || []}
                         />
@@ -135,7 +140,11 @@ export default async function TemplateDetailPage({ params }: TemplateDetailPageP
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <form action={deleteTemplate.bind(null, template.id) as unknown as (formData: FormData) => void}>
+                                <form action={async () => {
+                                    'use server'
+                                    await deleteTemplate(template.id)
+                                    redirect('/templates')
+                                }}>
                                     <button className="w-full">
                                         <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
                                             <Trash2 className="mr-2 h-4 w-4" />
@@ -165,7 +174,7 @@ export default async function TemplateDetailPage({ params }: TemplateDetailPageP
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">
-                                    {template.currency} {template.fees_professional + template.fees_official}
+                                    {template.currency} {(template.fees_professional ?? 0) + (template.fees_official ?? 0)}
                                 </div>
                                 <p className="text-xs text-muted-foreground">
                                     Honorarios + Tasas
@@ -179,7 +188,7 @@ export default async function TemplateDetailPage({ params }: TemplateDetailPageP
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">
-                                    {template.duration_work + template.duration_resolution} días
+                                    {(template.duration_work ?? 0) + (template.duration_resolution ?? 0)} días
                                 </div>
                                 <p className="text-xs text-muted-foreground">
                                     Gestión + Resolución
@@ -254,12 +263,12 @@ export default async function TemplateDetailPage({ params }: TemplateDetailPageP
                                                 )}
 
                                                 <div className="mt-3 flex items-center gap-3">
-                                                    {step.estimatedDays > 0 && (
+                                                    {step.estimatedDays && step.estimatedDays > 0 ? (
                                                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                                             <Clock className="h-3 w-3" />
                                                             {step.estimatedDays}d
                                                         </div>
-                                                    )}
+                                                    ) : null}
                                                 </div>
                                             </div>
                                         </div>
@@ -285,9 +294,8 @@ export default async function TemplateDetailPage({ params }: TemplateDetailPageP
                                 <CardContent className="space-y-4">
                                     {Array.isArray(template.requirements) && template.requirements.length > 0 ? (
                                         <ul className="space-y-2">
-/* eslint-disable */
-                                            {template.requirements.map((req: any, i: number) => {
-                                                const title = typeof req === 'string' ? req : req.title
+                                            {template.requirements.map((req: unknown, i: number) => {
+                                                const title = typeof req === 'string' ? req : (typeof req === 'object' && req !== null && 'title' in req ? String(req.title) : 'Requisito')
                                                 return (
                                                     <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                                                         <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />

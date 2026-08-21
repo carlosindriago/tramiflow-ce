@@ -1,63 +1,45 @@
 'use server'
 
-import { createClient } from '@carlosindriago/database/server'
 import { type Client } from '@carlosindriago/core'
 import { type Document } from '@carlosindriago/core'
+import { actionSuccess, actionError } from '@carlosindriago/core'
+import { createOrgAction } from '@/lib/action-helpers'
 
-export async function getClientById(id: string): Promise<Client | null> {
-    try {
-        console.log('getClientById: Creating client...')
-        const supabase = await createClient()
-        console.log('getClientById: Client created. Fetching user...')
-
-        // Verify auth
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-        if (authError || !user) {
-            console.error('getClientById Auth Error:', authError)
-            return null
-        }
-
+export const getClientById = createOrgAction(
+    async ({ supabase, orgId }, id: string) => {
         const { data, error } = await supabase
             .from('clients')
             .select('*')
             .eq('id', id)
+            .eq('organization_id', orgId)
             .single()
 
-        if (error) {
+        if (error || !data) {
             console.error('getClientById Error:', error)
-            return null
+            return actionError(error?.message || 'Cliente no encontrado')
         }
 
-        return data as Client
-    } catch (err) {
-        console.error('getClientById Unexpected Error:', err)
-        return null
+        return actionSuccess(data as Client)
     }
-}
+)
 
-export async function getClientDocuments(clientId: string): Promise<Document[]> {
-    try {
-        const supabase = await createClient()
-
-        // Verify auth
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-        if (authError || !user) {
-            console.error('getClientDocuments Auth Error:', authError)
-            return []
-        }
-
+export const getClientDocuments = createOrgAction(
+    async ({ supabase, orgId }, clientId: string) => {
         const { data: docs, error } = await supabase
             .from('documents')
             .select('*')
             .eq('client_id', clientId)
+            .eq('organization_id', orgId)
             .order('created_at', { ascending: false })
 
         if (error) {
             console.error('getClientDocuments Error:', error)
-            return []
+            return actionError(error.message)
         }
 
-        if (!docs || docs.length === 0) return []
+        if (!docs || docs.length === 0) {
+            return actionSuccess([] as Document[])
+        }
 
         // Generate signed URLs for all documents
         const { data: signedUrls, error: signedUrlError } = await supabase
@@ -70,8 +52,7 @@ export async function getClientDocuments(clientId: string): Promise<Document[]> 
 
         if (signedUrlError) {
             console.error('Error generating signed URLs:', signedUrlError)
-            // Fallback: return docs without URLs (thumbnails won't show)
-            return docs as unknown as Document[]
+            return actionSuccess(docs as unknown as Document[])
         }
 
         // Map signed URLs to documents
@@ -80,22 +61,12 @@ export async function getClientDocuments(clientId: string): Promise<Document[]> 
             url: signedUrls?.[index]?.signedUrl || '',
         }))
 
-        return documentsWithUrls as Document[]
-    } catch (err) {
-        console.error('getClientDocuments Unexpected Error:', err)
-        return []
+        return actionSuccess(documentsWithUrls as Document[])
     }
-}
+)
 
-export async function getClientProcedures(clientId: string) {
-    try {
-        const supabase = await createClient()
-        const { data: { user }, error: authError } = await supabase.auth.getUser()
-        if (authError || !user) {
-            console.error('getClientProcedures Auth Error:', authError)
-            return []
-        }
-
+export const getClientProcedures = createOrgAction(
+    async ({ supabase, orgId }, clientId: string) => {
         const { data, error } = await supabase
             .from('procedures')
             .select(`
@@ -110,15 +81,14 @@ export async function getClientProcedures(clientId: string) {
                 )
             `)
             .eq('client_id', clientId)
+            .eq('organization_id', orgId)
             .order('created_at', { ascending: false })
 
         if (error) {
             console.error('getClientProcedures Error:', error)
-            return []
+            return actionError(error.message)
         }
-        return data ?? []
-    } catch (err) {
-        console.error('getClientProcedures Unexpected Error:', err)
-        return []
+
+        return actionSuccess(data ?? [])
     }
-}
+)
