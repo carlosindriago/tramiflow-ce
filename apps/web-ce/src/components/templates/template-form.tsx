@@ -13,7 +13,6 @@ import {
     templateSchema,
     type TemplateFormData,
 } from '@carlosindriago/core'
-import { saveTemplateAction } from '@/app/(dashboard)/templates/new/actions'
 import { TemplateConfigPanel } from './template-config-panel'
 import { TemplateTimeline } from './template-timeline'
 import { toast } from '@carlosindriago/core'
@@ -82,18 +81,12 @@ export function TemplateForm({ initialData, permissions = [] }: TemplateFormProp
             // Pass the ID if it exists (for updates)
             const payload = initialData?.id ? { ...data, id: initialData.id } : data
 
-            let result: { success: boolean; data?: { id: string }; error?: string; fieldErrors?: Record<string, string[]> }
-
-            try {
-                const response = await fetch('/api/templates', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                })
-                result = await response.json()
-            } catch {
-                result = await saveTemplateAction(payload)
-            }
+            const response = await fetch('/api/templates', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            })
+            const result: { success: boolean; data?: { id: string }; error?: string; fieldErrors?: Record<string, string[]> } = await response.json()
 
             if (result.success) {
                 if (result.data?.id) {
