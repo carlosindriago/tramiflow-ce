@@ -36,12 +36,22 @@ export async function saveTemplateAction(input: TemplateFormData & { id?: string
                 show_steps: parsed.data.public_settings?.show_steps ?? true,
             }
 
+            // Ensure profile exists in public.profiles to satisfy FK constraint
+            try {
+                await supabase
+                    .from('profiles')
+                    .upsert({ id: user.id, email: user.email }, { onConflict: 'id', ignoreDuplicates: true })
+            } catch (profileErr) {
+                console.warn('Profile upsert warning:', profileErr)
+            }
+
             const templateData = {
                 organization_id: orgId,
                 created_by: user.id, // Required by RLS policy
                 name: parsed.data.name,
                 category: parsed.data.category || null,
 
+                base_cost: parsed.data.feesProfessional ?? 0,
                 fees: parsed.data.feesProfessional ?? 0,
                 government_fee: parsed.data.feesOfficial ?? 0,
                 payment_terms: parsed.data.paymentTerms || 'upfront',
