@@ -34,7 +34,7 @@ export default async function SettingsPage() {
     const { data: org } = await supabase.from('organizations')
         .select('*')
         .eq('id', orgId)
-        .single()
+        .maybeSingle()
 
     if (!org) {
         return <div className="p-8">Organización no encontrada</div>

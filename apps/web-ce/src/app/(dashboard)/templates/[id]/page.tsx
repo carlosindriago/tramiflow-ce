@@ -60,7 +60,7 @@ export default async function TemplateDetailPage({ params }: TemplateDetailPageP
         .select('*')
         .eq('id', id)
         .eq('organization_id', organizationId)
-        .single()
+        .maybeSingle()
 
     if (error || !template) {
         notFound()

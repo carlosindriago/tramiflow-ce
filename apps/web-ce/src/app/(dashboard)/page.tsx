@@ -103,7 +103,7 @@ export default async function DashboardPage() {
         supabase.from('leads').select('*', { count: 'exact', head: true })
             .eq('organization_id', orgId)
             .gte('created_at', startOfDay),
-        supabase.from('organizations').select('page_views').eq('id', orgId).single()
+        supabase.from('organizations').select('page_views').eq('id', orgId).maybeSingle()
     ])
 
     const stats = [
