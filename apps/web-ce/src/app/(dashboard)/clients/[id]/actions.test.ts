@@ -47,6 +47,10 @@ describe('getDocumentSignedUrlAction', () => {
         mockSelect.mockReturnValue({
             eq: vi.fn().mockReturnValue({
                 eq: vi.fn().mockReturnValue({
+                    maybeSingle: vi.fn().mockResolvedValue({
+                        data: { storage_path: 'org-456/client-789/dni.pdf', organization_id: 'org-456' },
+                        error: null,
+                    }),
                     single: vi.fn().mockResolvedValue({
                         data: { storage_path: 'org-456/client-789/dni.pdf', organization_id: 'org-456' },
                         error: null,
@@ -73,6 +77,10 @@ describe('getDocumentSignedUrlAction', () => {
         mockSelect.mockReturnValue({
             eq: vi.fn().mockReturnValue({
                 eq: vi.fn().mockReturnValue({
+                    maybeSingle: vi.fn().mockResolvedValue({
+                        data: null,
+                        error: { message: 'Not found' },
+                    }),
                     single: vi.fn().mockResolvedValue({
                         data: null,
                         error: { message: 'Not found' },

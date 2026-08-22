@@ -99,152 +99,156 @@ export async function submitLead(templateId: string, formData: FormData) {
 
 // --- Actions for Dashboard (Analytics) ---
 
-export const getTemplateAnalytics = createOrgAction(
-    async ({ supabase, orgId }, templateId: string) => {
-        const { data: template } = await supabase
-            .from('procedure_templates')
-            .select('organization_id')
-            .eq('id', templateId)
-            .eq('organization_id', orgId)
-            .single()
+export async function getTemplateAnalytics(templateId: string) {
+    return createOrgAction(
+        async ({ supabase, orgId }, tId: string) => {
+            const { data: template } = await supabase
+                .from('procedure_templates')
+                .select('organization_id')
+                .eq('id', tId)
+                .eq('organization_id', orgId)
+                .maybeSingle()
 
-        if (!template) {
-            return actionError('Plantilla no encontrada')
+            if (!template) {
+                return actionError('Plantilla no encontrada')
+            }
+
+            // 1. Get Totals
+            const { count: viewsCount } = await supabase
+                .from('template_views')
+                .select('*', { count: 'exact', head: true })
+                .eq('template_id', tId)
+
+            const { count: leadsCount } = await supabase
+                .from('template_leads')
+                .select('*', { count: 'exact', head: true })
+                .eq('template_id', tId)
+
+            // 2. Get Recent Leads
+            const { data: recentLeads } = await supabase
+                .from('template_leads')
+                .select('*')
+                .eq('template_id', tId)
+                .order('created_at', { ascending: false })
+                .limit(10)
+
+            // 3. Get Chart Data (Last 30 days)
+            const thirtyDaysAgo = new Date()
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+            const { data: viewsData } = await supabase
+                .from('template_views')
+                .select('created_at')
+                .eq('template_id', tId)
+                .gte('created_at', thirtyDaysAgo.toISOString())
+
+            const { data: leadsData } = await supabase
+                .from('template_leads')
+                .select('created_at')
+                .eq('template_id', tId)
+                .gte('created_at', thirtyDaysAgo.toISOString())
+
+            // Aggregate by day
+            const chartMap = new Map<string, { date: string; views: number; leads: number }>()
+
+            // Fill last 30 days with 0
+            for (let i = 0; i < 30; i++) {
+                const d = new Date()
+                d.setDate(d.getDate() - i)
+                const dateStr = d.toISOString().split('T')[0]
+                chartMap.set(dateStr, { date: dateStr, views: 0, leads: 0 })
+            }
+
+            viewsData?.forEach((v) => {
+                const dateStr = v.created_at.split('T')[0]
+                if (chartMap.has(dateStr)) {
+                    chartMap.get(dateStr)!.views += 1
+                }
+            })
+
+            leadsData?.forEach((l) => {
+                const dateStr = l.created_at.split('T')[0]
+                if (chartMap.has(dateStr)) {
+                    chartMap.get(dateStr)!.leads += 1
+                }
+            })
+
+            const chartData = Array.from(chartMap.values()).sort((a, b) => a.date.localeCompare(b.date))
+
+            // 4. Get Clones (Top 10)
+            const { data: clonesData } = await supabase
+                .from('procedure_templates')
+                .select(`
+                    id,
+                    created_at,
+                    source_ip_country,
+                    organization:organizations(name)
+                `)
+                .eq('source_template_id', tId)
+                .order('created_at', { ascending: false })
+                .limit(10)
+
+            const clones = clonesData?.map((c) => {
+                const org = Array.isArray(c.organization) ? c.organization[0] : c.organization
+                return {
+                    id: c.id,
+                    organization_name: org?.name || 'Organización desconocida',
+                    country: c.source_ip_country,
+                    created_at: c.created_at
+                }
+            }) || []
+
+            return actionSuccess({
+                totalViews: viewsCount || 0,
+                totalLeads: leadsCount || 0,
+                conversionRate: viewsCount ? ((leadsCount || 0) / viewsCount) * 100 : 0,
+                recentLeads: recentLeads || [],
+                clones,
+                chartData,
+            })
         }
+    )(templateId)
+}
 
-        // 1. Get Totals
-        const { count: viewsCount } = await supabase
-            .from('template_views')
-            .select('*', { count: 'exact', head: true })
-            .eq('template_id', templateId)
+export async function getTemplateClones(templateId: string, page: number = 1, limit: number = 20) {
+    return createOrgAction(
+        async ({ supabase }, tId: string, p: number = 1, l: number = 20) => {
+            // Offset
+            const from = (p - 1) * l
+            const to = from + l - 1
 
-        const { count: leadsCount } = await supabase
-            .from('template_leads')
-            .select('*', { count: 'exact', head: true })
-            .eq('template_id', templateId)
+            const { data, count, error } = await supabase
+                .from('procedure_templates')
+                .select(`
+                    id,
+                    created_at,
+                    source_ip_country,
+                    organization:organizations(name)
+                `, { count: 'exact' })
+                .eq('source_template_id', tId)
+                .order('created_at', { ascending: false })
+                .range(from, to)
 
-        // 2. Get Recent Leads
-        const { data: recentLeads } = await supabase
-            .from('template_leads')
-            .select('*')
-            .eq('template_id', templateId)
-            .order('created_at', { ascending: false })
-            .limit(10)
+            if (error) {
+                return actionError(error.message)
+            }
 
-        // 3. Get Chart Data (Last 30 days)
-        const thirtyDaysAgo = new Date()
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+            const clones = data?.map((c) => {
+                const org = Array.isArray(c.organization) ? c.organization[0] : c.organization
+                return {
+                    id: c.id,
+                    organization_name: org?.name || 'Organización desconocida',
+                    country: c.source_ip_country,
+                    created_at: c.created_at
+                }
+            }) || []
 
-        const { data: viewsData } = await supabase
-            .from('template_views')
-            .select('created_at')
-            .eq('template_id', templateId)
-            .gte('created_at', thirtyDaysAgo.toISOString())
-
-        const { data: leadsData } = await supabase
-            .from('template_leads')
-            .select('created_at')
-            .eq('template_id', templateId)
-            .gte('created_at', thirtyDaysAgo.toISOString())
-
-        // Aggregate by day
-        const chartMap = new Map<string, { date: string; views: number; leads: number }>()
-
-        // Fill last 30 days with 0
-        for (let i = 0; i < 30; i++) {
-            const d = new Date()
-            d.setDate(d.getDate() - i)
-            const dateStr = d.toISOString().split('T')[0]
-            chartMap.set(dateStr, { date: dateStr, views: 0, leads: 0 })
+            return actionSuccess({
+                clones,
+                count: count || 0,
+                page: p,
+                totalPages: Math.ceil((count || 0) / l)
+            })
         }
-
-        viewsData?.forEach((v) => {
-            const dateStr = v.created_at.split('T')[0]
-            if (chartMap.has(dateStr)) {
-                chartMap.get(dateStr)!.views += 1
-            }
-        })
-
-        leadsData?.forEach((l) => {
-            const dateStr = l.created_at.split('T')[0]
-            if (chartMap.has(dateStr)) {
-                chartMap.get(dateStr)!.leads += 1
-            }
-        })
-
-        const chartData = Array.from(chartMap.values()).sort((a, b) => a.date.localeCompare(b.date))
-
-        // 4. Get Clones (Top 10)
-        const { data: clonesData } = await supabase
-            .from('procedure_templates')
-            .select(`
-                id,
-                created_at,
-                source_ip_country,
-                organization:organizations(name)
-            `)
-            .eq('source_template_id', templateId)
-            .order('created_at', { ascending: false })
-            .limit(10)
-
-        const clones = clonesData?.map((c) => {
-            const org = Array.isArray(c.organization) ? c.organization[0] : c.organization
-            return {
-                id: c.id,
-                organization_name: org?.name || 'Organización desconocida',
-                country: c.source_ip_country,
-                created_at: c.created_at
-            }
-        }) || []
-
-        return actionSuccess({
-            totalViews: viewsCount || 0,
-            totalLeads: leadsCount || 0,
-            conversionRate: viewsCount ? ((leadsCount || 0) / viewsCount) * 100 : 0,
-            recentLeads: recentLeads || [],
-            clones,
-            chartData,
-        })
-    }
-)
-
-export const getTemplateClones = createOrgAction(
-    async ({ supabase }, templateId: string, page: number = 1, limit: number = 20) => {
-        // Offset
-        const from = (page - 1) * limit
-        const to = from + limit - 1
-
-        const { data, count, error } = await supabase
-            .from('procedure_templates')
-            .select(`
-                id,
-                created_at,
-                source_ip_country,
-                organization:organizations(name)
-            `, { count: 'exact' })
-            .eq('source_template_id', templateId)
-            .order('created_at', { ascending: false })
-            .range(from, to)
-
-        if (error) {
-            return actionError(error.message)
-        }
-
-        const clones = data?.map((c) => {
-            const org = Array.isArray(c.organization) ? c.organization[0] : c.organization
-            return {
-                id: c.id,
-                organization_name: org?.name || 'Organización desconocida',
-                country: c.source_ip_country,
-                created_at: c.created_at
-            }
-        }) || []
-
-        return actionSuccess({
-            clones,
-            count: count || 0,
-            page,
-            totalPages: Math.ceil((count || 0) / limit)
-        })
-    }
-)
+    )(templateId, page, limit)
+}

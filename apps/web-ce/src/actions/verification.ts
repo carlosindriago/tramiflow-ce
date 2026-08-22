@@ -23,7 +23,7 @@ export async function sendVerificationCode() {
             .from('profiles')
             .select('email_verified, full_name')
             .eq('id', user.id)
-            .single()
+            .maybeSingle()
 
         if (profile?.email_verified) {
             return { success: false, error: 'El email ya está verificado' }
@@ -108,7 +108,7 @@ export async function verifyEmailCode(code: string) {
             .from('profiles')
             .select('verification_code, verification_code_expires_at, email_verified')
             .eq('id', user.id)
-            .single()
+            .maybeSingle()
 
         if (!profile) {
             return { success: false, error: 'Perfil no encontrado' }

@@ -31,7 +31,7 @@ export async function updateOrganization(prevState: { message?: string, errors?:
         .eq('organization_id', organizationId)
         .eq('user_id', user.id)
         .limit(1)
-        .single()
+        .maybeSingle()
 
     if (!member || !['OWNER', 'ADMIN'].includes(member.role)) {
         return { message: 'No tienes permisos para editar esta organización', errors: {} }

@@ -58,7 +58,7 @@ export function TemplateForm({ initialData, permissions = [] }: TemplateFormProp
             requirements: [],
             steps: [
                 {
-                    stepId: 'bdd26912-3408-4e12-b05b-802c632616f4',
+                    stepId: crypto.randomUUID(),
                     title: 'Paso 1',
                     type: 'document',
                     description: '',

@@ -16,7 +16,7 @@ export async function getSharedTemplateByToken(token: string) {
         .select('*, organizations(name)')
         .eq('share_token', token)
         .eq('visibility', 'public')
-        .single()
+        .maybeSingle()
 
     if (publicTemplate) return { success: true, template: publicTemplate, mode: 'public' }
 
@@ -30,7 +30,7 @@ export async function getSharedTemplateByToken(token: string) {
             .select('*')
             .eq('share_token', token)
             .eq('visibility', 'restricted')
-            .single()
+            .maybeSingle()
 
         if (restrictedTemplate) {
             // Check permissions explicitly
@@ -39,7 +39,7 @@ export async function getSharedTemplateByToken(token: string) {
                 .select('*')
                 .eq('template_id', restrictedTemplate.id)
                 .eq('email', user.email || '')
-                .single()
+                .maybeSingle()
 
             if (permission) {
                 return { success: true, template: restrictedTemplate, mode: 'restricted' }
@@ -61,7 +61,7 @@ export async function importTemplateAction(templateId: string) {
         .from('profiles')
         .select('organization_id')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
 
     if (!profile?.organization_id) return { success: false, error: 'No organization found' }
 
@@ -71,7 +71,7 @@ export async function importTemplateAction(templateId: string) {
         .from('procedure_templates')
         .select('*')
         .eq('id', templateId)
-        .single()
+        .maybeSingle()
 
     if (sourceError || !source) return { success: false, error: 'Template not found or access denied' }
 
@@ -107,11 +107,11 @@ export async function importTemplateAction(templateId: string) {
             source_ip_country: country
         } as any)
         .select('id')
-        .single()
+        .maybeSingle()
 
-    if (cloneError) {
+    if (cloneError || !newTemplate) {
         console.error('Clone Error:', cloneError)
-        return { success: false, error: cloneError.message }
+        return { success: false, error: cloneError?.message || 'Error al clonar plantilla' }
     }
 
     return { success: true, newId: newTemplate.id }

@@ -159,11 +159,7 @@ export async function createOrganizationAction(formData: FormData): Promise<Onbo
             .eq('id', newOrgId)
 
         // 4.5 Seed Default Kanban Statuses
-        const seedResult = await seedDefaultProcedureStatuses(newOrgId)
-        if (!seedResult.success) {
-            console.warn('Seeding failed but organization was created:', seedResult.error)
-            // We don't block the onboarding for this, but log it
-        }
+        await seedDefaultProcedureStatuses(newOrgId)
 
         return {
             success: true,

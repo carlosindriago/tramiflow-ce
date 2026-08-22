@@ -435,7 +435,7 @@ export function ImagesToPdfDialog({
                     mime_type: 'application/pdf',
                 })
                 .select()
-                .single()
+                .maybeSingle()
 
             if (insertError) {
                 await supabase.storage.from('client-docs').remove([storagePath])

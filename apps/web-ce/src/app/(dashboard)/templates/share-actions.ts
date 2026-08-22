@@ -38,7 +38,7 @@ export async function updateTemplateVisibilityAction(input: z.infer<typeof share
             .from('procedure_templates')
             .select('share_token')
             .eq('id', data.templateId)
-            .single()
+            .maybeSingle()
 
         if (!current?.share_token) {
             share_token = crypto.randomUUID()

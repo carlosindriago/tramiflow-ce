@@ -40,7 +40,7 @@ export async function getAuditLogsAction(params: GetAuditLogsParams = {}) {
         .select('organization_id, role')
         .eq('user_id', user.id)
         .limit(1)
-        .single()
+        .maybeSingle()
 
     if (!member || !['OWNER', 'ADMIN'].includes(member.role)) {
         return { success: false, error: 'No tienes permisos para ver estos registros' }
@@ -99,7 +99,7 @@ export async function getAuditUsersAction() {
         .select('organization_id')
         .eq('user_id', user.id)
         .limit(1)
-        .single()
+        .maybeSingle()
 
     if (!member) return []
 
