@@ -40,16 +40,28 @@ export async function checkOnboardingAction(): Promise<UserOrganization[] | null
             return null
         }
 
-        const organizations = members
-            .filter((m: any) => m.organization !== null)
-            .map((m: any) => ({
-                id: m.organization.id,
-                name: m.organization.name,
-                slug: m.organization.slug || '',
-                logo_url: m.organization.logo_url || null,
-                plan: (m.organization.plan === 'pro' || m.organization.plan === 'enterprise') ? m.organization.plan : 'free',
-                role: (m.role?.toLowerCase() === 'owner' || m.role?.toLowerCase() === 'admin') ? m.role.toLowerCase() : 'member',
-            })) as UserOrganization[]
+        interface MemberOrgItem {
+            role: string | null
+            organization: {
+                id: string
+                name: string
+                slug: string | null
+                logo_url: string | null
+                plan: string | null
+            } | null
+        }
+
+        const rawMembers = members as unknown as MemberOrgItem[]
+        const organizations: UserOrganization[] = rawMembers
+            .filter((m) => m.organization !== null)
+            .map((m) => ({
+                id: m.organization!.id,
+                name: m.organization!.name,
+                slug: m.organization!.slug || '',
+                logo_url: m.organization!.logo_url || null,
+                plan: (m.organization!.plan === 'pro' || m.organization!.plan === 'enterprise') ? m.organization!.plan : 'free',
+                role: (m.role?.toLowerCase() === 'owner' || m.role?.toLowerCase() === 'admin') ? m.role.toLowerCase() as 'owner' | 'admin' : 'member',
+            }))
 
         if (organizations.length === 0) {
             return null
