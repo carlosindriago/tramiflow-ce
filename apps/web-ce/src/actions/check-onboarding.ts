@@ -22,16 +22,36 @@ export async function checkOnboardingAction(): Promise<UserOrganization[] | null
             return null
         }
 
-        const result = await supabase.rpc('get_user_organizations')
+        const { data: members, error: memberError } = await supabase
+            .from('organization_members')
+            .select(`
+                role,
+                organization:organizations(
+                    id,
+                    name,
+                    slug,
+                    logo_url,
+                    plan
+                )
+            `)
+            .eq('user_id', user.id)
 
-        if (result.error) {
-            console.error('RPC error checking organizations:', result.error)
+        if (memberError || !members || members.length === 0) {
             return null
         }
 
-        const organizations = result.data as UserOrganization[]
+        const organizations = members
+            .filter((m: any) => m.organization !== null)
+            .map((m: any) => ({
+                id: m.organization.id,
+                name: m.organization.name,
+                slug: m.organization.slug || '',
+                logo_url: m.organization.logo_url || null,
+                plan: (m.organization.plan === 'pro' || m.organization.plan === 'enterprise') ? m.organization.plan : 'free',
+                role: (m.role?.toLowerCase() === 'owner' || m.role?.toLowerCase() === 'admin') ? m.role.toLowerCase() : 'member',
+            })) as UserOrganization[]
 
-        if (!organizations || organizations.length === 0) {
+        if (organizations.length === 0) {
             return null
         }
 

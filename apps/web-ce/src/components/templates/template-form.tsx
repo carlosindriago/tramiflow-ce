@@ -81,7 +81,19 @@ export function TemplateForm({ initialData, permissions = [] }: TemplateFormProp
         try {
             // Pass the ID if it exists (for updates)
             const payload = initialData?.id ? { ...data, id: initialData.id } : data
-            const result = await saveTemplateAction(payload)
+
+            let result: { success: boolean; data?: { id: string }; error?: string; fieldErrors?: Record<string, string[]> }
+
+            try {
+                const response = await fetch('/api/templates', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                })
+                result = await response.json()
+            } catch {
+                result = await saveTemplateAction(payload)
+            }
 
             if (result.success) {
                 if (result.data?.id) {
@@ -94,7 +106,7 @@ export function TemplateForm({ initialData, permissions = [] }: TemplateFormProp
                 console.error('[ERROR] Save failed:', result.error, result.fieldErrors)
                 const fieldErrorMessages = result.fieldErrors
                     ? Object.entries(result.fieldErrors)
-                        .map(([field, msgs]) => `${field}: ${msgs.join(', ')}`)
+                        .map(([field, msgs]) => `${field}: ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`)
                         .join(' | ')
                     : null
                 toast.error(fieldErrorMessages || result.error || 'Error al guardar la plantilla')
