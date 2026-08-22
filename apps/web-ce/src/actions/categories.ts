@@ -33,7 +33,7 @@ export async function getCategories(): Promise<{ success: boolean; data?: Catego
             .select('organization_id')
             .eq('user_id', user.id)
             .limit(1)
-            .single()
+            .maybeSingle()
 
         if (!member?.organization_id) {
             return { success: false, error: 'No se encontró organización' }
@@ -76,7 +76,7 @@ export async function createCategory(input: CategoryInput): Promise<{ success: b
             .select('organization_id')
             .eq('user_id', user.id)
             .limit(1)
-            .single()
+            .maybeSingle()
 
         if (!member?.organization_id) {
             return { success: false, error: 'No se encontró organización' }
@@ -94,7 +94,7 @@ export async function createCategory(input: CategoryInput): Promise<{ success: b
                 icon: validatedData.icon,
             })
             .select()
-            .single()
+            .maybeSingle()
 
         if (error) {
             console.error('Error creating category:', error)
@@ -132,7 +132,7 @@ export async function updateCategory(id: string, input: Partial<CategoryInput>):
             .from('categories')
             .select('organization_id, slug')
             .eq('id', id)
-            .single()
+            .maybeSingle()
 
         if (!existing) {
             return { success: false, error: 'Categoría no encontrada' }
@@ -143,7 +143,7 @@ export async function updateCategory(id: string, input: Partial<CategoryInput>):
             .select('organization_id')
             .eq('user_id', user.id)
             .limit(1)
-            .single()
+            .maybeSingle()
 
         if (!member?.organization_id || member.organization_id !== existing.organization_id) {
             return { success: false, error: 'No tienes permiso para editar esta categoría' }
@@ -161,7 +161,7 @@ export async function updateCategory(id: string, input: Partial<CategoryInput>):
             })
             .eq('id', id)
             .select()
-            .single()
+            .maybeSingle()
 
         if (error) {
             console.error('Error updating category:', error)
@@ -196,7 +196,7 @@ export async function deleteCategory(id: string): Promise<{ success: boolean; er
             .from('categories')
             .select('organization_id')
             .eq('id', id)
-            .single()
+            .maybeSingle()
 
         if (!category) {
             return { success: false, error: 'Categoría no encontrada' }
@@ -207,7 +207,7 @@ export async function deleteCategory(id: string): Promise<{ success: boolean; er
             .select('organization_id')
             .eq('user_id', user.id)
             .limit(1)
-            .single()
+            .maybeSingle()
 
         if (!member?.organization_id || member.organization_id !== category.organization_id) {
             return { success: false, error: 'No tienes permiso para eliminar esta categoría' }

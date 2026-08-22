@@ -16,7 +16,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const supabase = await createClient()
     const { slug } = await params
-    const { data: org } = await supabase.from('organizations').select('*').eq('slug', slug).single()
+    const { data: org } = await supabase.from('organizations').select('*').eq('slug', slug).maybeSingle()
 
     if (!org) return { title: 'Agencia no encontrada' }
 
@@ -51,7 +51,7 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
         .from('organizations')
         .select('*')
         .eq('slug', slug)
-        .single()
+        .maybeSingle()
 
     if (!org) {
         notFound()

@@ -54,7 +54,7 @@ export default async function PublicTemplatePage({
         .eq('id', id)
         .eq('is_active', true) // Only active templates
         .eq('is_archived', false)
-        .single()
+        .maybeSingle()
 
     if (error || !template) {
         notFound()

@@ -27,7 +27,7 @@ export async function GET() {
             .select('organization_id')
             .eq('user_id', user.id)
             .limit(1)
-            .single()
+            .maybeSingle()
 
         if (!member?.organization_id) {
             return NextResponse.json({ error: 'No se encontró organización' }, { status: 400 })

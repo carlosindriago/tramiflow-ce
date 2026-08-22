@@ -37,7 +37,7 @@ export async function getPublicProcedureStatus(trackingId: string) {
             )
         `)
         .eq('tracking_id', trackingId)
-        .single()
+        .maybeSingle()
 
     if (error || !procedure) {
         // console.error('Error fetching public status:', error)

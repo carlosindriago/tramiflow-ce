@@ -415,7 +415,7 @@ export function SmartDropzone({ clientId, organizationId, procedureId, onUploadC
             mime_type: fileToUpload.type,
         })
             .select()
-            .single()
+            .maybeSingle()
 
         if (insertError) {
             // Rollback: delete uploaded file

@@ -34,7 +34,7 @@ export async function GET(request: Request) {
                     .from('profiles')
                     .select('registration_ip')
                     .eq('id', session.user.id)
-                    .single()
+                    .maybeSingle()
 
                 const updateData: { last_ip: string; registration_ip?: string } = { last_ip: ip }
                 if (profile && !profile.registration_ip) {

@@ -34,7 +34,7 @@ export const getPlan = unstable_cache(
             .from('subscription_plans')
             .select('*')
             .eq('code', code)
-            .single()
+            .maybeSingle()
         return data
     },
     ['subscription_plan'],
@@ -51,7 +51,7 @@ export async function checkLimit(
         .from('organizations')
         .select('plan_code')
         .eq('id', orgId)
-        .single()
+        .maybeSingle()
 
     const { data: ownerProfile } = await supabase
         .from('profiles')
@@ -59,7 +59,7 @@ export async function checkLimit(
         .eq('organization_id', orgId)
         .eq('role', 'owner')
         .limit(1)
-        .single()
+        .maybeSingle()
 
     const isVerified = ownerProfile?.email_verified ?? false
 

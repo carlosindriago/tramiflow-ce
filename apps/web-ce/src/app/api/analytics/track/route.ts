@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
                 .select('organization_id')
                 .eq('user_id', user.id)
                 .limit(1)
-                .single()
+                .maybeSingle()
             organizationId = membership?.organization_id ?? null
         }
 

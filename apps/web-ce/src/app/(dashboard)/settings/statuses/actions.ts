@@ -5,92 +5,120 @@ import { CreateProcedureStatusInput, UpdateProcedureStatusInput, actionSuccess, 
 import { createOrgAction } from '@/lib/action-helpers'
 import { createClient } from '@carlosindriago/database/server'
 
-export const createProcedureStatusAction = createOrgAction(
-    async ({ supabase, orgId }, input: CreateProcedureStatusInput) => {
-        const { data, error } = await supabase
-            .from('procedure_statuses')
-            .insert({
-                organization_id: orgId,
-                name: input.name,
-                color: input.color,
-                is_final: input.is_final,
-                order_index: input.order_index
-            })
-            .select()
-            .single()
-
-        if (error) return actionError(error.message)
-
-        revalidatePath('/settings/statuses')
-        revalidatePath('/procedures')
-        return actionSuccess(data)
-    }
-)
-
-export const updateProcedureStatusConfigAction = createOrgAction(
-    async ({ supabase, orgId }, input: UpdateProcedureStatusInput) => {
-        const updateData: {
-            name?: string
-            color?: string
-            is_final?: boolean
-            order_index?: number
-            updated_at: string
-        } = {
-            updated_at: new Date().toISOString()
-        }
-
-        if (input.name !== undefined) updateData.name = input.name
-        if (input.color !== undefined) updateData.color = input.color
-        if (input.is_final !== undefined) updateData.is_final = input.is_final
-        if (input.order_index !== undefined) updateData.order_index = input.order_index
-
-        const { error } = await supabase
-            .from('procedure_statuses')
-            .update(updateData)
-            .eq('id', input.id)
-            .eq('organization_id', orgId)
-
-        if (error) return actionError(error.message)
-
-        revalidatePath('/settings/statuses')
-        revalidatePath('/procedures')
-        return actionSuccess(undefined)
-    }
-)
-
-export const deleteProcedureStatusAction = createOrgAction(
-    async ({ supabase, orgId }, id: string) => {
-        const { error } = await supabase
-            .from('procedure_statuses')
-            .delete()
-            .eq('id', id)
-            .eq('organization_id', orgId)
-
-        if (error) return actionError(error.message)
-
-        revalidatePath('/settings/statuses')
-        revalidatePath('/procedures')
-        return actionSuccess(undefined)
-    }
-)
-
-export const reorderProcedureStatusesAction = createOrgAction(
-    async ({ supabase, orgId }, items: { id: string, order_index: number }[]) => {
-        const updates = items.map(item =>
-            supabase
+export async function createProcedureStatusAction(input: CreateProcedureStatusInput) {
+    return createOrgAction(
+        async ({ supabase, orgId }, dataInput: CreateProcedureStatusInput) => {
+            const { data, error } = await supabase
                 .from('procedure_statuses')
-                .update({ order_index: item.order_index })
-                .eq('id', item.id)
+                .insert({
+                    organization_id: orgId,
+                    name: dataInput.name,
+                    color: dataInput.color,
+                    is_final: dataInput.is_final,
+                    order_index: dataInput.order_index
+                })
+                .select()
+                .maybeSingle()
+
+            if (error) return actionError(error.message)
+
+            try {
+                revalidatePath('/settings/statuses')
+                revalidatePath('/procedures')
+            } catch (e) {
+                console.warn('revalidatePath error ignored:', e)
+            }
+
+            return actionSuccess(data)
+        }
+    )(input)
+}
+
+export async function updateProcedureStatusConfigAction(input: UpdateProcedureStatusInput) {
+    return createOrgAction(
+        async ({ supabase, orgId }, dataInput: UpdateProcedureStatusInput) => {
+            const updateData: {
+                name?: string
+                color?: string
+                is_final?: boolean
+                order_index?: number
+                updated_at: string
+            } = {
+                updated_at: new Date().toISOString()
+            }
+
+            if (dataInput.name !== undefined) updateData.name = dataInput.name
+            if (dataInput.color !== undefined) updateData.color = dataInput.color
+            if (dataInput.is_final !== undefined) updateData.is_final = dataInput.is_final
+            if (dataInput.order_index !== undefined) updateData.order_index = dataInput.order_index
+
+            const { error } = await supabase
+                .from('procedure_statuses')
+                .update(updateData)
+                .eq('id', dataInput.id)
                 .eq('organization_id', orgId)
-        )
 
-        await Promise.all(updates)
+            if (error) return actionError(error.message)
 
-        revalidatePath('/settings/statuses')
-        revalidatePath('/procedures')
-        return actionSuccess(undefined)
-    }
-)
+            try {
+                revalidatePath('/settings/statuses')
+                revalidatePath('/procedures')
+            } catch (e) {
+                console.warn('revalidatePath error ignored:', e)
+            }
+
+            return actionSuccess(undefined)
+        }
+    )(input)
+}
+
+export async function deleteProcedureStatusAction(id: string) {
+    return createOrgAction(
+        async ({ supabase, orgId }, statusId: string) => {
+            const { error } = await supabase
+                .from('procedure_statuses')
+                .delete()
+                .eq('id', statusId)
+                .eq('organization_id', orgId)
+
+            if (error) return actionError(error.message)
+
+            try {
+                revalidatePath('/settings/statuses')
+                revalidatePath('/procedures')
+            } catch (e) {
+                console.warn('revalidatePath error ignored:', e)
+            }
+
+            return actionSuccess(undefined)
+        }
+    )(id)
+}
+
+export async function reorderProcedureStatusesAction(items: { id: string, order_index: number }[]) {
+    return createOrgAction(
+        async ({ supabase, orgId }, orderItems: { id: string, order_index: number }[]) => {
+            const updates = orderItems.map(item =>
+                supabase
+                    .from('procedure_statuses')
+                    .update({ order_index: item.order_index })
+                    .eq('id', item.id)
+                    .eq('organization_id', orgId)
+            )
+
+            await Promise.all(updates)
+
+            try {
+                revalidatePath('/settings/statuses')
+                revalidatePath('/procedures')
+            } catch (e) {
+                console.warn('revalidatePath error ignored:', e)
+            }
+
+            return actionSuccess(undefined)
+        }
+    )(items)
+}
 
 export async function seedDefaultProcedureStatuses(organizationId: string) {
     const supabase = await createClient()
@@ -102,31 +130,26 @@ export async function seedDefaultProcedureStatuses(organizationId: string) {
         .eq('organization_id', organizationId)
 
     if (count && count > 0) {
-        return actionSuccess({ message: 'Ya existen estados' })
+        return
     }
 
     const defaultStatuses = [
-        { name: 'Pendiente', color: '#64748b', order_index: 1, is_final: false },
-        { name: 'Pago de Trámite', color: '#3b82f6', order_index: 2, is_final: false },
-        { name: 'Realizando Trámite', color: '#6366f1', order_index: 3, is_final: false },
-        { name: 'Espera Aprobación', color: '#f97316', order_index: 4, is_final: false },
-        { name: 'Aprobado', color: '#22c55e', order_index: 5, is_final: true },
-        { name: 'Rechazado', color: '#ef4444', order_index: 6, is_final: true },
+        { name: 'Documentación Pendiente', color: 'amber', is_final: false, order_index: 0 },
+        { name: 'En Trámite', color: 'blue', is_final: false, order_index: 1 },
+        { name: 'En Subsanación', color: 'rose', is_final: false, order_index: 2 },
+        { name: 'Finalizado', color: 'emerald', is_final: true, order_index: 3 }
     ]
 
-    const dataToInsert = defaultStatuses.map(status => ({
-        organization_id: organizationId,
-        ...status
+    const inserts = defaultStatuses.map(status => ({
+        ...status,
+        organization_id: organizationId
     }))
 
     const { error } = await supabase
         .from('procedure_statuses')
-        .insert(dataToInsert)
+        .insert(inserts)
 
     if (error) {
         console.error('Error seeding default statuses:', error)
-        return actionError(error.message)
     }
-
-    return actionSuccess(undefined)
 }
