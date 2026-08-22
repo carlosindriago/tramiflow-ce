@@ -163,7 +163,7 @@ export function TemplateForm({ initialData, permissions = [] }: TemplateFormProp
                             type="button"
                             onClick={handleSaveClick}
                             disabled={isSaving}
-                            className="gap-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow-sm"
+                            className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-sm"
                         >
                             {isSaving ? (
                                 <>

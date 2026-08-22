@@ -62,17 +62,17 @@ export function SortableStepCard({
             className="relative mb-4"
         >
             {/* Step Number Circle */}
-            <div className="absolute left-0 flex h-10 w-10 items-center justify-center rounded-full border-2 border-emerald-500 bg-card z-10">
-                <IconComponent className="h-4 w-4 text-emerald-500" />
+            <div className="absolute left-0 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card shadow-sm z-10">
+                <IconComponent className="h-4 w-4 text-primary" />
             </div>
             {/* Step Number Badge */}
-            <div className="absolute left-7 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-bold text-white z-20">
+            <div className="absolute left-7 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground z-20">
                 {index + 1}
             </div>
 
             {/* Step Card */}
             <Card
-                className={`ml-14 border-border/50 bg-slate-900/40 backdrop-blur-sm transition-all hover:border-emerald-500/30 hover:bg-slate-900/60 ${isDragging ? 'shadow-xl ring-2 ring-emerald-500/50' : ''
+                className={`ml-14 border-border bg-card shadow-sm transition-all hover:border-primary/40 ${isDragging ? 'shadow-xl ring-2 ring-primary/50' : ''
                     }`}
             >
                 <CardContent className="p-4">
@@ -91,7 +91,7 @@ export function SortableStepCard({
                         <div className="flex-1 space-y-2">
                             <Input
                                 placeholder="Nombre del paso..."
-                                className="border-0 bg-transparent p-0 text-base font-medium placeholder:text-muted-foreground/50 focus-visible:ring-0"
+                                className="border-0 bg-transparent p-0 text-base font-medium placeholder:text-muted-foreground focus-visible:ring-0"
                                 {...form.register(`steps.${index}.title`)}
                             />
                             {form.formState.errors.steps?.[index]?.title && (
@@ -106,7 +106,7 @@ export function SortableStepCard({
                                 form.setValue(`steps.${index}.type`, value as StepType)
                             }
                         >
-                            <SelectTrigger className="w-[140px] bg-background/50">
+                            <SelectTrigger className="w-[140px] bg-muted/40 border-border">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -128,12 +128,12 @@ export function SortableStepCard({
                     {/* Description */}
                     <Textarea
                         placeholder="Descripción breve del paso (opcional)..."
-                        className="mb-4 min-h-[60px] resize-none bg-background/30"
+                        className="mb-4 min-h-[60px] resize-none bg-muted/40 border-border placeholder:text-muted-foreground"
                         {...form.register(`steps.${index}.description`)}
                     />
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between border-t border-border/30 pt-3">
+                    <div className="flex items-center justify-between border-t border-border pt-3">
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2">
                                 <Switch
@@ -145,21 +145,17 @@ export function SortableStepCard({
                                 />
                                 <Label
                                     htmlFor={`required-${stepId}`}
-                                    className="text-sm text-muted-foreground"
+                                    className="text-sm text-muted-foreground cursor-pointer"
                                 >
                                     Obligatorio
                                 </Label>
                             </div>
                             <Badge
-                                variant={
-                                    form.watch(`steps.${index}.isRequired`)
-                                        ? 'default'
-                                        : 'secondary'
-                                }
+                                variant="outline"
                                 className={
                                     form.watch(`steps.${index}.isRequired`)
-                                        ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
-                                        : ''
+                                        ? 'bg-primary/10 text-primary border-primary/30'
+                                        : 'bg-muted text-muted-foreground border-border'
                                 }
                             >
                                 {form.watch(`steps.${index}.isRequired`)
@@ -171,7 +167,7 @@ export function SortableStepCard({
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                             onClick={onRemove}
                             disabled={!canRemove}
                         >

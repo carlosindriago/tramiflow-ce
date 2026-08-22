@@ -145,20 +145,20 @@ export function PdfCompressor({ initialFile, onCompressed }: PdfCompressorProps 
             ) : (
                 <>
                     {/* File Info */}
-                    <div className="flex items-center justify-between rounded-xl border border-slate-800/50 bg-slate-900/40 backdrop-blur-md p-4">
+                    <div className="flex items-center justify-between rounded-xl border border-border bg-card shadow-sm p-4">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500/10">
-                                <FileText className="h-5 w-5 text-red-400" />
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-destructive/10">
+                                <FileText className="h-5 w-5 text-destructive" />
                             </div>
                             <div>
-                                <p className="text-sm font-medium text-slate-200 truncate max-w-[300px]">{file.name}</p>
-                                <p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>
+                                <p className="text-sm font-medium text-foreground truncate max-w-[300px]">{file.name}</p>
+                                <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
                             </div>
                         </div>
                         {!initialFile && (
                             <button
                                 onClick={handleReset}
-                                className="rounded-lg p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                className="rounded-lg p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
                                 title="Eliminar archivo"
                             >
                                 <Trash2 className="h-4 w-4" />
@@ -167,10 +167,10 @@ export function PdfCompressor({ initialFile, onCompressed }: PdfCompressorProps 
                     </div>
 
                     {/* Quality Slider */}
-                    <div className="rounded-xl border border-slate-800/50 bg-slate-900/40 backdrop-blur-md p-5 space-y-4">
+                    <div className="rounded-xl border border-border bg-card shadow-sm p-5 space-y-4">
                         <div className="flex items-center gap-2">
-                            <SlidersHorizontal className="h-4 w-4 text-slate-500" />
-                            <span className="text-sm font-medium text-slate-300">Calidad de Compresión</span>
+                            <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm font-medium text-foreground">Calidad de Compresión</span>
                         </div>
                         <div className="space-y-2">
                             <input
