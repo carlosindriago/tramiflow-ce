@@ -35,7 +35,7 @@ export default async function EditTemplatePage({ params }: EditTemplatePageProps
         .select('*')
         .eq('id', id)
         .eq('organization_id', organizationId)
-        .single()
+        .maybeSingle()
 
     if (error || !template) {
         notFound()

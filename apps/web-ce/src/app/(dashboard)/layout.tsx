@@ -16,20 +16,24 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
 
     let emailVerified = true
 
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
+    try {
+        const {
+            data: { user },
+        } = await supabase.auth.getUser()
 
-    if (user) {
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('email_verified')
-            .eq('id', user.id)
-            .single()
+        if (user) {
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('email_verified')
+                .eq('id', user.id)
+                .maybeSingle()
 
-        if (profile) {
-            emailVerified = profile.email_verified ?? true
+            if (profile) {
+                emailVerified = profile.email_verified ?? true
+            }
         }
+    } catch (err) {
+        console.error('Error fetching profile in DashboardLayout:', err)
     }
 
     return (

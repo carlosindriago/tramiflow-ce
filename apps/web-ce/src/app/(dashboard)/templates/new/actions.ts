@@ -78,7 +78,11 @@ export const saveTemplateAction = createOrgAction(
             return actionError(result.error?.message || 'Error al guardar plantilla')
         }
 
-        revalidatePath('/templates')
+        try {
+            revalidatePath('/templates')
+        } catch (e) {
+            console.warn('revalidatePath error ignored:', e)
+        }
         return actionSuccess({ id: result.data.id })
     }
 )

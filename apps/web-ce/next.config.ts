@@ -11,7 +11,7 @@ base-uri 'none';
 form-action 'self' https://*.supabase.co https://accounts.google.com;
 frame-ancestors 'none';
 frame-src 'self' blob:;
-connect-src 'self' https://*.supabase.co https://api.resend.com;
+connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.resend.com;
 `.replace(/\n/g, ' ').trim();
 
 const securityHeaders = [
