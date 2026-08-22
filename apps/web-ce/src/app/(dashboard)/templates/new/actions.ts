@@ -51,10 +51,18 @@ export async function saveTemplateAction(input: TemplateFormData & { id?: string
                 name: parsed.data.name,
                 category: parsed.data.category || null,
 
-                base_cost: parsed.data.feesProfessional ?? 0,
                 fees: parsed.data.feesProfessional ?? 0,
+                fees_professional: parsed.data.feesProfessional ?? 0,
+                fees_official: parsed.data.feesOfficial ?? 0,
                 government_fee: parsed.data.feesOfficial ?? 0,
                 payment_terms: parsed.data.paymentTerms || 'upfront',
+                currency: parsed.data.currency || 'PEN',
+
+                duration_work: parsed.data.durationWork ?? 5,
+                duration_resolution: parsed.data.durationResolution ?? 0,
+                is_custom_category: parsed.data.isCustomCategory ?? false,
+                requires_renewal: parsed.data.requiresRenewal ?? false,
+                renewal_frequency: parsed.data.renewalFrequency ?? null,
 
                 is_active: parsed.data.isActive ?? true,
                 requirements: parsed.data.requirements || [],
