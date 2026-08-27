@@ -12,10 +12,8 @@ import { Label } from '@carlosindriago/ui'
 import {
     DialogFooter,
 } from '@carlosindriago/ui'
-import { createClientAction } from '@/app/(dashboard)/clients/actions'
-/* eslint-disable */
-import { createClientSchema, type CreateClientInput, type ClientActionResult } from '@carlosindriago/core'
-import { toast } from 'sonner'
+import { createClientSchema, type CreateClientInput } from '@carlosindriago/core'
+import { toast } from '@carlosindriago/core'
 
 interface ClientFormProps {
     defaultValues?: Partial<CreateClientInput>
@@ -65,10 +63,19 @@ export function ClientForm({ defaultValues, onSuccess, onCancel, isDialog = fals
             // Filter out empty identifications
             const cleanData = {
                 ...data,
-                identifications: data.identifications.filter(id => id.type && id.number)
+                identifications: data.identifications.filter(id => id.type && id.number),
+                nationality: data.nationality || undefined,
+                phone: data.phone || undefined,
+                email: data.email || undefined,
+                notes: data.notes || undefined,
             }
             
-            const result = await createClientAction(cleanData)
+            const response = await fetch('/api/clients', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(cleanData),
+            })
+            const result = await response.json()
 
             if (!result.success) {
                 if (result.error === 'UNVERIFIED_BLOCKED') {
@@ -77,7 +84,7 @@ export function ClientForm({ defaultValues, onSuccess, onCancel, isDialog = fals
                     }))
                     return
                 }
-                toast.error(result.error)
+                toast.error(result.error || 'Error al crear cliente')
                 return
             }
 

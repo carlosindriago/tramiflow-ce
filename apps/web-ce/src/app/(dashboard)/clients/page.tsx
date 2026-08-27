@@ -50,7 +50,6 @@ import { toast } from '@carlosindriago/core'
 import { PhoneAction } from '@carlosindriago/ui'
 import { ClientForm } from '@/components/clients/client-form'
 
-import { getClients, deleteClientAction } from './actions'
 import { type Client, getPrimaryIdentificationNumber } from '@carlosindriago/core'
 
 type ViewMode = 'grid' | 'table'
@@ -67,15 +66,17 @@ export default function ClientsPage() {
     const { data: clients = [], isLoading } = useQuery<Client[]>({
         queryKey: ['clients'],
         queryFn: async () => {
-            const res = await getClients()
-            return res.success ? res.data : []
+            const res = await fetch('/api/clients')
+            const json = await res.json()
+            return json.success ? json.data : []
         },
     })
 
     // Delete mutation
     const deleteMutation = useMutation({
         mutationFn: async (clientId: string) => {
-            const result = await deleteClientAction(clientId)
+            const res = await fetch(`/api/clients/${clientId}`, { method: 'DELETE' })
+            const result = await res.json()
             if (!result.success) throw new Error(result.error || 'Error al eliminar')
             return result
         },
