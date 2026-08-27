@@ -25,10 +25,9 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Procedure, ProcedureStatusConfig } from '@carlosindriago/core'
-import { updateProcedureStatusAction } from '@/app/(dashboard)/procedures/actions'
 import { ProcedureCard } from './procedure-card'
 import { NewProcedureDialog } from './new-procedure-dialog'
-import { toast } from 'sonner'
+import { toast } from '@carlosindriago/core'
 import { createPortal } from 'react-dom'
 import { Plus, ClipboardList } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
@@ -262,7 +261,12 @@ export function KanbanBoard({ initialProcedures, clients, templates, statuses = 
         if (!procedure) return
 
         try {
-            const result = await updateProcedureStatusAction(activeId, procedure.status)
+            const res = await fetch(`/api/procedures/${activeId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status_id: procedure.status }),
+            })
+            const result = await res.json()
             if (!result.success) {
                 toast.error('Error al mover trámite. Revirtiendo...')
                 setProcedures(previousProcedures)
@@ -286,7 +290,12 @@ export function KanbanBoard({ initialProcedures, clients, templates, statuses = 
         ))
 
         try {
-            const result = await updateProcedureStatusAction(procedureId, newStatus)
+            const res = await fetch(`/api/procedures/${procedureId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status_id: newStatus }),
+            })
+            const result = await res.json()
             if (!result.success) {
                 toast.error('Error al actualizar estado. Revirtiendo...')
                 setProcedures(previousProcedures)

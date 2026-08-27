@@ -2,11 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { ProcedureStepsDrawer } from '../procedure-steps-drawer'
 import type { Procedure } from '@carlosindriago/core'
-import * as actions from '@/app/(dashboard)/procedures/actions'
 
-vi.mock('@/app/(dashboard)/procedures/actions', () => ({
-  updateProcedureStepsProgressAction: vi.fn(),
-}))
 
 const createMockProcedure = (overrides: Partial<Procedure> = {}): Procedure => ({
   id: 'test-procedure-id',
@@ -73,9 +69,11 @@ describe('ProcedureStepsDrawer', () => {
     expect(screen.getByText(/Presentar formulario/)).toBeInTheDocument()
   })
 
-  it('calls updateProcedureStepsProgressAction when checkbox toggled', async () => {
-    const mockAction = vi.mocked(actions.updateProcedureStepsProgressAction)
-    mockAction.mockResolvedValue({ success: true, data: undefined })
+  it('calls PATCH /api/procedures/[id] when checkbox toggled', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      json: async () => ({ success: true }),
+    })
+    global.fetch = fetchMock
 
     render(
       <ProcedureStepsDrawer
@@ -89,16 +87,21 @@ describe('ProcedureStepsDrawer', () => {
     fireEvent.click(stepButton)
 
     await waitFor(() => {
-      expect(mockAction).toHaveBeenCalledWith(
-        'test-procedure-id',
-        { step1: true }
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/procedures/test-procedure-id',
+        expect.objectContaining({
+          method: 'PATCH',
+          body: JSON.stringify({ steps_progress: { step1: true } }),
+        })
       )
     })
   })
 
   it('reverts optimistic update when action fails', async () => {
-    const mockAction = vi.mocked(actions.updateProcedureStepsProgressAction)
-    mockAction.mockResolvedValue({ success: false, error: 'Server error' })
+    const fetchMock = vi.fn().mockResolvedValue({
+      json: async () => ({ success: false, error: 'Server error' }),
+    })
+    global.fetch = fetchMock
 
     render(
       <ProcedureStepsDrawer
@@ -112,15 +115,17 @@ describe('ProcedureStepsDrawer', () => {
     fireEvent.click(stepButton)
 
     await waitFor(() => {
-      expect(mockAction).toHaveBeenCalled()
+      expect(fetchMock).toHaveBeenCalled()
     })
     // After revert, step should still appear as uncompleted (no line-through)
     expect(screen.getByText(/Recopilar documentos/)).not.toHaveClass('line-through')
   })
 
   it('calls onStepsUpdate with updated procedure when action succeeds', async () => {
-    const mockAction = vi.mocked(actions.updateProcedureStepsProgressAction)
-    mockAction.mockResolvedValue({ success: true, data: undefined })
+    const fetchMock = vi.fn().mockResolvedValue({
+      json: async () => ({ success: true }),
+    })
+    global.fetch = fetchMock
     const onStepsUpdate = vi.fn()
 
     render(
