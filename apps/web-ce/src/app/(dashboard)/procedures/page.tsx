@@ -1,26 +1,91 @@
-import { getProceduresAction, getNewProcedureOptions, getProcedureStatusesAction } from './actions'
+import { createClient } from '@carlosindriago/database/server'
 import { KanbanBoard } from '@/components/procedures/kanban-board'
 import { Procedure, ProcedureStatusConfig } from '@carlosindriago/core'
+import { redirect } from 'next/navigation'
+
+export const dynamic = 'force-dynamic'
 
 export default async function ProceduresPage() {
-    const [proceduresRes, optionsRes, statusesRes] = await Promise.all([
-        getProceduresAction(false),
-        getNewProcedureOptions(),
-        getProcedureStatusesAction()
+    const supabase = await createClient()
+
+    const {
+        data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+        redirect('/login')
+    }
+
+    const { data: member } = await supabase
+        .from('organization_members')
+        .select('organization_id')
+        .eq('user_id', user.id)
+        .limit(1)
+        .maybeSingle()
+
+    if (!member?.organization_id) {
+        redirect('/onboarding')
+    }
+
+    const orgId = member.organization_id
+
+    const [proceduresResult, clientsResult, templatesResult, statusesResult] = await Promise.all([
+        supabase
+            .from('procedures')
+            .select(`
+                *,
+                client:clients(id, full_name, email),
+                template:procedure_templates(
+                    id,
+                    name,
+                    requirements,
+                    steps,
+                    fees_professional:fees,
+                    fees_official:government_fee
+                ),
+                status_details:procedure_statuses(*)
+            `)
+            .eq('organization_id', orgId)
+            .order('created_at', { ascending: false }),
+        supabase
+            .from('clients')
+            .select('id, full_name')
+            .eq('organization_id', orgId)
+            .order('full_name', { ascending: true }),
+        supabase
+            .from('procedure_templates')
+            .select('id, name')
+            .eq('organization_id', orgId)
+            .eq('is_active', true)
+            .eq('is_archived', false)
+            .order('name', { ascending: true }),
+        supabase
+            .from('procedure_statuses')
+            .select('*')
+            .eq('organization_id', orgId)
+            .order('order_index', { ascending: true })
     ])
 
-    const procedures = (proceduresRes.success && proceduresRes.data) ? (proceduresRes.data as unknown as Procedure[]) : []
-    const clients = (optionsRes.success && optionsRes.data) ? optionsRes.data.clients : []
-    const templates = (optionsRes.success && optionsRes.data) ? optionsRes.data.templates : []
-    const statuses = (statusesRes.success && statusesRes.data) ? (statusesRes.data as unknown as ProcedureStatusConfig[]) : []
-
-    if (!proceduresRes.success) {
+    if (proceduresResult.error) {
+        console.error('Error loading procedures in ProceduresPage:', proceduresResult.error)
         return (
-            <div className="p-8 text-center text-destructive bg-destructive/10 rounded-lg">
-                Error cargando trámites: {proceduresRes.error}
+            <div className="p-8 text-center text-destructive bg-destructive/10 rounded-lg m-6">
+                Error cargando trámites: {proceduresResult.error.message}
             </div>
         )
     }
+
+    const unmappedProcedures = proceduresResult.data || []
+    const procedures: Procedure[] = unmappedProcedures
+        .filter(p => !p.status_details?.is_final)
+        .map(p => ({
+            ...p,
+            status: p.status_id,
+        })) as unknown as Procedure[]
+
+    const clients = clientsResult.data || []
+    const templates = templatesResult.data || []
+    const statuses = (statusesResult.data || []) as unknown as ProcedureStatusConfig[]
 
     return (
         <div className="flex flex-col h-[calc(100vh-4rem)] w-full overflow-hidden">
