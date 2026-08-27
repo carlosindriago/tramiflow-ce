@@ -104,7 +104,7 @@ export async function getProcedureByIdAction(id: string) {
 
 export async function createProcedureAction(input: { clientId: string; templateId: string }) {
     return createOrgAction(
-        async ({ supabase, orgId }, dataInput: { clientId: string; templateId: string }) => {
+        async ({ supabase, orgId, user }, dataInput: { clientId: string; templateId: string }) => {
             // Check Plan Limits
             const { checkLimit } = await import('@carlosindriago/database/limits')
             const limitStatus = await checkLimit(orgId, 'procedures', supabase)
@@ -115,6 +115,15 @@ export async function createProcedureAction(input: { clientId: string; templateI
 
             if (limitStatus.status === 'blocked') {
                 return actionError('LIMIT_REACHED')
+            }
+
+            // Ensure profile exists in public.profiles to satisfy Foreign Key constraint
+            try {
+                await supabase
+                    .from('profiles')
+                    .upsert({ id: user.id, email: user.email }, { onConflict: 'id', ignoreDuplicates: true })
+            } catch (profileErr) {
+                console.warn('Profile upsert warning:', profileErr)
             }
 
             // 1. Fetch Template to copy details
@@ -170,6 +179,7 @@ export async function createProcedureAction(input: { clientId: string; templateI
                 .from('procedures')
                 .insert({
                     organization_id: orgId,
+                    created_by: user.id,
                     client_id: dataInput.clientId,
                     template_id: dataInput.templateId,
                     title: template.name,
