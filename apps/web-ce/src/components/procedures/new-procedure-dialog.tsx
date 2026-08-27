@@ -18,8 +18,7 @@ import {
 } from '@carlosindriago/ui'
 import { Check, ChevronsUpDown, Loader2, Plus } from 'lucide-react'
 import { cn } from '@carlosindriago/core'
-import { createProcedureAction } from '@/app/(dashboard)/procedures/actions'
-import { toast } from 'sonner'
+import { toast } from '@carlosindriago/core'
 
 interface NewProcedureDialogProps {
     open: boolean
@@ -53,13 +52,31 @@ export function NewProcedureDialog({
 
         setIsLoading(true)
         try {
-            const result = await createProcedureAction({
-                clientId: selectedClientId,
-                templateId: selectedTemplateId
+            const response = await fetch('/api/procedures', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    clientId: selectedClientId,
+                    templateId: selectedTemplateId,
+                }),
             })
 
+            const result = await response.json()
+
             if (!result.success) {
-                throw new Error(result.error)
+                if (result.error === 'UNVERIFIED_BLOCKED') {
+                    window.dispatchEvent(new CustomEvent('open-verification-modal', {
+                        detail: { message: 'Has alcanzado el límite de trámites de tu plan no verificado. Verifica tu correo para continuar.' }
+                    }))
+                    onOpenChange(false)
+                    return
+                }
+                if (result.error === 'LIMIT_REACHED') {
+                    toast.error('Has alcanzado el límite de trámites de tu plan actual.')
+                    return
+                }
+                toast.error(result.error || 'Error al crear el trámite')
+                return
             }
 
             toast.success('Trámite creado exitosamente')
@@ -67,20 +84,11 @@ export function NewProcedureDialog({
             if (!defaultClientId) setSelectedClientId('')
             setSelectedTemplateId('')
             onProcedureCreated?.()
-/* eslint-disable */
-        } catch (error: any) {
-            if (error.message === 'UNVERIFIED_BLOCKED') {
-                window.dispatchEvent(new CustomEvent('open-verification-modal', {
-                    detail: { message: 'Has alcanzado el límite de trámites de tu plan no verificado. Verifica tu correo para continuar.' }
-                }))
-                onOpenChange(false)
-                return
-            }
-            if (error.message === 'LIMIT_REACHED') {
-                toast.error('Has alcanzado el límite de trámites de tu plan actual.')
-                return
-            }
-            toast.error(error.message || 'Error al crear el trámite')
+            router.refresh()
+        } catch (error) {
+            console.error('Submit procedure error:', error)
+            const message = error instanceof Error ? error.message : 'Error al crear el trámite'
+            toast.error(message)
         } finally {
             setIsLoading(false)
         }
