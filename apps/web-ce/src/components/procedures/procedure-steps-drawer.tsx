@@ -8,7 +8,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@carlosindriago/ui
 import { Button } from '@carlosindriago/ui'
 import { cn } from '@carlosindriago/core'
 import type { Procedure, TemplateStep, StepsProgress } from '@carlosindriago/core'
-import { updateProcedureStepsProgressAction } from '@/app/(dashboard)/procedures/actions'
 
 interface ProcedureStepsDrawerProps {
   procedure: Procedure | null
@@ -54,7 +53,12 @@ export function ProcedureStepsDrawer({
     setIsUpdating(true)
 
     try {
-      const result = await updateProcedureStepsProgressAction(procedure.id, newProgress)
+      const res = await fetch(`/api/procedures/${procedure.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ steps_progress: newProgress }),
+      })
+      const result = await res.json()
       
       if (!result.success) {
         setLocalProgress(localProgress)
