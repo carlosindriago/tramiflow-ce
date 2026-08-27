@@ -2,14 +2,6 @@
 
 import { Procedure, ProcedureStatusConfig, getPrimaryIdentificationNumber } from '@carlosindriago/core'
 import {
-    updateProcedureChecklistAction,
-    updateProcedureStatusAction,
-    updateProcedurePaymentStatusAction,
-    updateProcedureStepAction,
-    getProcedureByIdAction,
-    getProcedureStatusesAction
-} from '@/app/(dashboard)/procedures/actions'
-import {
     getProcedureDocumentsAction,
     linkDocumentToProcedureAction,
     unlinkDocumentFromProcedureAction
@@ -78,9 +70,10 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
     const { data: statuses = [] } = useQuery<ProcedureStatusConfig[]>({
         queryKey: ['procedure-statuses'],
         queryFn: async () => {
-            const res = await getProcedureStatusesAction()
-            if (!res.success) return []
-            return res.data
+            const res = await fetch('/api/procedures/statuses')
+            const json = await res.json()
+            if (!json.success) return []
+            return json.data
         }
     })
 
@@ -88,9 +81,10 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
     const { data: procedure, isLoading: isFetching, refetch } = useQuery<Procedure>({
         queryKey: ['procedure', procedureId],
         queryFn: async () => {
-            const res = await getProcedureByIdAction(procedureId)
-            if (!res.success) throw new Error(res.error)
-            return res.data as unknown as Procedure
+            const res = await fetch(`/api/procedures/${procedureId}`)
+            const json = await res.json()
+            if (!json.success) throw new Error(json.error)
+            return json.data as unknown as Procedure
         }
     })
 
@@ -189,8 +183,13 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
         const newChecklist = { ...checklist, [reqId]: checked }
 
         try {
-            const result = await updateProcedureChecklistAction(procedureId, newChecklist)
-            if (!result.success) throw new Error(result.error)
+            const res = await fetch(`/api/procedures/${procedureId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ checklist_progress: newChecklist }),
+            })
+            const json = await res.json()
+            if (!json.success) throw new Error(json.error)
             refetch()
         } catch (error) {
             console.error('Checklist update error:', error)
@@ -201,8 +200,13 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
     const handleStatusChange = async (status: string) => {
         setIsLoading(true)
         try {
-            const result = await updateProcedureStatusAction(procedureId, status)
-            if (!result.success) throw new Error(result.error)
+            const res = await fetch(`/api/procedures/${procedureId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status_id: status }),
+            })
+            const json = await res.json()
+            if (!json.success) throw new Error(json.error)
             refetch()
             toast.success('Estado actualizado')
         } catch (error) {
@@ -215,8 +219,13 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
 
     const handlePaymentChange = async (status: 'pending' | 'partial' | 'paid') => {
         try {
-            const result = await updateProcedurePaymentStatusAction(procedureId, status)
-            if (!result.success) throw new Error(result.error)
+            const res = await fetch(`/api/procedures/${procedureId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ payment_status: status }),
+            })
+            const json = await res.json()
+            if (!json.success) throw new Error(json.error)
             refetch()
             toast.success('Estado de pago actualizado')
         } catch (error) {
@@ -231,8 +240,13 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
         if (isFinalized) return
         const newIndex = index + 1
         try {
-            const result = await updateProcedureStepAction(procedureId, newIndex)
-            if (!result.success) throw new Error(result.error)
+            const res = await fetch(`/api/procedures/${procedureId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ current_step_index: newIndex }),
+            })
+            const json = await res.json()
+            if (!json.success) throw new Error(json.error)
             refetch()
             toast.success('Progreso actualizado')
         } catch (error) {
@@ -244,8 +258,13 @@ export default function ProcedurePage({ params }: ProcedurePageProps) {
     const handleStepRevert = async (index: number) => {
         if (isFinalized) return
         try {
-            const result = await updateProcedureStepAction(procedureId, index)
-            if (!result.success) throw new Error(result.error)
+            const res = await fetch(`/api/procedures/${procedureId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ current_step_index: index }),
+            })
+            const json = await res.json()
+            if (!json.success) throw new Error(json.error)
             refetch()
             toast.success('Paso corregido')
         } catch (error) {
