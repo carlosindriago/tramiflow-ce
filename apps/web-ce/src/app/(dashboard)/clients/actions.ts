@@ -45,12 +45,19 @@ export async function createClientAction(input: CreateClientInput) {
 
             const { lead_id, ...clientData } = parsed.data
 
+            const insertPayload = {
+                full_name: clientData.full_name,
+                identifications: clientData.identifications || [],
+                nationality: clientData.nationality || null,
+                phone: clientData.phone || null,
+                email: clientData.email || null,
+                notes: clientData.notes || null,
+                organization_id: orgId,
+            }
+
             const { data: newClient, error } = await supabase
                 .from('clients')
-                .insert({
-                    ...clientData,
-                    organization_id: orgId,
-                })
+                .insert(insertPayload)
                 .select()
                 .maybeSingle()
 

@@ -2,8 +2,6 @@ import { ClientForm } from '@/components/clients/client-form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@carlosindriago/ui'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-/* eslint-disable */
-import { redirect } from 'next/navigation'
 
 interface PageProps {
     searchParams: Promise<{
