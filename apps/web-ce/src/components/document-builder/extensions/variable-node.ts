@@ -1,7 +1,7 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 
 export interface VariableNodeOptions {
-    HTMLAttributes: Record<string, any>
+    HTMLAttributes: Record<string, unknown>
 }
 
 declare module '@tiptap/core' {
