@@ -16,6 +16,7 @@ import { createClientSchema, type CreateClientInput } from '@carlosindriago/core
 import { toast } from '@carlosindriago/core'
 
 interface ClientFormProps {
+    clientId?: string
     defaultValues?: Partial<CreateClientInput>
     onSuccess?: () => void
     onCancel?: () => void
@@ -33,7 +34,7 @@ const ID_TYPES = [
     { value: 'Otro', label: 'Otro' },
 ]
 
-export function ClientForm({ defaultValues, onSuccess, onCancel, isDialog = false, redirectOnSuccess }: ClientFormProps) {
+export function ClientForm({ clientId, defaultValues, onSuccess, onCancel, isDialog = false, redirectOnSuccess }: ClientFormProps) {
     const [isPending, setIsPending] = useState(false)
     const router = useRouter()
 
@@ -70,8 +71,11 @@ export function ClientForm({ defaultValues, onSuccess, onCancel, isDialog = fals
                 notes: data.notes || undefined,
             }
             
-            const response = await fetch('/api/clients', {
-                method: 'POST',
+            const endpoint = clientId ? `/api/clients/${clientId}` : '/api/clients'
+            const method = clientId ? 'PATCH' : 'POST'
+            
+            const response = await fetch(endpoint, {
+                method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(cleanData),
             })
@@ -84,11 +88,11 @@ export function ClientForm({ defaultValues, onSuccess, onCancel, isDialog = fals
                     }))
                     return
                 }
-                toast.error(result.error || 'Error al crear cliente')
+                toast.error(result.error || (clientId ? 'Error al actualizar cliente' : 'Error al crear cliente'))
                 return
             }
 
-            toast.success('Cliente creado correctamente')
+            toast.success(clientId ? 'Cliente actualizado correctamente' : 'Cliente creado correctamente')
             if (onSuccess) onSuccess()
             else if (redirectOnSuccess) router.push(redirectOnSuccess)
             else router.refresh()
@@ -240,7 +244,7 @@ export function ClientForm({ defaultValues, onSuccess, onCancel, isDialog = fals
                         {isPending && (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        Crear Cliente
+                        {clientId ? 'Guardar Cambios' : 'Crear Cliente'}
                     </Button>
                 </DialogFooter>
             ) : (
@@ -260,7 +264,7 @@ export function ClientForm({ defaultValues, onSuccess, onCancel, isDialog = fals
                         {isPending && (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        Guardar Cliente
+                        {clientId ? 'Guardar Cambios' : 'Guardar Cliente'}
                     </Button>
                 </div>
             )}
