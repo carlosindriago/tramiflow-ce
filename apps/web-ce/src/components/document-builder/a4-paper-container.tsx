@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react'
-import { cn } from '@carlosindriago/ui'
+import { cn } from '@carlosindriago/core'
 import type { DocumentMargins } from '@carlosindriago/core'
 
 export interface A4PaperContainerProps extends React.HTMLAttributes<HTMLDivElement> {
