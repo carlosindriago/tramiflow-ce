@@ -123,6 +123,22 @@ export function NewProcedureDialog({
                             </PopoverTrigger>
                             <PopoverContent className="w-[400px] p-0">
                                 <Command>
+                                    <div className="p-1 border-b border-border">
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="w-full justify-start text-xs font-medium text-primary hover:text-primary hover:bg-primary/10 gap-2 h-8"
+                                            onClick={() => {
+                                                setOpenCombobox(false)
+                                                onOpenChange(false)
+                                                router.push('/clients/new')
+                                            }}
+                                        >
+                                            <Plus className="h-3.5 w-3.5" />
+                                            Crear nuevo cliente
+                                        </Button>
+                                    </div>
                                     <CommandInput placeholder="Buscar cliente..." />
                                     <CommandList>
                                         <CommandEmpty className="py-6 px-4 text-center">
@@ -133,6 +149,7 @@ export function NewProcedureDialog({
                                                 className="w-full gap-2 border-dashed"
                                                 onClick={() => {
                                                     setOpenCombobox(false)
+                                                    onOpenChange(false)
                                                     router.push('/clients/new')
                                                 }}
                                             >
@@ -169,13 +186,29 @@ export function NewProcedureDialog({
                         <Label>Plantilla de Trámite</Label>
                         <Select
                             value={selectedTemplateId}
-                            onValueChange={setSelectedTemplateId}
+                            onValueChange={(val) => {
+                                if (val === '__new_template__') {
+                                    onOpenChange(false)
+                                    router.push('/templates/new')
+                                    return
+                                }
+                                setSelectedTemplateId(val)
+                            }}
                             disabled={isLoading}
                         >
                             <SelectTrigger>
                                 <SelectValue placeholder="Seleccionar trámite..." />
                             </SelectTrigger>
                             <SelectContent>
+                                <SelectItem
+                                    value="__new_template__"
+                                    className="text-primary font-medium focus:text-primary focus:bg-primary/10 border-b border-border mb-1"
+                                >
+                                    <span className="flex items-center gap-2">
+                                        <Plus className="h-3.5 w-3.5" />
+                                        Crear nueva plantilla
+                                    </span>
+                                </SelectItem>
                                 {templates.map((template) => (
                                     <SelectItem key={template.id} value={template.id}>
                                         {template.name}
