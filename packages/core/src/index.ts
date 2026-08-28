@@ -13,4 +13,7 @@ export * from './types/procedure';
 export * from './types/admin';
 export * from './types/procedure-status';
 export * from './types/template';
+export * from './types/document-builder';
 export * from './types/action';
+export * from './utils/ast-parser';
+export * from './utils/ast-hydrator';

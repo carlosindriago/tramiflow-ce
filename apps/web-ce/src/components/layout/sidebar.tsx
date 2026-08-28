@@ -114,6 +114,7 @@ const navSections = [
     {
         label: 'HERRAMIENTAS',
         items: [
+            { title: 'Plantillas de Docs', icon: FileText, href: '/documents/templates' },
             { title: 'PDF Kit', icon: Wrench, href: '/tools/pdf' },
         ],
     },

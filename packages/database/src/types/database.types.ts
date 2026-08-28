@@ -166,6 +166,47 @@ export type Database = {
         }
         Relationships: []
       }
+      document_templates: {
+        Row: {
+          content_ast: Json
+          created_at: string
+          id: string
+          margins: Json
+          organization_id: string
+          title: string
+          updated_at: string
+          variables: Json
+        }
+        Insert: {
+          content_ast?: Json
+          created_at?: string
+          id?: string
+          margins?: Json
+          organization_id: string
+          title: string
+          updated_at?: string
+          variables?: Json
+        }
+        Update: {
+          content_ast?: Json
+          created_at?: string
+          id?: string
+          margins?: Json
+          organization_id?: string
+          title?: string
+          updated_at?: string
+          variables?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           category: string | null
@@ -219,6 +260,64 @@ export type Database = {
             columns: ["procedure_id"]
             isOneToOne: false
             referencedRelation: "procedures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      generated_documents: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          final_ast: Json
+          form_data: Json
+          id: string
+          organization_id: string
+          template_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          final_ast?: Json
+          form_data?: Json
+          id?: string
+          organization_id: string
+          template_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          final_ast?: Json
+          form_data?: Json
+          id?: string
+          organization_id?: string
+          template_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_documents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "document_templates"
             referencedColumns: ["id"]
           },
         ]
