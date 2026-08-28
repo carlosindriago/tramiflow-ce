@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
     User,
     Phone,
@@ -11,6 +11,7 @@ import {
     Calendar,
     Globe,
     CreditCard,
+    Edit2,
 } from 'lucide-react'
 import Link from 'next/link'
 import { PhoneAction } from '@carlosindriago/ui'
@@ -20,13 +21,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@carlosindriago/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@carlosindriago/ui'
 import { Badge } from '@carlosindriago/ui'
 import { Skeleton } from '@carlosindriago/ui'
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@carlosindriago/ui'
 
 import { SmartDropzone } from '@/components/documents/smart-dropzone'
 import { DocumentGrid } from '@/components/documents/document-grid'
 import { ProcedureCard } from '@/components/procedures/procedure-card'
 import { NewProcedureDialog } from '@/components/procedures/new-procedure-dialog'
+import { ClientForm } from '@/components/clients/client-form'
 
-import { getClientById, getClientDocuments, getClientProcedures } from './actions'
+import { getClientDocuments, getClientProcedures } from './actions'
 import { getTemplatesAction } from '@/app/(dashboard)/procedures/actions'
 import type { Client } from '@carlosindriago/core'
 import { getPrimaryIdentificationNumber } from '@carlosindriago/core'
@@ -39,16 +47,19 @@ interface ClientProfileProps {
 
 export default function ClientProfile({ clientId }: ClientProfileProps) {
     const [isNewProcedureOpen, setIsNewProcedureOpen] = useState(false)
+    const [isEditOpen, setIsEditOpen] = useState(false)
+    const queryClient = useQueryClient()
 
-    // Fetch client data
+    // Fetch client data via REST API to avoid server component render error
     const {
         data: client,
         isLoading: clientLoading,
     } = useQuery<Client | null>({
         queryKey: ['client', clientId],
         queryFn: async () => {
-            const res = await getClientById(clientId)
-            return res.success ? res.data : null
+            const res = await fetch(`/api/clients/${clientId}`)
+            const json = await res.json()
+            return json.success ? json.data : null
         },
     })
 
@@ -131,10 +142,43 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
                         </div>
                     </div>
                 </div>
-                <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
-                    Activo
-                </Badge>
+                <div className="flex items-center gap-3">
+                    <Button variant="outline" onClick={() => setIsEditOpen(true)} className="gap-2">
+                        <Edit2 className="h-4 w-4" />
+                        Editar
+                    </Button>
+                    <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
+                        Activo
+                    </Badge>
+                </div>
             </div>
+
+            {/* Edit Dialog */}
+            <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                        <DialogTitle>Editar Cliente</DialogTitle>
+                    </DialogHeader>
+                    <ClientForm
+                        clientId={client.id}
+                        defaultValues={{
+                            full_name: client.full_name,
+                            identifications: (client.identifications as { type: string; number: string; }[]) || [{ type: 'DNI', number: '' }],
+                            nationality: client.nationality || '',
+                            phone: client.phone || '',
+                            email: client.email || '',
+                            notes: client.notes || '',
+                        }}
+                        isDialog={true}
+                        onCancel={() => setIsEditOpen(false)}
+                        onSuccess={() => {
+                            setIsEditOpen(false)
+                            queryClient.invalidateQueries({ queryKey: ['client', clientId] })
+                            queryClient.invalidateQueries({ queryKey: ['clients'] })
+                        }}
+                    />
+                </DialogContent>
+            </Dialog>
 
             {/* Tabs */}
             <Tabs defaultValue="info" className="w-full">
