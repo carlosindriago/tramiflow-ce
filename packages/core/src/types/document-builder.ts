@@ -40,11 +40,11 @@ export const saveDocumentTemplateSchema = z.object({
     id: z.string().uuid().optional(),
     title: z.string().min(1, 'El título de la plantilla es requerido'),
     content_ast: z.record(z.string(), z.any()).or(z.array(z.any())),
-    variables: z.array(z.string()).default([]),
-    margins: documentMarginsSchema.default({ top: 20, right: 20, bottom: 20, left: 20 }),
+    variables: z.array(z.string()).optional().default([]),
+    margins: documentMarginsSchema.optional().default({ top: 20, right: 20, bottom: 20, left: 20 }),
 })
 
-export type SaveDocumentTemplateInput = z.infer<typeof saveDocumentTemplateSchema>
+export type SaveDocumentTemplateInput = z.input<typeof saveDocumentTemplateSchema>
 
 /**
  * Zod Schema to validate instantiating a Generated Document
