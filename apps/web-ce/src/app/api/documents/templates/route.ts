@@ -1,4 +1,5 @@
 import { createClient } from '@carlosindriago/database/server'
+import type { Json } from '@carlosindriago/database'
 import { saveDocumentTemplateSchema, extractVariablesFromAST } from '@carlosindriago/core'
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
@@ -30,12 +31,12 @@ export async function GET() {
             .from('document_templates')
             .select('*')
             .eq('organization_id', member.organization_id)
-            .order('title', { ascending: true })
+            .order('updated_at', { ascending: false })
 
         if (error) {
-            console.error('[GET /api/documents/templates] Error:', error)
+            console.error('[GET /api/documents/templates] Query error:', error)
             const errorMsg = error.code === '42P01'
-                ? 'La tabla document_templates no existe en Supabase. Ejecuta la migración SQL.'
+                ? 'La tabla de plantillas de documentos aún no está creada en la base de datos.'
                 : error.message
             return NextResponse.json({ success: false, error: errorMsg }, { status: 500 })
         }
@@ -85,10 +86,10 @@ export async function POST(req: NextRequest) {
 
         const payload = {
             title,
-            content_ast,
-            variables: extractedVars,
-            margins,
-            paper_config: paper_config || { format: 'a4' },
+            content_ast: content_ast as unknown as Json,
+            variables: extractedVars as unknown as Json,
+            margins: margins as unknown as Json,
+            paper_config: (paper_config || { format: 'a4' }) as unknown as Json,
             organization_id: member.organization_id,
             updated_at: new Date().toISOString(),
         }
