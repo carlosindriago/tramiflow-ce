@@ -25,7 +25,7 @@ import {
 } from '@carlosindriago/ui'
 import { toast } from '@carlosindriago/core'
 import type { DocumentTemplateModel } from '@carlosindriago/core'
-import { DocumentGeneratorDialog } from './document-generator-dialog'
+import { NewDocumentDialog } from './new-document-dialog'
 
 interface DocumentTemplatesListProps {
     templates: DocumentTemplateModel[]
@@ -187,10 +187,10 @@ export function DocumentTemplatesList({ templates: initialTemplates }: DocumentT
                 </div>
             )}
 
-            {/* Dynamic Document Generator Dialog */}
+            {/* Dynamic New Document Dialog with Client Selection */}
             {selectedTemplateForGen && (
-                <DocumentGeneratorDialog
-                    template={selectedTemplateForGen}
+                <NewDocumentDialog
+                    defaultTemplateId={selectedTemplateForGen.id}
                     open={Boolean(selectedTemplateForGen)}
                     onOpenChange={open => {
                         if (!open) setSelectedTemplateForGen(null)
