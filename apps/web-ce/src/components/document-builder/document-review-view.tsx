@@ -10,7 +10,6 @@ import { TableRow } from '@tiptap/extension-table-row'
 import { TableHeader } from '@tiptap/extension-table-header'
 import { TableCell } from '@tiptap/extension-table-cell'
 import { useReactToPrint } from 'react-to-print'
-import download from 'downloadjs'
 import {
     ArrowLeft,
     Printer,
@@ -183,7 +182,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                 return
             }
 
-            const cleanFileName = `${title.replace(/[^a-zA-Z0-9_-]/g, '_')}.docx`
+            const cleanFileName = `${(title || 'documento').replace(/[^a-zA-Z0-9_-]/g, '_')}.docx`
             const byteCharacters = atob(res.base64)
             const byteNumbers = new Array(byteCharacters.length)
             for (let i = 0; i < byteCharacters.length; i++) {
@@ -194,7 +193,15 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                 type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             })
 
-            download(blob, cleanFileName, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = cleanFileName
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            URL.revokeObjectURL(url)
+
             toast.success('Documento Word descargado')
         } catch (err) {
             console.error('Error exporting DOCX:', err)
@@ -399,7 +406,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent className="max-w-xs text-xs">
-                                Descarga en formato DOCX compatible con Microsoft Word. Pueden existir leves variaciones de formato según el visor.
+                                El archivo .docx es crudo; la paginación y los márgenes exactos podrían requerir ajustes en Microsoft Word.
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
