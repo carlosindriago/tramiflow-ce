@@ -34,7 +34,6 @@ import {
 } from '@carlosindriago/ui'
 import { toast, cn, autoFillClientVariables, type Client, type DocumentTemplateModel } from '@carlosindriago/core'
 import { FileText, Loader2, Sparkles, Plus, Check, ChevronsUpDown, Wand2, Info } from 'lucide-react'
-import { createGeneratedDocAction } from '@/app/(dashboard)/documents/generate/actions'
 
 interface NewDocumentDialogProps {
     open: boolean
@@ -165,12 +164,18 @@ export function NewDocumentDialog({
         try {
             const { docTitle, ...formData } = values
 
-            const result = await createGeneratedDocAction({
-                template_id: selectedTemplate.id,
-                client_id: selectedClientId,
-                title: docTitle as string,
-                form_data: formData as Record<string, string>,
+            const response = await fetch('/api/documents/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    template_id: selectedTemplate.id,
+                    client_id: selectedClientId,
+                    title: docTitle as string,
+                    form_data: formData as Record<string, string>,
+                }),
             })
+
+            const result = await response.json()
 
             if (!result.success || !result.data) {
                 toast.error(result.error || 'Error al generar el documento')

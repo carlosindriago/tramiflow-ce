@@ -35,7 +35,7 @@ import {
 import { toast } from '@carlosindriago/core'
 import { A4PaperContainer } from './a4-paper-container'
 import { LineHeight } from './extensions/line-height'
-import { updateGeneratedDocAction, exportDocxAction } from '@/app/(dashboard)/documents/generate/actions'
+import { exportDocxAction } from '@/app/(dashboard)/documents/generate/actions'
 import type { DocumentMargins, JSONContentNode } from '@carlosindriago/core'
 
 export interface GeneratedDocWithDetails {
@@ -166,11 +166,17 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
         setIsSaving(true)
         try {
             const finalAST = editor.getJSON()
-            const res = await updateGeneratedDocAction({
-                id: initialDoc.id,
-                title: title.trim(),
-                final_ast: finalAST,
+            const response = await fetch('/api/documents/generate', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: initialDoc.id,
+                    title: title.trim(),
+                    final_ast: finalAST,
+                }),
             })
+
+            const res = await response.json()
 
             if (!res.success) {
                 toast.error(res.error || 'Error al guardar cambios')

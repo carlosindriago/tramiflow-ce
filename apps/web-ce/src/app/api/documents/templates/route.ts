@@ -1,5 +1,7 @@
 import { createClient } from '@carlosindriago/database/server'
-import { NextResponse } from 'next/server'
+import { saveDocumentTemplateSchema, extractVariablesFromAST } from '@carlosindriago/core'
+import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 
 export async function GET() {
     try {
@@ -32,12 +34,109 @@ export async function GET() {
 
         if (error) {
             console.error('[GET /api/documents/templates] Error:', error)
-            return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+            const errorMsg = error.code === '42P01'
+                ? 'La tabla document_templates no existe en Supabase. Ejecuta la migración SQL.'
+                : error.message
+            return NextResponse.json({ success: false, error: errorMsg }, { status: 500 })
         }
 
         return NextResponse.json({ success: true, data: data || [] })
     } catch (error) {
         console.error('Unexpected error in GET /api/documents/templates:', error)
+        const message = error instanceof Error ? error.message : 'Error inesperado'
+        return NextResponse.json({ success: false, error: message }, { status: 500 })
+    }
+}
+
+export async function POST(req: NextRequest) {
+    try {
+        const supabase = await createClient()
+        const {
+            data: { user },
+            error: authError,
+        } = await supabase.auth.getUser()
+
+        if (authError || !user) {
+            return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 })
+        }
+
+        const { data: member, error: memberError } = await supabase
+            .from('organization_members')
+            .select('organization_id')
+            .eq('user_id', user.id)
+            .limit(1)
+            .maybeSingle()
+
+        if (memberError || !member?.organization_id) {
+            return NextResponse.json({ success: false, error: 'No se encontró organización activa' }, { status: 400 })
+        }
+
+        const body = await req.json()
+        const parsed = saveDocumentTemplateSchema.safeParse(body)
+        if (!parsed.success) {
+            return NextResponse.json(
+                { success: false, error: 'Validación fallida', fieldErrors: parsed.error.flatten().fieldErrors },
+                { status: 400 }
+            )
+        }
+
+        const { id, title, content_ast, margins } = parsed.data
+        const extractedVars = extractVariablesFromAST(content_ast)
+
+        const payload = {
+            title,
+            content_ast,
+            variables: extractedVars,
+            margins,
+            organization_id: member.organization_id,
+            updated_at: new Date().toISOString(),
+        }
+
+        let savedData
+        if (id) {
+            const { data, error } = await supabase
+                .from('document_templates')
+                .update(payload)
+                .eq('id', id)
+                .eq('organization_id', member.organization_id)
+                .select()
+                .maybeSingle()
+
+            if (error) {
+                console.error('[POST /api/documents/templates] Update Error:', error)
+                const errorMsg = error.code === '42P01'
+                    ? 'La tabla document_templates no existe en Supabase. Ejecuta la migración SQL en tu proyecto de Supabase.'
+                    : error.message
+                return NextResponse.json({ success: false, error: errorMsg }, { status: 500 })
+            }
+            savedData = data
+        } else {
+            const { data, error } = await supabase
+                .from('document_templates')
+                .insert(payload)
+                .select()
+                .maybeSingle()
+
+            if (error) {
+                console.error('[POST /api/documents/templates] Insert Error:', error)
+                const errorMsg = error.code === '42P01'
+                    ? 'La tabla document_templates no existe en Supabase. Ejecuta la migración SQL en tu proyecto de Supabase.'
+                    : error.message
+                return NextResponse.json({ success: false, error: errorMsg }, { status: 500 })
+            }
+            savedData = data
+        }
+
+        try {
+            revalidatePath('/documents/templates')
+            if (id) revalidatePath(`/documents/templates/${id}`)
+        } catch (e) {
+            console.warn('revalidatePath error ignored:', e)
+        }
+
+        return NextResponse.json({ success: true, data: savedData })
+    } catch (error) {
+        console.error('Unexpected error in POST /api/documents/templates:', error)
         const message = error instanceof Error ? error.message : 'Error inesperado'
         return NextResponse.json({ success: false, error: message }, { status: 500 })
     }
