@@ -1,48 +1,24 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@carlosindriago/database/server'
 import type { Json } from '@carlosindriago/database'
 import {
     createGeneratedDocumentSchema,
     hydrateASTWithData,
     actionSuccess,
     actionError,
-    type ActionResult,
     type CreateGeneratedDocumentInput,
     type GeneratedDocumentModel,
     type JSONContentNode,
     type PaperConfiguration,
 } from '@carlosindriago/core'
+import { createOrgAction } from '@/lib/action-helpers'
 
 /**
  * Server Action to instantiate and generate a document from a template
  */
-export async function createGeneratedDocumentAction(
-    rawInput: CreateGeneratedDocumentInput
-): Promise<ActionResult<GeneratedDocumentModel>> {
-    try {
-        const supabase = await createClient()
-        const {
-            data: { user },
-            error: authError,
-        } = await supabase.auth.getUser()
-
-        if (authError || !user) {
-            return actionError('No autenticado')
-        }
-
-        const { data: member, error: memberError } = await supabase
-            .from('organization_members')
-            .select('organization_id')
-            .eq('user_id', user.id)
-            .limit(1)
-            .maybeSingle()
-
-        if (memberError || !member?.organization_id) {
-            return actionError('No se encontró organización activa')
-        }
-
+export const createGeneratedDocumentAction = createOrgAction(
+    async ({ supabase, orgId }, rawInput: CreateGeneratedDocumentInput) => {
         const parsed = createGeneratedDocumentSchema.safeParse(rawInput)
         if (!parsed.success) {
             return actionError('Validación fallida', parsed.error.flatten().fieldErrors)
@@ -55,7 +31,7 @@ export async function createGeneratedDocumentAction(
             .from('document_templates')
             .select('content_ast, paper_config')
             .eq('id', template_id)
-            .eq('organization_id', member.organization_id)
+            .eq('organization_id', orgId)
             .maybeSingle()
 
         if (templateError || !template) {
@@ -69,7 +45,7 @@ export async function createGeneratedDocumentAction(
         const { data: generatedDoc, error: insertError } = await supabase
             .from('generated_documents')
             .insert({
-                organization_id: member.organization_id,
+                organization_id: orgId,
                 template_id,
                 client_id: client_id || null,
                 title,
@@ -82,9 +58,10 @@ export async function createGeneratedDocumentAction(
 
         if (insertError || !generatedDoc) {
             console.error('[createGeneratedDocumentAction] Insert error:', insertError)
-            const errorMsg = insertError?.code === '42P01'
-                ? 'La tabla generated_documents no existe en la base de datos.'
-                : (insertError?.message || 'Error al guardar el documento generado')
+            const errorMsg =
+                insertError?.code === '42P01'
+                    ? 'La tabla generated_documents no existe en la base de datos.'
+                    : insertError?.message || 'Error al guardar el documento generado'
             return actionError(errorMsg)
         }
 
@@ -93,44 +70,22 @@ export async function createGeneratedDocumentAction(
         if (client_id) revalidatePath(`/clients/${client_id}`)
 
         return actionSuccess(generatedDoc as unknown as GeneratedDocumentModel)
-    } catch (error) {
-        console.error('Unexpected error in createGeneratedDocumentAction:', error)
-        const message = error instanceof Error ? error.message : 'Error inesperado'
-        return actionError(message)
     }
-}
+)
 
 /**
  * Server Action to update an existing generated document (e.g. after manual editing or reviewing)
  */
-export async function updateGeneratedDocumentAction(input: {
-    id: string
-    title?: string
-    final_ast?: JSONContentNode | Record<string, unknown>
-    paper_config?: PaperConfiguration | null
-}): Promise<ActionResult<GeneratedDocumentModel>> {
-    try {
-        const supabase = await createClient()
-        const {
-            data: { user },
-            error: authError,
-        } = await supabase.auth.getUser()
-
-        if (authError || !user) {
-            return actionError('No autenticado')
+export const updateGeneratedDocumentAction = createOrgAction(
+    async (
+        { supabase, orgId },
+        input: {
+            id: string
+            title?: string
+            final_ast?: JSONContentNode | Record<string, unknown>
+            paper_config?: PaperConfiguration | null
         }
-
-        const { data: member, error: memberError } = await supabase
-            .from('organization_members')
-            .select('organization_id')
-            .eq('user_id', user.id)
-            .limit(1)
-            .maybeSingle()
-
-        if (memberError || !member?.organization_id) {
-            return actionError('No se encontró organización activa')
-        }
-
+    ) => {
         const updatePayload: Record<string, unknown> = {
             updated_at: new Date().toISOString(),
         }
@@ -143,7 +98,7 @@ export async function updateGeneratedDocumentAction(input: {
             .from('generated_documents')
             .update(updatePayload)
             .eq('id', input.id)
-            .eq('organization_id', member.organization_id)
+            .eq('organization_id', orgId)
             .select()
             .maybeSingle()
 
@@ -156,9 +111,5 @@ export async function updateGeneratedDocumentAction(input: {
         revalidatePath('/documents/templates')
 
         return actionSuccess(data as unknown as GeneratedDocumentModel)
-    } catch (error) {
-        console.error('Unexpected error in updateGeneratedDocumentAction:', error)
-        const message = error instanceof Error ? error.message : 'Error inesperado'
-        return actionError(message)
     }
-}
+)
