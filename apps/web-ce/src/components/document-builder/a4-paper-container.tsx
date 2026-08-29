@@ -22,6 +22,15 @@ export const A4PaperContainer = forwardRef<HTMLDivElement, A4PaperContainerProps
     ) => {
         const { width, height } = getPaperDimensions(paperConfig)
         const firstPageTop = margins.first_page_top ?? margins.top
+        const firstPageBottom = margins.first_page_bottom ?? margins.bottom
+        const firstPageLeft = margins.first_page_left ?? margins.left
+        const firstPageRight = margins.first_page_right ?? margins.right
+
+        const hasCustomFirstPage =
+            firstPageTop !== margins.top ||
+            firstPageBottom !== margins.bottom ||
+            firstPageLeft !== margins.left ||
+            firstPageRight !== margins.right
 
         return (
             <div
@@ -40,6 +49,9 @@ export const A4PaperContainer = forwardRef<HTMLDivElement, A4PaperContainerProps
                     ['--page-margin-bottom' as string]: `${margins.bottom}mm`,
                     ['--page-margin-left' as string]: `${margins.left}mm`,
                     ['--first-page-margin-top' as string]: `${firstPageTop}mm`,
+                    ['--first-page-margin-bottom' as string]: `${firstPageBottom}mm`,
+                    ['--first-page-margin-left' as string]: `${firstPageLeft}mm`,
+                    ['--first-page-margin-right' as string]: `${firstPageRight}mm`,
                     maxWidth: `${width}mm`,
                     minHeight: `${height}mm`,
                     paddingTop: 'var(--first-page-margin-top)',
@@ -56,6 +68,16 @@ export const A4PaperContainer = forwardRef<HTMLDivElement, A4PaperContainerProps
                 } as React.CSSProperties}
                 {...props}
             >
+                {/* WYSIWYM Margins Badge (Hidden on print) */}
+                <div className="absolute top-2 right-2 print:hidden select-none pointer-events-none z-10">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-100/90 text-zinc-600 border border-zinc-200 backdrop-blur-xs shadow-2xs dark:bg-zinc-800/90 dark:text-zinc-400 dark:border-zinc-700">
+                        <span>Márgenes: {margins.top}mm</span>
+                        {hasCustomFirstPage && (
+                            <span className="text-emerald-600 font-semibold">| Pág 1 Sup: {firstPageTop}mm</span>
+                        )}
+                    </span>
+                </div>
+
                 {children}
             </div>
         )

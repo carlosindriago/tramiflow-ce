@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useEditor, EditorContent } from '@tiptap/react'
+import { BubbleMenu } from './bubble-menu'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import { Table } from '@tiptap/extension-table'
@@ -387,23 +388,78 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                                     />
                                 </div>
                             </div>
-                            <div className="pt-2 border-t border-border space-y-1">
-                                <Label className="text-xs">Margen Sup. Pág. 1 (mm)</Label>
-                                <Input
-                                    type="number"
-                                    min={0}
-                                    max={100}
-                                    placeholder={`${margins.top} (igual al general)`}
-                                    value={margins.first_page_top ?? ''}
-                                    onChange={e =>
-                                        setMargins({
-                                            ...margins,
-                                            first_page_top: e.target.value === '' ? undefined : Number(e.target.value),
-                                        })
-                                    }
-                                    className="h-8 text-xs"
-                                />
-                                <span className="text-[10px] text-muted-foreground">Útil para hojas con membrete</span>
+                            <div className="pt-2 border-t border-border space-y-2">
+                                <h5 className="font-medium text-[11px] text-muted-foreground">Márgenes Página 1 (Opcional / Membrete)</h5>
+                                <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                        <Label className="text-[11px]">Pág 1 Sup (mm)</Label>
+                                        <Input
+                                            type="number"
+                                            min={0}
+                                            max={100}
+                                            placeholder={`${margins.top}`}
+                                            value={margins.first_page_top ?? ''}
+                                            onChange={e =>
+                                                setMargins({
+                                                    ...margins,
+                                                    first_page_top: e.target.value === '' ? undefined : Number(e.target.value),
+                                                })
+                                            }
+                                            className="h-8 text-xs"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label className="text-[11px]">Pág 1 Inf (mm)</Label>
+                                        <Input
+                                            type="number"
+                                            min={0}
+                                            max={100}
+                                            placeholder={`${margins.bottom}`}
+                                            value={margins.first_page_bottom ?? ''}
+                                            onChange={e =>
+                                                setMargins({
+                                                    ...margins,
+                                                    first_page_bottom: e.target.value === '' ? undefined : Number(e.target.value),
+                                                })
+                                            }
+                                            className="h-8 text-xs"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label className="text-[11px]">Pág 1 Izq (mm)</Label>
+                                        <Input
+                                            type="number"
+                                            min={0}
+                                            max={100}
+                                            placeholder={`${margins.left}`}
+                                            value={margins.first_page_left ?? ''}
+                                            onChange={e =>
+                                                setMargins({
+                                                    ...margins,
+                                                    first_page_left: e.target.value === '' ? undefined : Number(e.target.value),
+                                                })
+                                            }
+                                            className="h-8 text-xs"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label className="text-[11px]">Pág 1 Der (mm)</Label>
+                                        <Input
+                                            type="number"
+                                            min={0}
+                                            max={100}
+                                            placeholder={`${margins.right}`}
+                                            value={margins.first_page_right ?? ''}
+                                            onChange={e =>
+                                                setMargins({
+                                                    ...margins,
+                                                    first_page_right: e.target.value === '' ? undefined : Number(e.target.value),
+                                                })
+                                            }
+                                            className="h-8 text-xs"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </PopoverContent>
                     </Popover>
@@ -899,7 +955,107 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
             </div>
 
             {/* Paper Editor Container */}
-            <main className="flex-1 p-4 sm:p-8 overflow-y-auto flex justify-center">
+            <main className="flex-1 p-4 sm:p-8 overflow-y-auto flex justify-center relative">
+                {editor && (
+                    <BubbleMenu
+                        editor={editor}
+                        shouldShow={({ editor: ed }) => ed.isActive('signatureBlock')}
+                    >
+                        <div className="flex flex-col gap-2 p-3 bg-popover text-popover-foreground border border-border shadow-xl rounded-lg w-80">
+                            <div className="flex items-center justify-between border-b border-border pb-1.5">
+                                <span className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
+                                    <FileSignature className="h-3.5 w-3.5 text-emerald-600" />
+                                    Bloque de Firmas
+                                </span>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6 text-destructive hover:bg-destructive/10"
+                                    onClick={() => editor.chain().focus().deleteSelection().run()}
+                                    title="Eliminar Bloque de Firmas"
+                                >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
+                            </div>
+
+                            <div className="space-y-2 text-xs">
+                                <div>
+                                    <Label className="text-[11px] text-muted-foreground">Cantidad de Firmas</Label>
+                                    <div className="flex gap-1 mt-0.5">
+                                        {[1, 2, 3].map(cnt => (
+                                            <Button
+                                                key={cnt}
+                                                type="button"
+                                                size="sm"
+                                                variant={(editor.getAttributes('signatureBlock').count || 2) === cnt ? 'default' : 'outline'}
+                                                className="flex-1 h-6 text-xs"
+                                                onClick={() => editor.chain().focus().updateAttributes('signatureBlock', { count: cnt }).run()}
+                                            >
+                                                {cnt}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1.5 pt-1 border-t border-border">
+                                    <div className="space-y-0.5">
+                                        <Label className="text-[10px] text-muted-foreground">Firma 1</Label>
+                                        <Input
+                                            value={editor.getAttributes('signatureBlock').label1 || ''}
+                                            onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { label1: e.target.value }).run()}
+                                            placeholder="ej: El Cliente"
+                                            className="h-6 text-xs"
+                                        />
+                                        <Input
+                                            value={editor.getAttributes('signatureBlock').sublabel1 || ''}
+                                            onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel1: e.target.value }).run()}
+                                            placeholder="ej: DNI / Doc: ______________"
+                                            className="h-6 text-xs font-mono text-[10px]"
+                                        />
+                                    </div>
+
+                                    {((editor.getAttributes('signatureBlock').count as number) || 2) >= 2 && (
+                                        <div className="space-y-0.5">
+                                            <Label className="text-[10px] text-muted-foreground">Firma 2</Label>
+                                            <Input
+                                                value={editor.getAttributes('signatureBlock').label2 || ''}
+                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { label2: e.target.value }).run()}
+                                                placeholder="ej: El Abogado / Representante"
+                                                className="h-6 text-xs"
+                                            />
+                                            <Input
+                                                value={editor.getAttributes('signatureBlock').sublabel2 || ''}
+                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel2: e.target.value }).run()}
+                                                placeholder="ej: DNI / Doc: ______________"
+                                                className="h-6 text-xs font-mono text-[10px]"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {((editor.getAttributes('signatureBlock').count as number) || 2) >= 3 && (
+                                        <div className="space-y-0.5">
+                                            <Label className="text-[10px] text-muted-foreground">Firma 3</Label>
+                                            <Input
+                                                value={editor.getAttributes('signatureBlock').label3 || ''}
+                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { label3: e.target.value }).run()}
+                                                placeholder="ej: Testigo / Garante"
+                                                className="h-6 text-xs"
+                                            />
+                                            <Input
+                                                value={editor.getAttributes('signatureBlock').sublabel3 || ''}
+                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel3: e.target.value }).run()}
+                                                placeholder="ej: DNI / Doc: ______________"
+                                                className="h-6 text-xs font-mono text-[10px]"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </BubbleMenu>
+                )}
+
                 <A4PaperContainer margins={margins} paperConfig={paperConfig} className="p-8 sm:p-12">
                     <EditorContent editor={editor} />
                 </A4PaperContainer>
