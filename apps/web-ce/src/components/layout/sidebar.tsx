@@ -15,7 +15,8 @@ import {
     Wrench,
     Sparkles,
     AlertTriangle,
-    Archive
+    Archive,
+    BarChart3
 } from 'lucide-react'
 import {
     Sidebar,
@@ -115,6 +116,7 @@ const navSections = [
         label: 'HERRAMIENTAS',
         items: [
             { title: 'Plantillas de Docs', icon: FileText, href: '/documents/templates' },
+            { title: 'Reportes Pro', icon: BarChart3, href: '/reports' },
             { title: 'PDF Kit', icon: Wrench, href: '/tools/pdf' },
         ],
     },

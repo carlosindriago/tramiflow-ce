@@ -34,3 +34,18 @@ export function actionError(error: string, fieldErrors?: Record<string, string[]
         ...(fieldErrors ? { fieldErrors } : {}),
     }
 }
+
+/**
+ * Creates a guarded action requiring an active Pro/Enterprise license
+ */
+export function createProAction<TInput, TOutput>(
+    handler: (input: TInput) => Promise<ActionResult<TOutput>>
+) {
+    return async (input: TInput): Promise<ActionResult<TOutput>> => {
+        const { isProEnabled } = await import('../env/license')
+        if (!isProEnabled()) {
+            return actionError('Esta funcionalidad requiere una licencia Enterprise / Pro activa.')
+        }
+        return handler(input)
+    }
+}
