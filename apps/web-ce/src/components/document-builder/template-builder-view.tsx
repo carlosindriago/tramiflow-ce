@@ -60,6 +60,7 @@ import {
     toast,
     cn,
     getPaperDimensions,
+    generatePrintPageStyle,
     PAPER_DIMENSIONS,
     type DocumentMargins,
     type DocumentTemplateModel,
@@ -106,6 +107,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
     const handlePrint = useReactToPrint({
         contentRef: printRef,
         documentTitle: title || 'Plantilla de Documento',
+        pageStyle: generatePrintPageStyle(paperConfig, margins),
     })
 
     const editor = useEditor({
