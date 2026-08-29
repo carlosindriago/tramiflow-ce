@@ -1,5 +1,3 @@
-'use client'
-
 import React from 'react'
 import { isProEnabled } from '@carlosindriago/core'
 import { UpgradeUpsell } from './upgrade-upsell'
