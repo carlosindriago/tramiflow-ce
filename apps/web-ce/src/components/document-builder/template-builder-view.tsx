@@ -46,7 +46,6 @@ import { toast } from '@carlosindriago/core'
 import { A4PaperContainer } from './a4-paper-container'
 import { VariableNode } from './extensions/variable-node'
 import { LineHeight } from './extensions/line-height'
-import { saveDocumentTemplateAction } from '@/app/(dashboard)/documents/templates/actions'
 import type { DocumentMargins, DocumentTemplateModel } from '@carlosindriago/core'
 
 const COMMON_VARIABLES = [
@@ -149,12 +148,18 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
         setIsSaving(true)
         try {
             const ast = editor.getJSON()
-            const result = await saveDocumentTemplateAction({
-                id: initialTemplate?.id,
-                title: title.trim(),
-                content_ast: ast,
-                margins,
+            const response = await fetch('/api/documents/templates', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: initialTemplate?.id,
+                    title: title.trim(),
+                    content_ast: ast,
+                    margins,
+                }),
             })
+
+            const result = await response.json()
 
             if (!result.success) {
                 toast.error(result.error || 'Error al guardar la plantilla')
@@ -163,6 +168,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
 
             toast.success(initialTemplate ? 'Plantilla actualizada' : 'Plantilla creada con éxito')
             router.push('/documents/templates')
+            router.refresh()
         } catch (err) {
             console.error('Error saving template:', err)
             toast.error('Ocurrió un error inesperado al guardar')
