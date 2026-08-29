@@ -17,11 +17,6 @@ import {
     Input,
     Label,
     ScrollArea,
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
     Popover,
     PopoverContent,
     PopoverTrigger,
@@ -60,6 +55,7 @@ export function NewDocumentDialog({
     const [selectedClientId, setSelectedClientId] = useState(defaultClientId || '')
     const [selectedTemplateId, setSelectedTemplateId] = useState(defaultTemplateId || '')
     const [openClientCombobox, setOpenClientCombobox] = useState(false)
+    const [openTemplateCombobox, setOpenTemplateCombobox] = useState(false)
     const [isGenerating, setIsGenerating] = useState(false)
     const [hasAutoFilled, setHasAutoFilled] = useState(false)
 
@@ -333,43 +329,96 @@ export function NewDocumentDialog({
                                 <Label className="text-xs font-semibold text-foreground">
                                     Plantilla de Documento <span className="text-destructive">*</span>
                                 </Label>
-                                <Select
-                                    value={selectedTemplateId}
-                                    onValueChange={val => {
-                                        if (val === '__new_doc_template__') {
-                                            onOpenChange(false)
-                                            router.push('/documents/templates/new')
-                                            return
-                                        }
-                                        setSelectedTemplateId(val)
-                                    }}
-                                    disabled={isGenerating || templatesLoading}
-                                >
-                                    <SelectTrigger className="h-10 border-border bg-background">
-                                        <SelectValue placeholder="Seleccionar plantilla de documento..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem
-                                            value="__new_doc_template__"
-                                            className="text-emerald-600 dark:text-emerald-400 font-medium border-b border-border/50 pb-2 mb-1 cursor-pointer focus:bg-emerald-500/10"
+                                <Popover open={openTemplateCombobox} onOpenChange={setOpenTemplateCombobox}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={openTemplateCombobox}
+                                            className="w-full justify-between font-normal text-left h-10 border-border bg-background"
+                                            disabled={isGenerating || templatesLoading || Boolean(defaultTemplateId)}
                                         >
-                                            <div className="flex items-center gap-2">
-                                                <Plus className="h-4 w-4" />
-                                                <span>Crear nueva plantilla de docs</span>
-                                            </div>
-                                        </SelectItem>
-                                        {templates.map(t => (
-                                            <SelectItem key={t.id} value={t.id} className="cursor-pointer">
-                                                <div className="flex items-center justify-between gap-3 w-full">
-                                                    <span>{t.title}</span>
+                                            {selectedTemplate ? (
+                                                <div className="flex items-center justify-between w-full pr-2">
+                                                    <span className="font-medium text-foreground">{selectedTemplate.title}</span>
                                                     <span className="text-[11px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                                                        {t.variables?.length || 0} variables
+                                                        {selectedTemplate.variables?.length || 0} variables
                                                     </span>
                                                 </div>
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                            ) : (
+                                                <span className="text-muted-foreground">
+                                                    {templatesLoading ? 'Cargando plantillas...' : 'Seleccionar plantilla de documento...'}
+                                                </span>
+                                            )}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-[570px] p-0" align="start">
+                                        <Command>
+                                            <div className="p-1 border-b border-border">
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="w-full justify-start text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 hover:bg-emerald-500/10 gap-2 h-8"
+                                                    onClick={() => {
+                                                        setOpenTemplateCombobox(false)
+                                                        onOpenChange(false)
+                                                        router.push('/documents/templates/new')
+                                                    }}
+                                                >
+                                                    <Plus className="h-3.5 w-3.5" />
+                                                    Crear nueva plantilla de docs
+                                                </Button>
+                                            </div>
+                                            <CommandInput placeholder="Buscar plantilla de documento..." />
+                                            <CommandList>
+                                                <CommandEmpty className="py-6 px-4 text-center">
+                                                    <p className="text-sm text-muted-foreground mb-3">No se encontraron plantillas de documentos.</p>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="w-full gap-2 border-dashed"
+                                                        onClick={() => {
+                                                            setOpenTemplateCombobox(false)
+                                                            onOpenChange(false)
+                                                            router.push('/documents/templates/new')
+                                                        }}
+                                                    >
+                                                        <Plus className="h-4 w-4" />
+                                                        Crear nueva plantilla de docs
+                                                    </Button>
+                                                </CommandEmpty>
+                                                <CommandGroup>
+                                                    {templates.map(t => (
+                                                        <CommandItem
+                                                            key={t.id}
+                                                            value={t.title}
+                                                            onSelect={() => {
+                                                                setSelectedTemplateId(t.id)
+                                                                setOpenTemplateCombobox(false)
+                                                            }}
+                                                            className="flex items-center justify-between py-2.5 cursor-pointer"
+                                                        >
+                                                            <div className="flex items-center gap-2">
+                                                                <Check
+                                                                    className={cn(
+                                                                        "h-4 w-4 text-emerald-600",
+                                                                        selectedTemplateId === t.id ? "opacity-100" : "opacity-0"
+                                                                    )}
+                                                                />
+                                                                <span className="font-medium text-sm">{t.title}</span>
+                                                            </div>
+                                                            <span className="text-[11px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                                                                {t.variables?.length || 0} variables
+                                                            </span>
+                                                        </CommandItem>
+                                                    ))}
+                                                </CommandGroup>
+                                            </CommandList>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
                             </div>
 
                             {/* 3. Document Title */}
