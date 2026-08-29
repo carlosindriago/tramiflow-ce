@@ -32,7 +32,9 @@ import { SmartDropzone } from '@/components/documents/smart-dropzone'
 import { DocumentGrid } from '@/components/documents/document-grid'
 import { ProcedureCard } from '@/components/procedures/procedure-card'
 import { NewProcedureDialog } from '@/components/procedures/new-procedure-dialog'
+import { NewDocumentDialog } from '@/components/document-builder/new-document-dialog'
 import { ClientForm } from '@/components/clients/client-form'
+import { Plus, Sparkles, ExternalLink } from 'lucide-react'
 
 // Removed server action imports for client data fetching to avoid 500 render errors
 import type { Client } from '@carlosindriago/core'
@@ -46,6 +48,7 @@ interface ClientProfileProps {
 
 export default function ClientProfile({ clientId }: ClientProfileProps) {
     const [isNewProcedureOpen, setIsNewProcedureOpen] = useState(false)
+    const [isNewDocOpen, setIsNewDocOpen] = useState(false)
     const [isEditOpen, setIsEditOpen] = useState(false)
     const queryClient = useQueryClient()
 
@@ -62,7 +65,7 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
         },
     })
 
-    // Fetch documents via REST API
+    // Fetch uploaded documents via REST API
     const {
         data: documents = [],
         isLoading: docsLoading,
@@ -71,6 +74,20 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
         queryKey: ['documents', clientId],
         queryFn: async () => {
             const res = await fetch(`/api/clients/${clientId}/documents`)
+            const json = await res.json()
+            return json.success ? json.data : []
+        },
+    })
+
+    // Fetch generated documents via REST API
+    const {
+        data: generatedDocs = [],
+        isLoading: genDocsLoading,
+        refetch: refetchGenDocs,
+    } = useQuery<{ id: string; title: string; created_at: string; template?: { id: string; title: string } }[]>({
+        queryKey: ['client-generated-documents', clientId],
+        queryFn: async () => {
+            const res = await fetch(`/api/clients/${clientId}/generated-documents`)
             const json = await res.json()
             return json.success ? json.data : []
         },
@@ -147,10 +164,29 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
                         </div>
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
-                    <Button variant="outline" onClick={() => setIsEditOpen(true)} className="gap-2">
+                <div className="flex items-center gap-3 flex-wrap">
+                    <Button
+                        variant="outline"
+                        onClick={() => setIsEditOpen(true)}
+                        className="gap-2"
+                    >
                         <Edit2 className="h-4 w-4" />
                         Editar
+                    </Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => setIsNewDocOpen(true)}
+                        className="gap-2 border-emerald-600/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                    >
+                        <FileText className="h-4 w-4" />
+                        Nuevo Documento
+                    </Button>
+                    <Button
+                        onClick={() => setIsNewProcedureOpen(true)}
+                        className="gap-2 bg-emerald-600 hover:bg-emerald-500 text-white"
+                    >
+                        <Plus className="h-4 w-4" />
+                        Nuevo Trámite
                     </Button>
                     <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
                         Activo
@@ -187,17 +223,26 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
 
             {/* Tabs */}
             <Tabs defaultValue="info" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 max-w-[500px]">
+                <TabsList className="grid w-full grid-cols-4 max-w-[650px]">
                     <TabsTrigger value="info" className="gap-2">
                         <User className="h-4 w-4" />
                         Información
                     </TabsTrigger>
                     <TabsTrigger value="documents" className="gap-2">
                         <FileText className="h-4 w-4" />
-                        Documentos
+                        Archivos
                         {documents.length > 0 && (
                             <Badge variant="secondary" className="ml-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center">
                                 {documents.length}
+                            </Badge>
+                        )}
+                    </TabsTrigger>
+                    <TabsTrigger value="generated_docs" className="gap-2">
+                        <Sparkles className="h-4 w-4 text-emerald-600" />
+                        Docs Generados
+                        {generatedDocs.length > 0 && (
+                            <Badge variant="secondary" className="ml-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center">
+                                {generatedDocs.length}
                             </Badge>
                         )}
                     </TabsTrigger>
@@ -290,7 +335,7 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
                     </div>
                 </TabsContent>
 
-                {/* Documents Tab */}
+                {/* Uploaded Documents Tab */}
                 <TabsContent value="documents" className="mt-6 space-y-6">
                     <SmartDropzone
                         clientId={clientId}
@@ -313,6 +358,81 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
                             clientId={clientId}
                             onDelete={() => refetchDocs()}
                         />
+                    )}
+                </TabsContent>
+
+                {/* Generated Documents Tab */}
+                <TabsContent value="generated_docs" className="mt-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="text-sm font-semibold text-foreground">Documentos Generados</h3>
+                            <p className="text-xs text-muted-foreground">Documentos redactados a partir de plantillas para este cliente.</p>
+                        </div>
+                        <Button
+                            onClick={() => setIsNewDocOpen(true)}
+                            size="sm"
+                            className="bg-emerald-600 hover:bg-emerald-500 text-white gap-2 text-xs"
+                        >
+                            <Plus className="h-3.5 w-3.5" />
+                            Generar Documento
+                        </Button>
+                    </div>
+
+                    {genDocsLoading ? (
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {[1, 2].map(i => (
+                                <Skeleton key={i} className="h-32 rounded-xl" />
+                            ))}
+                        </div>
+                    ) : generatedDocs.length === 0 ? (
+                        <div className="text-center py-12 border-2 border-dashed rounded-xl bg-card">
+                            <FileText className="h-10 w-10 text-muted-foreground/40 mx-auto mb-2" />
+                            <p className="text-sm font-medium text-foreground">No hay documentos generados para este cliente</p>
+                            <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+                                Puedes generar contratos, cartas o solicitudes oficiales autocompletando los datos del cliente.
+                            </p>
+                            <Button
+                                variant="outline"
+                                className="mt-4 gap-2 border-emerald-600/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50"
+                                onClick={() => setIsNewDocOpen(true)}
+                            >
+                                <Sparkles className="h-4 w-4" />
+                                Generar Primer Documento
+                            </Button>
+                        </div>
+                    ) : (
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {generatedDocs.map(doc => (
+                                <Card key={doc.id} className="p-4 hover:border-emerald-500/50 transition-all bg-card">
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                                            <FileText className="h-4 w-4" />
+                                        </div>
+                                        <Link href={`/documents/review/${doc.id}`} className="shrink-0">
+                                            <Button variant="ghost" size="sm" className="h-8 px-2 text-xs gap-1 hover:text-emerald-600">
+                                                Revisar
+                                                <ExternalLink className="h-3 w-3" />
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                    <div className="mt-3">
+                                        <h4 className="font-semibold text-sm line-clamp-1 text-foreground">{doc.title}</h4>
+                                        {doc.template?.title && (
+                                            <p className="text-xs text-muted-foreground mt-0.5">
+                                                Plantilla: {doc.template.title}
+                                            </p>
+                                        )}
+                                        <p className="text-[11px] text-muted-foreground/70 mt-2">
+                                            {new Date(doc.created_at).toLocaleDateString('es-PE', {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                year: 'numeric',
+                                            })}
+                                        </p>
+                                    </div>
+                                </Card>
+                            ))}
+                        </div>
                     )}
                 </TabsContent>
 
@@ -357,6 +477,13 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
                 templates={templates as { id: string, name: string }[]}
                 defaultClientId={clientId}
                 onProcedureCreated={() => refetchProcedures()}
+            />
+
+            <NewDocumentDialog
+                open={isNewDocOpen}
+                onOpenChange={setIsNewDocOpen}
+                defaultClientId={clientId}
+                onDocumentCreated={() => refetchGenDocs()}
             />
         </div>
     )
