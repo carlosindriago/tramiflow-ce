@@ -112,7 +112,7 @@ export function DocumentTemplatesList({ templates: initialTemplates }: DocumentT
                                         A4
                                     </Badge>
                                 </div>
-                                <CardDescription className="flex items-center gap-1 text-xs mt-1">
+                                <CardDescription className="flex items-center gap-1 text-xs mt-1" suppressHydrationWarning>
                                     <Calendar className="h-3.5 w-3.5" />
                                     {new Date(tmpl.updated_at).toLocaleDateString('es-PE', {
                                         day: 'numeric',
