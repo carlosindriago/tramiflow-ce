@@ -173,6 +173,7 @@ export type Database = {
           id: string
           margins: Json
           organization_id: string
+          paper_config: Json
           title: string
           updated_at: string
           variables: Json
@@ -183,6 +184,7 @@ export type Database = {
           id?: string
           margins?: Json
           organization_id: string
+          paper_config?: Json
           title: string
           updated_at?: string
           variables?: Json
@@ -193,6 +195,7 @@ export type Database = {
           id?: string
           margins?: Json
           organization_id?: string
+          paper_config?: Json
           title?: string
           updated_at?: string
           variables?: Json
@@ -272,6 +275,7 @@ export type Database = {
           form_data: Json
           id: string
           organization_id: string
+          paper_config: Json
           template_id: string | null
           title: string
           updated_at: string
@@ -283,6 +287,7 @@ export type Database = {
           form_data?: Json
           id?: string
           organization_id: string
+          paper_config?: Json
           template_id?: string | null
           title: string
           updated_at?: string
@@ -294,6 +299,7 @@ export type Database = {
           form_data?: Json
           id?: string
           organization_id?: string
+          paper_config?: Json
           template_id?: string | null
           title?: string
           updated_at?: string

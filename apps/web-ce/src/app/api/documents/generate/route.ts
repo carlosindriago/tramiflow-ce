@@ -1,5 +1,10 @@
 import { createClient } from '@carlosindriago/database/server'
-import { createGeneratedDocumentSchema, hydrateASTWithData } from '@carlosindriago/core'
+import {
+    createGeneratedDocumentSchema,
+    hydrateASTWithData,
+    type JSONContentNode,
+    type PaperConfiguration,
+} from '@carlosindriago/core'
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 
@@ -35,12 +40,12 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        const { template_id, client_id, title, form_data } = parsed.data
+        const { template_id, client_id, title, form_data, paper_config } = parsed.data
 
-        // 1. Fetch template AST
+        // 1. Fetch template AST and paper config
         const { data: template, error: templateError } = await supabase
             .from('document_templates')
-            .select('content_ast')
+            .select('content_ast, paper_config')
             .eq('id', template_id)
             .eq('organization_id', member.organization_id)
             .maybeSingle()
@@ -53,7 +58,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 2. Hydrate AST on the server side
-        const finalAST = hydrateASTWithData(template.content_ast, form_data)
+        const finalAST = hydrateASTWithData(template.content_ast as unknown as JSONContentNode, form_data)
 
         // 3. Save instantiated document
         const { data: generatedDoc, error: insertError } = await supabase
@@ -65,6 +70,7 @@ export async function POST(req: NextRequest) {
                 title,
                 final_ast: finalAST,
                 form_data,
+                paper_config: paper_config || (template.paper_config as unknown as PaperConfiguration) || { format: 'a4' },
             })
             .select()
             .maybeSingle()
@@ -117,7 +123,7 @@ export async function PATCH(req: NextRequest) {
         }
 
         const body = await req.json()
-        const { id, title, final_ast } = body
+        const { id, title, final_ast, paper_config } = body
         if (!id) {
             return NextResponse.json({ success: false, error: 'ID del documento requerido' }, { status: 400 })
         }
@@ -127,6 +133,7 @@ export async function PATCH(req: NextRequest) {
             updated_at: new Date().toISOString(),
         }
         if (title) payload.title = title
+        if (paper_config) payload.paper_config = paper_config
 
         const { data, error } = await supabase
             .from('generated_documents')

@@ -27,7 +27,16 @@ import {
     CommandItem,
     CommandList,
 } from '@carlosindriago/ui'
-import { toast, cn, autoFillClientVariables, type Client, type DocumentTemplateModel } from '@carlosindriago/core'
+import {
+    toast,
+    cn,
+    autoFillClientVariables,
+    getPaperDimensions,
+    PAPER_DIMENSIONS,
+    type Client,
+    type DocumentTemplateModel,
+    type PaperConfiguration,
+} from '@carlosindriago/core'
 import { FileText, Loader2, Sparkles, Plus, Check, ChevronsUpDown, Wand2, Info } from 'lucide-react'
 
 interface NewDocumentDialogProps {
@@ -56,6 +65,7 @@ export function NewDocumentDialog({
     const [selectedTemplateId, setSelectedTemplateId] = useState(defaultTemplateId || '')
     const [openClientCombobox, setOpenClientCombobox] = useState(false)
     const [openTemplateCombobox, setOpenTemplateCombobox] = useState(false)
+    const [paperConfig, setPaperConfig] = useState<PaperConfiguration>({ format: 'a4' })
     const [isGenerating, setIsGenerating] = useState(false)
     const [hasAutoFilled, setHasAutoFilled] = useState(false)
 
@@ -128,9 +138,15 @@ export function NewDocumentDialog({
         },
     })
 
-    // Update default values when template or client changes (variables start empty)
+    // Update default values and paper size when template or client changes
     useEffect(() => {
         if (!selectedTemplate) return
+
+        if (selectedTemplate.paper_config) {
+            setPaperConfig(selectedTemplate.paper_config)
+        } else {
+            setPaperConfig({ format: 'a4' })
+        }
 
         const initialDocTitle = `${selectedTemplate.title} - ${selectedClient ? selectedClient.full_name : new Date().toLocaleDateString('es-PE')}`
 
@@ -188,6 +204,7 @@ export function NewDocumentDialog({
                     client_id: selectedClientId,
                     title: docTitle as string,
                     form_data: formData as Record<string, string>,
+                    paper_config: paperConfig,
                 }),
             })
 
@@ -440,7 +457,99 @@ export function NewDocumentDialog({
                                 </div>
                             )}
 
-                            {/* 4. Intelligent Auto-Fill Notice & Dynamic Variable Inputs */}
+                            {/* 4. Paper Size Selection */}
+                            {selectedTemplate && (
+                                <div className="space-y-2 pt-2 border-t border-border/60">
+                                    <div className="flex items-center justify-between">
+                                        <Label className="text-xs font-semibold text-foreground">
+                                            Tamaño de Hoja
+                                        </Label>
+                                        <span className="text-[11px] text-muted-foreground font-medium">
+                                            {getPaperDimensions(paperConfig).name}
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                        {(['a4', 'letter', 'legal'] as const).map(fmt => (
+                                            <button
+                                                key={fmt}
+                                                type="button"
+                                                onClick={() => setPaperConfig({ format: fmt })}
+                                                className={cn(
+                                                    'flex flex-col items-center justify-center p-2 rounded-lg text-xs border text-center transition-all cursor-pointer',
+                                                    paperConfig.format === fmt
+                                                        ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-700 dark:text-emerald-300 font-semibold shadow-xs'
+                                                        : 'bg-background hover:bg-muted border-border text-muted-foreground hover:text-foreground'
+                                                )}
+                                            >
+                                                <span>{PAPER_DIMENSIONS[fmt].name}</span>
+                                                <span className="text-[10px] opacity-75">
+                                                    {PAPER_DIMENSIONS[fmt].width}×{PAPER_DIMENSIONS[fmt].height}mm
+                                                </span>
+                                            </button>
+                                        ))}
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setPaperConfig(prev => ({
+                                                    format: 'custom',
+                                                    customWidth: prev.customWidth || 210,
+                                                    customHeight: prev.customHeight || 297,
+                                                }))
+                                            }
+                                            className={cn(
+                                                'flex flex-col items-center justify-center p-2 rounded-lg text-xs border text-center transition-all cursor-pointer',
+                                                paperConfig.format === 'custom'
+                                                    ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-700 dark:text-emerald-300 font-semibold shadow-xs'
+                                                    : 'bg-background hover:bg-muted border-border text-muted-foreground hover:text-foreground'
+                                            )}
+                                        >
+                                            <span>Personalizado</span>
+                                            <span className="text-[10px] opacity-75">Manual (mm)</span>
+                                        </button>
+                                    </div>
+
+                                    {paperConfig.format === 'custom' && (
+                                        <div className="pt-2 p-3 bg-muted/40 rounded-lg border border-border/70 grid grid-cols-2 gap-3 text-xs">
+                                            <div>
+                                                <Label className="text-[11px] font-medium text-foreground">Ancho de Hoja (mm)</Label>
+                                                <Input
+                                                    type="number"
+                                                    min={50}
+                                                    max={1000}
+                                                    value={paperConfig.customWidth || 210}
+                                                    onChange={e =>
+                                                        setPaperConfig(prev => ({
+                                                            ...prev,
+                                                            format: 'custom',
+                                                            customWidth: Number(e.target.value) || 210,
+                                                        }))
+                                                    }
+                                                    className="h-8 text-xs mt-1 bg-background"
+                                                />
+                                            </div>
+                                            <div>
+                                                <Label className="text-[11px] font-medium text-foreground">Alto de Hoja (mm)</Label>
+                                                <Input
+                                                    type="number"
+                                                    min={50}
+                                                    max={1000}
+                                                    value={paperConfig.customHeight || 297}
+                                                    onChange={e =>
+                                                        setPaperConfig(prev => ({
+                                                            ...prev,
+                                                            format: 'custom',
+                                                            customHeight: Number(e.target.value) || 297,
+                                                        }))
+                                                    }
+                                                    className="h-8 text-xs mt-1 bg-background"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* 5. Intelligent Auto-Fill Notice & Dynamic Variable Inputs */}
                             {selectedTemplate && (
                                 <div className="space-y-4 pt-2">
                                     <div className="flex flex-wrap items-center justify-between gap-2">

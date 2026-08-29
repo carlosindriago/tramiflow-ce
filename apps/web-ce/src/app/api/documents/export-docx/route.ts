@@ -1,6 +1,6 @@
 import { createClient } from '@carlosindriago/database/server'
 import { NextRequest, NextResponse } from 'next/server'
-import type { DocumentMargins } from '@carlosindriago/core'
+import { getPaperDimensions, type DocumentMargins, type PaperConfiguration } from '@carlosindriago/core'
 
 export async function POST(req: NextRequest) {
     try {
@@ -18,12 +18,14 @@ export async function POST(req: NextRequest) {
             html: string
             title: string
             margins?: DocumentMargins
+            paper_config?: PaperConfiguration | null
         }
 
         if (!body.html) {
             return NextResponse.json({ success: false, error: 'Contenido HTML requerido' }, { status: 400 })
         }
 
+        const { width, height } = getPaperDimensions(body.paper_config)
         const htmlToDocx = (await import('html-to-docx')).default
         const docxMargins = {
             top: Math.round((body.margins?.top || 20) * 56.7),
@@ -35,6 +37,10 @@ export async function POST(req: NextRequest) {
         const buffer = await htmlToDocx(body.html, null, {
             title: body.title || 'Documento',
             margins: docxMargins,
+            pageSize: {
+                width: Math.round(width * 56.7),
+                height: Math.round(height * 56.7),
+            },
         })
 
         const base64 = Buffer.from(buffer as ArrayBuffer).toString('base64')

@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        const { id, title, content_ast, margins } = parsed.data
+        const { id, title, content_ast, margins, paper_config } = parsed.data
         const extractedVars = extractVariablesFromAST(content_ast)
 
         const payload = {
@@ -88,6 +88,7 @@ export async function POST(req: NextRequest) {
             content_ast,
             variables: extractedVars,
             margins,
+            paper_config: paper_config || { format: 'a4' },
             organization_id: member.organization_id,
             updated_at: new Date().toISOString(),
         }
