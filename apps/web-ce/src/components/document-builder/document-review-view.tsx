@@ -35,7 +35,6 @@ import {
 import { toast } from '@carlosindriago/core'
 import { A4PaperContainer } from './a4-paper-container'
 import { LineHeight } from './extensions/line-height'
-import { exportDocxAction } from '@/app/(dashboard)/documents/generate/actions'
 import type { DocumentMargins, JSONContentNode } from '@carlosindriago/core'
 
 export interface GeneratedDocWithDetails {
@@ -122,25 +121,31 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
         `,
     })
 
-    // Setup HTML-To-DOCX export via Server Action
+    // Setup HTML-To-DOCX export via REST API
     const handleExportWord = async () => {
         if (!editor) return
         setIsExportingWord(true)
         try {
             const htmlContent = editor.getHTML()
-            const res = await exportDocxAction({
-                html: htmlContent,
-                title,
-                margins,
+            const response = await fetch('/api/documents/export-docx', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    html: htmlContent,
+                    title,
+                    margins,
+                }),
             })
 
-            if (!res.success || !res.data?.base64) {
+            const res = await response.json()
+
+            if (!res.success || !res.base64) {
                 toast.error(res.error || 'Error al exportar a archivo Word')
                 return
             }
 
             const cleanFileName = `${title.replace(/[^a-zA-Z0-9_-]/g, '_')}.docx`
-            const byteCharacters = atob(res.data.base64)
+            const byteCharacters = atob(res.base64)
             const byteNumbers = new Array(byteCharacters.length)
             for (let i = 0; i < byteCharacters.length; i++) {
                 byteNumbers[i] = byteCharacters.charCodeAt(i)
