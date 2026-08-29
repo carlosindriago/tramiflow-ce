@@ -23,7 +23,7 @@ import {
     CardTitle,
     Badge,
 } from '@carlosindriago/ui'
-import { toast } from '@carlosindriago/core'
+import { toast, getPaperDimensions } from '@carlosindriago/core'
 import type { DocumentTemplateModel } from '@carlosindriago/core'
 import { NewDocumentDialog } from './new-document-dialog'
 
@@ -109,7 +109,7 @@ export function DocumentTemplatesList({ templates: initialTemplates }: DocumentT
                                         {tmpl.title}
                                     </CardTitle>
                                     <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300">
-                                        A4
+                                        {getPaperDimensions(tmpl.paper_config).name}
                                     </Badge>
                                 </div>
                                 <CardDescription className="flex items-center gap-1 text-xs mt-1" suppressHydrationWarning>

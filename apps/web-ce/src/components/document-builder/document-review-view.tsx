@@ -22,30 +22,44 @@ import {
     List,
     ListOrdered,
     Loader2,
+    FileText,
 } from 'lucide-react'
 import {
     Button,
     Input,
+    Label,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
     Separator,
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from '@carlosindriago/ui'
-import { toast } from '@carlosindriago/core'
+import {
+    toast,
+    cn,
+    getPaperDimensions,
+    PAPER_DIMENSIONS,
+    type DocumentMargins,
+    type JSONContentNode,
+    type PaperConfiguration,
+} from '@carlosindriago/core'
 import { A4PaperContainer } from './a4-paper-container'
 import { LineHeight } from './extensions/line-height'
-import type { DocumentMargins, JSONContentNode } from '@carlosindriago/core'
 
 export interface GeneratedDocWithDetails {
     id: string
     title: string
     final_ast: JSONContentNode | Record<string, unknown>
     form_data: Record<string, string>
+    paper_config?: PaperConfiguration | null
     template?: {
         id: string
         title: string
         margins?: DocumentMargins
+        paper_config?: PaperConfiguration | null
     } | null
     client?: {
         id: string
@@ -61,6 +75,9 @@ interface DocumentReviewViewProps {
 export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewProps) {
     const printRef = useRef<HTMLDivElement>(null)
     const [title, setTitle] = useState(initialDoc.title)
+    const [paperConfig, setPaperConfig] = useState<PaperConfiguration>(
+        initialDoc.paper_config || initialDoc.template?.paper_config || { format: 'a4' }
+    )
     const [isSaving, setIsSaving] = useState(false)
     const [isExportingWord, setIsExportingWord] = useState(false)
 
@@ -70,6 +87,8 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
         bottom: 20,
         left: 20,
     }
+
+    const { width: paperWidth, height: paperHeight, name: paperName } = getPaperDimensions(paperConfig)
 
     // Tiptap instance WITHOUT VariableNode: final document text is pure text
     const editor = useEditor({
@@ -101,7 +120,7 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
         documentTitle: title,
         pageStyle: `
             @page {
-                size: A4;
+                size: ${paperWidth}mm ${paperHeight}mm;
                 margin: 0;
             }
             @media print {
@@ -134,6 +153,7 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
                     html: htmlContent,
                     title,
                     margins,
+                    paper_config: paperConfig,
                 }),
             })
 
@@ -165,7 +185,7 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
         }
     }
 
-    // Save modifications to AST
+    // Save modifications to AST and paper_config
     const handleSave = async () => {
         if (!editor) return
         setIsSaving(true)
@@ -178,6 +198,7 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
                     id: initialDoc.id,
                     title: title.trim(),
                     final_ast: finalAST,
+                    paper_config: paperConfig,
                 }),
             })
 
@@ -226,6 +247,101 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
                 </div>
 
                 <div className="flex items-center gap-2">
+                    {/* Paper Size Selector */}
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+                                <FileText className="h-3.5 w-3.5 text-primary" />
+                                <span>{paperName}</span>
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-72 p-4 space-y-3" align="end">
+                            <h4 className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">
+                                Tamaño de Hoja
+                            </h4>
+                            <div className="space-y-2">
+                                <div className="grid grid-cols-1 gap-1.5">
+                                    {(['a4', 'letter', 'legal'] as const).map(fmt => (
+                                        <button
+                                            key={fmt}
+                                            type="button"
+                                            onClick={() => setPaperConfig({ format: fmt })}
+                                            className={cn(
+                                                'flex items-center justify-between px-3 py-2 rounded-md text-xs border text-left transition-colors',
+                                                paperConfig.format === fmt
+                                                    ? 'bg-primary/10 border-primary text-primary font-medium'
+                                                    : 'bg-background hover:bg-muted border-border text-foreground'
+                                            )}
+                                        >
+                                            <span>{PAPER_DIMENSIONS[fmt].name}</span>
+                                            <span className="text-[10px] text-muted-foreground">
+                                                {PAPER_DIMENSIONS[fmt].width} × {PAPER_DIMENSIONS[fmt].height} mm
+                                            </span>
+                                        </button>
+                                    ))}
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setPaperConfig(prev => ({
+                                                format: 'custom',
+                                                customWidth: prev.customWidth || 210,
+                                                customHeight: prev.customHeight || 297,
+                                            }))
+                                        }
+                                        className={cn(
+                                            'flex items-center justify-between px-3 py-2 rounded-md text-xs border text-left transition-colors',
+                                            paperConfig.format === 'custom'
+                                                ? 'bg-primary/10 border-primary text-primary font-medium'
+                                                : 'bg-background hover:bg-muted border-border text-foreground'
+                                        )}
+                                    >
+                                        <span>Personalizado</span>
+                                        <span className="text-[10px] text-muted-foreground">Milímetros (mm)</span>
+                                    </button>
+                                </div>
+
+                                {paperConfig.format === 'custom' && (
+                                    <div className="pt-2 border-t border-border grid grid-cols-2 gap-2 text-xs">
+                                        <div>
+                                            <Label className="text-xs">Ancho (mm)</Label>
+                                            <Input
+                                                type="number"
+                                                min={50}
+                                                max={1000}
+                                                value={paperConfig.customWidth || 210}
+                                                onChange={e =>
+                                                    setPaperConfig(prev => ({
+                                                        ...prev,
+                                                        format: 'custom',
+                                                        customWidth: Number(e.target.value) || 210,
+                                                    }))
+                                                }
+                                                className="h-8 text-xs mt-1"
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label className="text-xs">Alto (mm)</Label>
+                                            <Input
+                                                type="number"
+                                                min={50}
+                                                max={1000}
+                                                value={paperConfig.customHeight || 297}
+                                                onChange={e =>
+                                                    setPaperConfig(prev => ({
+                                                        ...prev,
+                                                        format: 'custom',
+                                                        customHeight: Number(e.target.value) || 297,
+                                                    }))
+                                                }
+                                                className="h-8 text-xs mt-1"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+
                     <Button
                         variant="outline"
                         size="sm"
@@ -363,9 +479,9 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
                 </Button>
             </div>
 
-            {/* Document A4 Canvas */}
+            {/* Document Canvas */}
             <main className="flex-1 p-4 sm:p-8 overflow-y-auto flex justify-center">
-                <A4PaperContainer ref={printRef} margins={margins} className="p-8 sm:p-12">
+                <A4PaperContainer ref={printRef} margins={margins} paperConfig={paperConfig} className="p-8 sm:p-12">
                     <EditorContent editor={editor} />
                 </A4PaperContainer>
             </main>

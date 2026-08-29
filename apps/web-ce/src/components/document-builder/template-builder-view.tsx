@@ -25,6 +25,7 @@ import {
     Heading2,
     Heading3,
     Pilcrow,
+    FileText,
 } from 'lucide-react'
 import Link from 'next/link'
 import {
@@ -41,12 +42,19 @@ import {
     SelectValue,
     Separator,
 } from '@carlosindriago/ui'
-import { toast } from '@carlosindriago/core'
+import {
+    toast,
+    cn,
+    getPaperDimensions,
+    PAPER_DIMENSIONS,
+    type DocumentMargins,
+    type DocumentTemplateModel,
+    type PaperConfiguration,
+} from '@carlosindriago/core'
 
 import { A4PaperContainer } from './a4-paper-container'
 import { VariableNode } from './extensions/variable-node'
 import { LineHeight } from './extensions/line-height'
-import type { DocumentMargins, DocumentTemplateModel } from '@carlosindriago/core'
 
 const COMMON_VARIABLES = [
     { label: 'Nombre Cliente', name: 'nombre_cliente' },
@@ -70,6 +78,9 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
     const [title, setTitle] = useState(initialTemplate?.title || 'Nueva Plantilla de Documento')
     const [margins, setMargins] = useState<DocumentMargins>(
         initialTemplate?.margins || { top: 20, right: 20, bottom: 20, left: 20 }
+    )
+    const [paperConfig, setPaperConfig] = useState<PaperConfiguration>(
+        initialTemplate?.paper_config || { format: 'a4' }
     )
     const [isSaving, setIsSaving] = useState(false)
     const [customVar, setCustomVar] = useState('')
@@ -124,7 +135,8 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
     useEffect(() => {
         if (initialTemplate && editor) {
             setTitle(initialTemplate.title)
-            setMargins(initialTemplate.margins)
+            setMargins(initialTemplate.margins || { top: 20, right: 20, bottom: 20, left: 20 })
+            setPaperConfig(initialTemplate.paper_config || { format: 'a4' })
             editor.commands.setContent(initialTemplate.content_ast)
         }
     }, [initialTemplate, editor])
@@ -156,6 +168,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     title: title.trim(),
                     content_ast: ast,
                     margins,
+                    paper_config: paperConfig,
                 }),
             })
 
@@ -204,6 +217,101 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                 </div>
 
                 <div className="flex items-center gap-2">
+                    {/* Paper Size Configuration Popover */}
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+                                <FileText className="h-3.5 w-3.5 text-primary" />
+                                <span>{getPaperDimensions(paperConfig).name}</span>
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-72 p-4 space-y-3" align="end">
+                            <h4 className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">
+                                Tamaño de Hoja por Defecto
+                            </h4>
+                            <div className="space-y-2">
+                                <div className="grid grid-cols-1 gap-1.5">
+                                    {(['a4', 'letter', 'legal'] as const).map(fmt => (
+                                        <button
+                                            key={fmt}
+                                            type="button"
+                                            onClick={() => setPaperConfig({ format: fmt })}
+                                            className={cn(
+                                                'flex items-center justify-between px-3 py-2 rounded-md text-xs border text-left transition-colors',
+                                                paperConfig.format === fmt
+                                                    ? 'bg-primary/10 border-primary text-primary font-medium'
+                                                    : 'bg-background hover:bg-muted border-border text-foreground'
+                                            )}
+                                        >
+                                            <span>{PAPER_DIMENSIONS[fmt].name}</span>
+                                            <span className="text-[10px] text-muted-foreground">
+                                                {PAPER_DIMENSIONS[fmt].width} × {PAPER_DIMENSIONS[fmt].height} mm
+                                            </span>
+                                        </button>
+                                    ))}
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setPaperConfig(prev => ({
+                                                format: 'custom',
+                                                customWidth: prev.customWidth || 210,
+                                                customHeight: prev.customHeight || 297,
+                                            }))
+                                        }
+                                        className={cn(
+                                            'flex items-center justify-between px-3 py-2 rounded-md text-xs border text-left transition-colors',
+                                            paperConfig.format === 'custom'
+                                                ? 'bg-primary/10 border-primary text-primary font-medium'
+                                                : 'bg-background hover:bg-muted border-border text-foreground'
+                                        )}
+                                    >
+                                        <span>Personalizado</span>
+                                        <span className="text-[10px] text-muted-foreground">Milímetros (mm)</span>
+                                    </button>
+                                </div>
+
+                                {paperConfig.format === 'custom' && (
+                                    <div className="pt-2 border-t border-border grid grid-cols-2 gap-2 text-xs">
+                                        <div>
+                                            <Label className="text-xs">Ancho (mm)</Label>
+                                            <Input
+                                                type="number"
+                                                min={50}
+                                                max={1000}
+                                                value={paperConfig.customWidth || 210}
+                                                onChange={e =>
+                                                    setPaperConfig(prev => ({
+                                                        ...prev,
+                                                        format: 'custom',
+                                                        customWidth: Number(e.target.value) || 210,
+                                                    }))
+                                                }
+                                                className="h-8 text-xs mt-1"
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label className="text-xs">Alto (mm)</Label>
+                                            <Input
+                                                type="number"
+                                                min={50}
+                                                max={1000}
+                                                value={paperConfig.customHeight || 297}
+                                                onChange={e =>
+                                                    setPaperConfig(prev => ({
+                                                        ...prev,
+                                                        format: 'custom',
+                                                        customHeight: Number(e.target.value) || 297,
+                                                    }))
+                                                }
+                                                className="h-8 text-xs mt-1"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+
                     {/* Margins Configuration Popover */}
                     <Popover>
                         <PopoverTrigger asChild>
@@ -496,9 +604,9 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                 </Popover>
             </div>
 
-            {/* A4 Paper Editor Container */}
+            {/* Paper Editor Container */}
             <main className="flex-1 p-4 sm:p-8 overflow-y-auto flex justify-center">
-                <A4PaperContainer margins={margins} className="p-8 sm:p-12">
+                <A4PaperContainer margins={margins} paperConfig={paperConfig} className="p-8 sm:p-12">
                     <EditorContent editor={editor} />
                 </A4PaperContainer>
             </main>

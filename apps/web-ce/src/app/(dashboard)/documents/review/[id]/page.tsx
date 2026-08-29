@@ -39,7 +39,8 @@ export default async function DocumentReviewPage({ params }: PageProps) {
             template:document_templates(
                 id,
                 title,
-                margins
+                margins,
+                paper_config
             ),
             client:clients(
                 id,

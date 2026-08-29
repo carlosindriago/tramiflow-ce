@@ -17,7 +17,7 @@ export interface JSONContentNode {
 }
 
 /**
- * Margins configuration for A4 documents (in mm or px)
+ * Margins configuration for documents (in mm)
  */
 export interface DocumentMargins {
     top: number
@@ -34,6 +34,50 @@ export const documentMarginsSchema = z.object({
 })
 
 /**
+ * Paper Size formats & dimensions
+ */
+export type PaperSizeFormat = 'a4' | 'letter' | 'legal' | 'custom'
+
+export interface PaperConfiguration {
+    format: PaperSizeFormat
+    customWidth?: number // in mm
+    customHeight?: number // in mm
+}
+
+export const paperConfigurationSchema = z.object({
+    format: z.enum(['a4', 'letter', 'legal', 'custom']).default('a4'),
+    customWidth: z.number().min(50).max(1000).optional(),
+    customHeight: z.number().min(50).max(1000).optional(),
+})
+
+export const PAPER_DIMENSIONS: Record<
+    'a4' | 'letter' | 'legal',
+    { width: number; height: number; label: string; name: string }
+> = {
+    a4: { width: 210, height: 297, label: 'A4 (210 × 297 mm)', name: 'A4' },
+    letter: { width: 215.9, height: 279.4, label: 'Carta / Letter (216 × 279 mm)', name: 'Carta' },
+    legal: { width: 215.9, height: 355.6, label: 'Oficio / Legal (216 × 356 mm)', name: 'Oficio' },
+}
+
+export function getPaperDimensions(config?: PaperConfiguration | null): { width: number; height: number; name: string } {
+    if (!config || config.format === 'a4') {
+        return { width: 210, height: 297, name: 'A4' }
+    }
+    if (config.format === 'letter') {
+        return { width: 215.9, height: 279.4, name: 'Carta' }
+    }
+    if (config.format === 'legal') {
+        return { width: 215.9, height: 355.6, name: 'Oficio' }
+    }
+    if (config.format === 'custom') {
+        const w = config.customWidth && config.customWidth > 0 ? config.customWidth : 210
+        const h = config.customHeight && config.customHeight > 0 ? config.customHeight : 297
+        return { width: w, height: h, name: `Personalizado (${w}×${h}mm)` }
+    }
+    return { width: 210, height: 297, name: 'A4' }
+}
+
+/**
  * Zod Schema to validate saving/updating a Document Template
  */
 export const saveDocumentTemplateSchema = z.object({
@@ -42,6 +86,7 @@ export const saveDocumentTemplateSchema = z.object({
     content_ast: z.record(z.string(), z.any()).or(z.array(z.any())),
     variables: z.array(z.string()).optional().default([]),
     margins: documentMarginsSchema.optional().default({ top: 20, right: 20, bottom: 20, left: 20 }),
+    paper_config: paperConfigurationSchema.optional().default({ format: 'a4' }),
 })
 
 export type SaveDocumentTemplateInput = z.input<typeof saveDocumentTemplateSchema>
@@ -54,6 +99,7 @@ export const createGeneratedDocumentSchema = z.object({
     client_id: z.string().uuid().optional().nullable(),
     title: z.string().min(1, 'El título del documento es requerido'),
     form_data: z.record(z.string(), z.string()),
+    paper_config: paperConfigurationSchema.optional(),
 })
 
 export type CreateGeneratedDocumentInput = z.infer<typeof createGeneratedDocumentSchema>
@@ -68,6 +114,7 @@ export interface DocumentTemplateModel {
     content_ast: JSONContentNode
     variables: string[]
     margins: DocumentMargins
+    paper_config?: PaperConfiguration
     created_at: string
     updated_at: string
 }
@@ -80,6 +127,7 @@ export interface GeneratedDocumentModel {
     title: string
     final_ast: JSONContentNode
     form_data: Record<string, string>
+    paper_config?: PaperConfiguration
     created_at: string
     updated_at: string
 }
