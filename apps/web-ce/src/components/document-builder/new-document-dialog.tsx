@@ -63,6 +63,14 @@ export function NewDocumentDialog({
     const [isGenerating, setIsGenerating] = useState(false)
     const [hasAutoFilled, setHasAutoFilled] = useState(false)
 
+    // Sync state when dialog opens or defaults change
+    useEffect(() => {
+        if (open) {
+            setSelectedClientId(defaultClientId || '')
+            setSelectedTemplateId(defaultTemplateId || '')
+        }
+    }, [open, defaultClientId, defaultTemplateId])
+
     // 1. Fetch active clients
     const { data: clients = [], isLoading: clientsLoading } = useQuery<Client[]>({
         queryKey: ['clients-list'],
