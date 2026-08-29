@@ -17,3 +17,4 @@ export * from './types/document-builder';
 export * from './types/action';
 export * from './utils/ast-parser';
 export * from './utils/ast-hydrator';
+export * from './utils/client-autofill';
