@@ -25,7 +25,6 @@ import {
 } from '@carlosindriago/ui'
 import { toast } from '@carlosindriago/core'
 import type { DocumentTemplateModel } from '@carlosindriago/core'
-import { deleteDocumentTemplateAction } from '@/app/(dashboard)/documents/templates/actions'
 import { DocumentGeneratorDialog } from './document-generator-dialog'
 
 interface DocumentTemplatesListProps {
@@ -43,7 +42,10 @@ export function DocumentTemplatesList({ templates: initialTemplates }: DocumentT
 
         setDeletingId(id)
         try {
-            const res = await deleteDocumentTemplateAction(id)
+            const response = await fetch(`/api/documents/templates?id=${id}`, {
+                method: 'DELETE',
+            })
+            const res = await response.json()
             if (!res.success) {
                 toast.error(res.error || 'Error al eliminar plantilla')
                 return

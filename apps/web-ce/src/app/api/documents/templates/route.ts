@@ -141,3 +141,57 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: false, error: message }, { status: 500 })
     }
 }
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url)
+        const id = searchParams.get('id')
+        if (!id) {
+            return NextResponse.json({ success: false, error: 'ID requerido' }, { status: 400 })
+        }
+
+        const supabase = await createClient()
+        const {
+            data: { user },
+            error: authError,
+        } = await supabase.auth.getUser()
+
+        if (authError || !user) {
+            return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 })
+        }
+
+        const { data: member, error: memberError } = await supabase
+            .from('organization_members')
+            .select('organization_id')
+            .eq('user_id', user.id)
+            .limit(1)
+            .maybeSingle()
+
+        if (memberError || !member?.organization_id) {
+            return NextResponse.json({ success: false, error: 'No se encontró organización activa' }, { status: 400 })
+        }
+
+        const { error } = await supabase
+            .from('document_templates')
+            .delete()
+            .eq('id', id)
+            .eq('organization_id', member.organization_id)
+
+        if (error) {
+            console.error('[DELETE /api/documents/templates] Error:', error)
+            return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+        }
+
+        try {
+            revalidatePath('/documents/templates')
+        } catch (e) {
+            console.warn('revalidatePath error ignored:', e)
+        }
+
+        return NextResponse.json({ success: true })
+    } catch (error) {
+        console.error('Unexpected error in DELETE /api/documents/templates:', error)
+        const message = error instanceof Error ? error.message : 'Error inesperado'
+        return NextResponse.json({ success: false, error: message }, { status: 500 })
+    }
+}
