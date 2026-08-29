@@ -35,6 +35,8 @@ import {
     Columns,
     FileSignature,
     Trash2,
+    Undo,
+    Redo,
 } from 'lucide-react'
 import Link from 'next/link'
 import {
@@ -385,6 +387,24 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                                     />
                                 </div>
                             </div>
+                            <div className="pt-2 border-t border-border space-y-1">
+                                <Label className="text-xs">Margen Sup. Pág. 1 (mm)</Label>
+                                <Input
+                                    type="number"
+                                    min={0}
+                                    max={100}
+                                    placeholder={`${margins.top} (igual al general)`}
+                                    value={margins.first_page_top ?? ''}
+                                    onChange={e =>
+                                        setMargins({
+                                            ...margins,
+                                            first_page_top: e.target.value === '' ? undefined : Number(e.target.value),
+                                        })
+                                    }
+                                    className="h-8 text-xs"
+                                />
+                                <span className="text-[10px] text-muted-foreground">Útil para hojas con membrete</span>
+                            </div>
                         </PopoverContent>
                     </Popover>
 
@@ -398,6 +418,32 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
 
             {/* Toolbar */}
             <div className="sticky top-[53px] z-20 flex flex-wrap items-center gap-1 border-b bg-background px-4 py-1.5 shadow-xs">
+                {/* Undo / Redo */}
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    disabled={!editor.can().undo()}
+                    onClick={() => editor.chain().focus().undo().run()}
+                    title="Deshacer (Ctrl+Z)"
+                >
+                    <Undo className="h-4 w-4" />
+                </Button>
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    disabled={!editor.can().redo()}
+                    onClick={() => editor.chain().focus().redo().run()}
+                    title="Rehacer (Ctrl+Y)"
+                >
+                    <Redo className="h-4 w-4" />
+                </Button>
+
+                <Separator orientation="vertical" className="h-5 mx-1" />
+
                 {/* Heading format */}
                 <Select
                     value={
@@ -620,27 +666,173 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     </PopoverContent>
                 </Popover>
 
-                {/* Signature Block Button */}
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-8 gap-1.5 text-xs font-medium border-zinc-300 dark:border-zinc-700"
-                    onClick={() =>
-                        editor
-                            .chain()
-                            .focus()
-                            .insertSignatureBlock({
-                                count: 2,
-                                label1: 'El Cliente',
-                                label2: 'El Contratista / Abogado',
-                            })
-                            .run()
-                    }
-                >
-                    <FileSignature className="h-3.5 w-3.5 text-primary" />
-                    <span>Firmas (2)</span>
-                </Button>
+                {/* Signature Block Dropdown / Customizer */}
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            type="button"
+                            variant={editor.isActive('signatureBlock') ? 'secondary' : 'outline'}
+                            size="sm"
+                            className={cn(
+                                'h-8 gap-1.5 text-xs font-medium border-zinc-300 dark:border-zinc-700',
+                                editor.isActive('signatureBlock') && 'bg-primary/10 border-primary text-primary font-semibold'
+                            )}
+                        >
+                            <FileSignature className="h-3.5 w-3.5 text-primary" />
+                            <span>{editor.isActive('signatureBlock') ? 'Editar Firmas' : 'Firmas'}</span>
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-3 space-y-3" align="start">
+                        <div className="flex items-center justify-between">
+                            <h4 className="font-semibold text-xs text-foreground flex items-center gap-1.5">
+                                <FileSignature className="h-4 w-4 text-emerald-600" />
+                                {editor.isActive('signatureBlock') ? 'Configurar Bloque de Firmas' : 'Insertar Bloque de Firmas'}
+                            </h4>
+                        </div>
+
+                        {editor.isActive('signatureBlock') ? (
+                            <div className="space-y-2.5 text-xs">
+                                <div>
+                                    <Label className="text-xs">Cantidad de Firmas</Label>
+                                    <div className="flex gap-1 mt-1">
+                                        {[1, 2, 3].map(cnt => (
+                                            <Button
+                                                key={cnt}
+                                                type="button"
+                                                size="sm"
+                                                variant={(editor.getAttributes('signatureBlock').count || 2) === cnt ? 'default' : 'outline'}
+                                                className="flex-1 h-7 text-xs"
+                                                onClick={() => editor.chain().focus().updateAttributes('signatureBlock', { count: cnt }).run()}
+                                            >
+                                                {cnt} {cnt === 1 ? 'Firma' : 'Firmas'}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2 pt-1 border-t border-border">
+                                    <div className="space-y-1">
+                                        <Label className="text-[11px] font-medium text-muted-foreground">Firma 1 (Título y Detalle)</Label>
+                                        <Input
+                                            value={editor.getAttributes('signatureBlock').label1 || ''}
+                                            onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { label1: e.target.value }).run()}
+                                            placeholder="ej: El Cliente"
+                                            className="h-7 text-xs"
+                                        />
+                                        <Input
+                                            value={editor.getAttributes('signatureBlock').sublabel1 || ''}
+                                            onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel1: e.target.value }).run()}
+                                            placeholder="ej: DNI / Doc: ______________"
+                                            className="h-7 text-xs font-mono text-[10px]"
+                                        />
+                                    </div>
+
+                                    {((editor.getAttributes('signatureBlock').count as number) || 2) >= 2 && (
+                                        <div className="space-y-1">
+                                            <Label className="text-[11px] font-medium text-muted-foreground">Firma 2 (Título y Detalle)</Label>
+                                            <Input
+                                                value={editor.getAttributes('signatureBlock').label2 || ''}
+                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { label2: e.target.value }).run()}
+                                                placeholder="ej: El Abogado / Representante"
+                                                className="h-7 text-xs"
+                                            />
+                                            <Input
+                                                value={editor.getAttributes('signatureBlock').sublabel2 || ''}
+                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel2: e.target.value }).run()}
+                                                placeholder="ej: DNI / Doc: ______________"
+                                                className="h-7 text-xs font-mono text-[10px]"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {((editor.getAttributes('signatureBlock').count as number) || 2) >= 3 && (
+                                        <div className="space-y-1">
+                                            <Label className="text-[11px] font-medium text-muted-foreground">Firma 3 (Título y Detalle)</Label>
+                                            <Input
+                                                value={editor.getAttributes('signatureBlock').label3 || ''}
+                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { label3: e.target.value }).run()}
+                                                placeholder="ej: Testigo / Garante"
+                                                className="h-7 text-xs"
+                                            />
+                                            <Input
+                                                value={editor.getAttributes('signatureBlock').sublabel3 || ''}
+                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel3: e.target.value }).run()}
+                                                placeholder="ej: DNI / Doc: ______________"
+                                                className="h-7 text-xs font-mono text-[10px]"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 gap-1.5">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    className="justify-start text-xs h-8"
+                                    onClick={() =>
+                                        editor
+                                            .chain()
+                                            .focus()
+                                            .insertSignatureBlock({
+                                                count: 1,
+                                                label1: 'El Solicitante',
+                                                sublabel1: 'DNI / Doc: ______________',
+                                            })
+                                            .run()
+                                    }
+                                >
+                                    Insertar 1 Firma (Individual)
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    className="justify-start text-xs h-8"
+                                    onClick={() =>
+                                        editor
+                                            .chain()
+                                            .focus()
+                                            .insertSignatureBlock({
+                                                count: 2,
+                                                label1: 'El Cliente',
+                                                label2: 'El Abogado / Representante',
+                                                sublabel1: 'DNI / Doc: ______________',
+                                                sublabel2: 'DNI / Doc: ______________',
+                                            })
+                                            .run()
+                                    }
+                                >
+                                    Insertar 2 Firmas (Contrapartes)
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    className="justify-start text-xs h-8"
+                                    onClick={() =>
+                                        editor
+                                            .chain()
+                                            .focus()
+                                            .insertSignatureBlock({
+                                                count: 3,
+                                                label1: 'El Cliente',
+                                                label2: 'El Contratista',
+                                                label3: 'El Garante / Testigo',
+                                                sublabel1: 'DNI / Doc: ______________',
+                                                sublabel2: 'DNI / Doc: ______________',
+                                                sublabel3: 'DNI / Doc: ______________',
+                                            })
+                                            .run()
+                                    }
+                                >
+                                    Insertar 3 Firmas (Con Testigo)
+                                </Button>
+                            </div>
+                        )}
+                    </PopoverContent>
+                </Popover>
 
                 <Separator orientation="vertical" className="h-5 mx-1" />
 

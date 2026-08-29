@@ -24,6 +24,7 @@ export interface DocumentMargins {
     right: number
     bottom: number
     left: number
+    first_page_top?: number
 }
 
 export const documentMarginsSchema = z.object({
@@ -31,6 +32,7 @@ export const documentMarginsSchema = z.object({
     right: z.number().min(0).default(20),
     bottom: z.number().min(0).default(20),
     left: z.number().min(0).default(20),
+    first_page_top: z.number().min(0).optional(),
 })
 
 /**
