@@ -124,30 +124,42 @@ export function NewDocumentDialog({
         },
     })
 
-    // Update default values and auto-fill when template or client changes
+    // Update default values when template or client changes (variables start empty)
     useEffect(() => {
         if (!selectedTemplate) return
 
         const initialDocTitle = `${selectedTemplate.title} - ${selectedClient ? selectedClient.full_name : new Date().toLocaleDateString('es-PE')}`
-        const prefilled = autoFillClientVariables(selectedTemplate.variables || [], selectedClient)
 
         const newDefaults: Record<string, string> = {
             docTitle: initialDocTitle,
-            ...prefilled,
+        }
+        for (const v of selectedTemplate.variables || []) {
+            newDefaults[v] = ''
         }
 
         reset(newDefaults)
-        setHasAutoFilled(Boolean(selectedClient && selectedTemplate.variables && selectedTemplate.variables.length > 0))
+        setHasAutoFilled(false)
     }, [selectedTemplate, selectedClient, reset])
 
-    // Re-apply auto-fill handler
-    const handleReapplyAutoFill = () => {
+    // Auto-fill handler on user request
+    const handleAutoFill = () => {
         if (!selectedTemplate || !selectedClient) return
         const prefilled = autoFillClientVariables(selectedTemplate.variables || [], selectedClient)
         for (const [k, v] of Object.entries(prefilled)) {
-            setValue(k, v)
+            setValue(k, v, { shouldValidate: true, shouldDirty: true })
         }
+        setHasAutoFilled(true)
         toast.success(`Datos de ${selectedClient.full_name} autocompletados`)
+    }
+
+    // Clear variables handler
+    const handleClearVariables = () => {
+        if (!selectedTemplate) return
+        for (const v of selectedTemplate.variables || []) {
+            setValue(v, '', { shouldValidate: false, shouldDirty: true })
+        }
+        setHasAutoFilled(false)
+        toast.info('Campos vaciados')
     }
 
     const onSubmit = async (values: FormValues) => {
@@ -374,32 +386,45 @@ export function NewDocumentDialog({
                             {/* 4. Intelligent Auto-Fill Notice & Dynamic Variable Inputs */}
                             {selectedTemplate && (
                                 <div className="space-y-4 pt-2">
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex flex-wrap items-center justify-between gap-2">
                                         <div className="flex items-center gap-2">
                                             <Sparkles className="h-4 w-4 text-emerald-600" />
                                             <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
                                                 Variables del Documento ({selectedTemplate.variables?.length || 0})
                                             </span>
                                         </div>
-                                        {selectedClient && (
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={handleReapplyAutoFill}
-                                                className="text-xs text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 gap-1.5 h-7 px-2"
-                                            >
-                                                <Wand2 className="h-3.5 w-3.5" />
-                                                Autocompletar con datos de {selectedClient.full_name.split(' ')[0]}
-                                            </Button>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                            {selectedClient && (
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={handleAutoFill}
+                                                    className="text-xs border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20 gap-1.5 h-7 px-2.5 font-medium cursor-pointer"
+                                                >
+                                                    <Wand2 className="h-3.5 w-3.5" />
+                                                    Autocompletar con datos de {selectedClient.full_name.split(' ')[0]}
+                                                </Button>
+                                            )}
+                                            {hasAutoFilled && (
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={handleClearVariables}
+                                                    className="text-xs text-muted-foreground hover:text-foreground h-7 px-2"
+                                                >
+                                                    Limpiar
+                                                </Button>
+                                            )}
+                                        </div>
                                     </div>
 
                                     {hasAutoFilled && selectedClient && (
                                         <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs flex items-start gap-2.5">
                                             <Info className="h-4 w-4 shrink-0 mt-0.5" />
                                             <span>
-                                                Campos detectados del cliente ({selectedClient.full_name}) precargados automáticamente. Puedes editarlos antes de generar el documento.
+                                                Campos completados con los datos de <strong>{selectedClient.full_name}</strong>. Puedes modificarlos si deseas otros valores para este documento.
                                             </span>
                                         </div>
                                     )}
