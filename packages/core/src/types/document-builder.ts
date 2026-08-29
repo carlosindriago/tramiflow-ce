@@ -36,7 +36,7 @@ export const documentMarginsSchema = z.object({
 /**
  * Paper Size formats & dimensions
  */
-export type PaperSizeFormat = 'a4' | 'letter' | 'legal' | 'custom'
+export type PaperSizeFormat = 'a4' | 'letter' | 'legal' | 'folio' | 'custom'
 
 export interface PaperConfiguration {
     format: PaperSizeFormat
@@ -45,18 +45,19 @@ export interface PaperConfiguration {
 }
 
 export const paperConfigurationSchema = z.object({
-    format: z.enum(['a4', 'letter', 'legal', 'custom']).default('a4'),
+    format: z.enum(['a4', 'letter', 'legal', 'folio', 'custom']).default('a4'),
     customWidth: z.number().min(50).max(1000).optional(),
     customHeight: z.number().min(50).max(1000).optional(),
 })
 
 export const PAPER_DIMENSIONS: Record<
-    'a4' | 'letter' | 'legal',
-    { width: number; height: number; label: string; name: string }
+    'a4' | 'letter' | 'legal' | 'folio',
+    { width: number; height: number; label: string; name: string; description?: string }
 > = {
-    a4: { width: 210, height: 297, label: 'A4 (210 × 297 mm)', name: 'A4' },
-    letter: { width: 215.9, height: 279.4, label: 'Carta / Letter (216 × 279 mm)', name: 'Carta' },
-    legal: { width: 215.9, height: 355.6, label: 'Oficio / Legal (216 × 356 mm)', name: 'Oficio' },
+    a4: { width: 210, height: 297, label: 'A4 (210 × 297 mm)', name: 'A4', description: 'Estándar internacional' },
+    letter: { width: 215.9, height: 279.4, label: 'Carta / Letter (215.9 × 279.4 mm)', name: 'Carta', description: '8.5" × 11"' },
+    legal: { width: 215.9, height: 355.6, label: 'Oficio EE.UU. / Legal (215.9 × 355.6 mm)', name: 'Oficio EE.UU.', description: '8.5" × 14"' },
+    folio: { width: 215.9, height: 330.2, label: 'Oficio Latam / Folio (215.9 × 330.2 mm)', name: 'Oficio Latam', description: '8.5" × 13" (Perú/Latam)' },
 }
 
 export function getPaperDimensions(config?: PaperConfiguration | null): { width: number; height: number; name: string } {
@@ -67,7 +68,10 @@ export function getPaperDimensions(config?: PaperConfiguration | null): { width:
         return { width: 215.9, height: 279.4, name: 'Carta' }
     }
     if (config.format === 'legal') {
-        return { width: 215.9, height: 355.6, name: 'Oficio' }
+        return { width: 215.9, height: 355.6, name: 'Oficio EE.UU.' }
+    }
+    if (config.format === 'folio') {
+        return { width: 215.9, height: 330.2, name: 'Oficio Latam' }
     }
     if (config.format === 'custom') {
         const w = config.customWidth && config.customWidth > 0 ? config.customWidth : 210
