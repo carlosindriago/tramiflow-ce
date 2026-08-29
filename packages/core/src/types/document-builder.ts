@@ -90,6 +90,57 @@ export function getPaperDimensions(config?: PaperConfiguration | null): { width:
 }
 
 /**
+ * Generates exact CSS @page rules and @media print adjustments
+ * for accurate multi-page print/PDF export across all pages.
+ */
+export function generatePrintPageStyle(
+    paperConfig?: PaperConfiguration | null,
+    margins?: DocumentMargins | null
+): string {
+    const { width, height } = getPaperDimensions(paperConfig)
+    const m = margins || { top: 20, right: 20, bottom: 20, left: 20 }
+    const firstPageTop = m.first_page_top ?? m.top
+    const firstPageBottom = m.first_page_bottom ?? m.bottom
+    const firstPageLeft = m.first_page_left ?? m.left
+    const firstPageRight = m.first_page_right ?? m.right
+
+    return `
+        @page {
+            size: ${width}mm ${height}mm;
+            margin-top: ${m.top}mm;
+            margin-right: ${m.right}mm;
+            margin-bottom: ${m.bottom}mm;
+            margin-left: ${m.left}mm;
+        }
+        @page :first {
+            margin-top: ${firstPageTop}mm;
+            margin-right: ${firstPageRight}mm;
+            margin-bottom: ${firstPageBottom}mm;
+            margin-left: ${firstPageLeft}mm;
+        }
+        @media print {
+            html, body {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                background-color: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .a4-paper-container {
+                box-shadow: none !important;
+                width: 100% !important;
+                max-width: none !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: none !important;
+                background-image: none !important;
+            }
+        }
+    `
+}
+
+/**
  * Zod Schema to validate saving/updating a Document Template
  */
 export const saveDocumentTemplateSchema = z.object({

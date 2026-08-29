@@ -43,6 +43,7 @@ import {
     toast,
     cn,
     getPaperDimensions,
+    generatePrintPageStyle,
     PAPER_DIMENSIONS,
     type DocumentMargins,
     type JSONContentNode,
@@ -99,7 +100,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
         left: 20,
     }
 
-    const { width: paperWidth, height: paperHeight, name: paperName } = getPaperDimensions(paperConfig)
+    const { name: paperName } = getPaperDimensions(paperConfig)
 
     // Tiptap instance WITHOUT VariableNode: final document text is pure text
     const editor = useEditor({
@@ -132,36 +133,11 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
         },
     })
 
-    const firstPageTop = margins.first_page_top ?? margins.top
-
     // Setup React-To-Print for browser PDF export
     const handlePrint = useReactToPrint({
         contentRef: printRef,
         documentTitle: title,
-        pageStyle: `
-            @page {
-                size: ${paperWidth}mm ${paperHeight}mm;
-                margin: ${margins.top}mm ${margins.right}mm ${margins.bottom}mm ${margins.left}mm;
-            }
-            @page :first {
-                margin-top: ${firstPageTop}mm;
-            }
-            @media print {
-                body {
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                    background-color: white !important;
-                }
-                .a4-paper-container {
-                    box-shadow: none !important;
-                    width: 100% !important;
-                    max-width: none !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
-                    background: none !important;
-                }
-            }
-        `,
+        pageStyle: generatePrintPageStyle(paperConfig, margins),
     })
 
     // Export to docx handler via export-docx endpoint
