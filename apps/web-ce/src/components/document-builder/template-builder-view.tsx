@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { BubbleMenu } from './bubble-menu'
@@ -10,6 +10,7 @@ import { Table } from '@tiptap/extension-table'
 import { TableRow } from '@tiptap/extension-table-row'
 import { TableHeader } from '@tiptap/extension-table-header'
 import { TableCell } from '@tiptap/extension-table-cell'
+import { useReactToPrint } from 'react-to-print'
 import {
     Bold,
     Italic,
@@ -31,6 +32,7 @@ import {
     Heading3,
     Pilcrow,
     FileText,
+    Printer,
     Table as TableIcon,
     Rows,
     Columns,
@@ -89,6 +91,7 @@ interface TemplateBuilderViewProps {
 
 export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProps) {
     const router = useRouter()
+    const printRef = useRef<HTMLDivElement>(null)
     const [title, setTitle] = useState(initialTemplate?.title || 'Nueva Plantilla de Documento')
     const [margins, setMargins] = useState<DocumentMargins>(
         initialTemplate?.margins || { top: 20, right: 20, bottom: 20, left: 20 }
@@ -99,6 +102,11 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
     const [isSaving, setIsSaving] = useState(false)
     const [customVar, setCustomVar] = useState('')
     const [isVarPopoverOpen, setIsVarPopoverOpen] = useState(false)
+
+    const handlePrint = useReactToPrint({
+        contentRef: printRef,
+        documentTitle: title || 'Plantilla de Documento',
+    })
 
     const editor = useEditor({
         immediatelyRender: false,
@@ -463,6 +471,18 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                             </div>
                         </PopoverContent>
                     </Popover>
+
+                    {/* Preview Print Button */}
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePrint()}
+                        className="gap-1.5 text-xs"
+                    >
+                        <Printer className="h-3.5 w-3.5" />
+                        Previsualizar Documento Impreso
+                    </Button>
 
                     {/* Save Button */}
                     <Button onClick={handleSave} disabled={isSaving} size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5">
@@ -1056,7 +1076,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     </BubbleMenu>
                 )}
 
-                <A4PaperContainer margins={margins} paperConfig={paperConfig} className="p-8 sm:p-12">
+                <A4PaperContainer ref={printRef} margins={margins} paperConfig={paperConfig} className="p-8 sm:p-12">
                     <EditorContent editor={editor} />
                 </A4PaperContainer>
             </main>
