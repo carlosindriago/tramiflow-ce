@@ -132,6 +132,8 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
         },
     })
 
+    const firstPageTop = margins.first_page_top ?? margins.top
+
     // Setup React-To-Print for browser PDF export
     const handlePrint = useReactToPrint({
         contentRef: printRef,
@@ -139,7 +141,10 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
         pageStyle: `
             @page {
                 size: ${paperWidth}mm ${paperHeight}mm;
-                margin: 0;
+                margin: ${margins.top}mm ${margins.right}mm ${margins.bottom}mm ${margins.left}mm;
+            }
+            @page :first {
+                margin-top: ${firstPageTop}mm;
             }
             @media print {
                 body {
@@ -152,7 +157,8 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                     width: 100% !important;
                     max-width: none !important;
                     margin: 0 !important;
-                    padding: ${margins.top}mm ${margins.right}mm ${margins.bottom}mm ${margins.left}mm !important;
+                    padding: 0 !important;
+                    background: none !important;
                 }
             }
         `,

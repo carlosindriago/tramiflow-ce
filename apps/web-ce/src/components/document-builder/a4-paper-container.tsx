@@ -21,6 +21,7 @@ export const A4PaperContainer = forwardRef<HTMLDivElement, A4PaperContainerProps
         ref
     ) => {
         const { width, height } = getPaperDimensions(paperConfig)
+        const firstPageTop = margins.first_page_top ?? margins.top
 
         return (
             <div
@@ -28,18 +29,27 @@ export const A4PaperContainer = forwardRef<HTMLDivElement, A4PaperContainerProps
                 className={cn(
                     'a4-paper-container relative bg-white text-zinc-900 shadow-xl rounded-xs transition-all mx-auto',
                     'w-full',
-                    'print:shadow-none print:border-none print:m-0 print:w-full print:max-w-none print:min-h-0 print:rounded-none',
+                    'print:shadow-none print:border-none print:m-0 print:w-full print:max-w-none print:min-h-0 print:rounded-none print:bg-none print:bg-white',
                     className
                 )}
                 style={{
-                    ['--page-width' as unknown as string]: `${width}mm`,
-                    ['--page-height' as unknown as string]: `${height}mm`,
+                    ['--page-width' as string]: `${width}mm`,
+                    ['--page-height' as string]: `${height}mm`,
+                    ['--page-margin-top' as string]: `${margins.top}mm`,
+                    ['--page-margin-right' as string]: `${margins.right}mm`,
+                    ['--page-margin-bottom' as string]: `${margins.bottom}mm`,
+                    ['--page-margin-left' as string]: `${margins.left}mm`,
+                    ['--first-page-margin-top' as string]: `${firstPageTop}mm`,
                     maxWidth: `${width}mm`,
                     minHeight: `${height}mm`,
-                    paddingTop: `${margins.top}mm`,
-                    paddingRight: `${margins.right}mm`,
-                    paddingBottom: `${margins.bottom}mm`,
-                    paddingLeft: `${margins.left}mm`,
+                    paddingTop: 'var(--first-page-margin-top)',
+                    paddingRight: 'var(--page-margin-right)',
+                    paddingBottom: 'var(--page-margin-bottom)',
+                    paddingLeft: 'var(--page-margin-left)',
+                    backgroundImage:
+                        'repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--page-height) - 1px), rgba(148, 163, 184, 0.35) calc(var(--page-height) - 1px), rgba(148, 163, 184, 0.35) var(--page-height))',
+                    backgroundPosition: '0 0',
+                    backgroundSize: '100% var(--page-height)',
                     printColorAdjust: 'exact',
                     WebkitPrintColorAdjust: 'exact',
                     ...style,
