@@ -53,6 +53,7 @@ import {
 import { A4PaperContainer } from './a4-paper-container'
 import { LineHeight } from './extensions/line-height'
 import { SignatureBlock } from './extensions/signature-block'
+import { updateGeneratedDocumentAction } from '@/actions/documents/generate-document'
 
 export interface GeneratedDocWithDetails {
     id: string
@@ -92,7 +93,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
     const [isSaving, setIsSaving] = useState(false)
     const [isExportingWord, setIsExportingWord] = useState(false)
 
-    const margins: DocumentMargins = initialDoc.template?.margins || {
+    const margins: DocumentMargins = initialDoc?.template?.margins || {
         top: 20,
         right: 20,
         bottom: 20,
@@ -158,7 +159,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
         `,
     })
 
-    // Setup HTML-To-DOCX export via REST API
+    // Export to docx handler via export-docx endpoint
     const handleExportWord = async () => {
         if (!editor) return
         setIsExportingWord(true)
@@ -209,18 +210,12 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
         setIsSaving(true)
         try {
             const finalAST = editor.getJSON()
-            const response = await fetch('/api/documents/generate', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: initialDoc.id,
-                    title: title.trim(),
-                    final_ast: finalAST,
-                    paper_config: paperConfig,
-                }),
+            const res = await updateGeneratedDocumentAction({
+                id: initialDoc.id,
+                title: title.trim(),
+                final_ast: finalAST,
+                paper_config: paperConfig,
             })
-
-            const res = await response.json()
 
             if (!res.success) {
                 toast.error(res.error || 'Error al guardar cambios')

@@ -1,15 +1,26 @@
+'use server'
+
+import { revalidatePath } from 'next/cache'
 import { createClient } from '@carlosindriago/database/server'
 import type { Json } from '@carlosindriago/database'
 import {
     createGeneratedDocumentSchema,
     hydrateASTWithData,
+    actionSuccess,
+    actionError,
+    type ActionResult,
+    type CreateGeneratedDocumentInput,
+    type GeneratedDocumentModel,
     type JSONContentNode,
     type PaperConfiguration,
 } from '@carlosindriago/core'
-import { NextRequest, NextResponse } from 'next/server'
-import { revalidatePath } from 'next/cache'
 
-export async function POST(req: NextRequest) {
+/**
+ * Server Action to instantiate and generate a document from a template
+ */
+export async function createGeneratedDocumentAction(
+    rawInput: CreateGeneratedDocumentInput
+): Promise<ActionResult<GeneratedDocumentModel>> {
     try {
         const supabase = await createClient()
         const {
@@ -18,7 +29,7 @@ export async function POST(req: NextRequest) {
         } = await supabase.auth.getUser()
 
         if (authError || !user) {
-            return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 })
+            return actionError('No autenticado')
         }
 
         const { data: member, error: memberError } = await supabase
@@ -29,21 +40,17 @@ export async function POST(req: NextRequest) {
             .maybeSingle()
 
         if (memberError || !member?.organization_id) {
-            return NextResponse.json({ success: false, error: 'No se encontró organización activa' }, { status: 400 })
+            return actionError('No se encontró organización activa')
         }
 
-        const body = await req.json()
-        const parsed = createGeneratedDocumentSchema.safeParse(body)
+        const parsed = createGeneratedDocumentSchema.safeParse(rawInput)
         if (!parsed.success) {
-            return NextResponse.json(
-                { success: false, error: 'Validación fallida', fieldErrors: parsed.error.flatten().fieldErrors },
-                { status: 400 }
-            )
+            return actionError('Validación fallida', parsed.error.flatten().fieldErrors)
         }
 
         const { template_id, client_id, title, form_data, paper_config } = parsed.data
 
-        // 1. Fetch template AST and paper config
+        // 1. Fetch template AST and paper config safely on the server
         const { data: template, error: templateError } = await supabase
             .from('document_templates')
             .select('content_ast, paper_config')
@@ -52,10 +59,7 @@ export async function POST(req: NextRequest) {
             .maybeSingle()
 
         if (templateError || !template) {
-            return NextResponse.json(
-                { success: false, error: 'La plantilla de origen no existe o no tienes acceso.' },
-                { status: 404 }
-            )
+            return actionError('La plantilla de origen no existe o no tienes acceso.')
         }
 
         // 2. Hydrate AST on the server side
@@ -77,30 +81,34 @@ export async function POST(req: NextRequest) {
             .maybeSingle()
 
         if (insertError || !generatedDoc) {
-            console.error('[POST /api/documents/generate] Insert error:', insertError)
+            console.error('[createGeneratedDocumentAction] Insert error:', insertError)
             const errorMsg = insertError?.code === '42P01'
-                ? 'La tabla generated_documents no existe en Supabase. Ejecuta la migración SQL en tu proyecto de Supabase.'
+                ? 'La tabla generated_documents no existe en la base de datos.'
                 : (insertError?.message || 'Error al guardar el documento generado')
-            return NextResponse.json({ success: false, error: errorMsg }, { status: 500 })
+            return actionError(errorMsg)
         }
 
-        try {
-            revalidatePath('/documents/templates')
-            revalidatePath(`/documents/review/${generatedDoc.id}`)
-            if (client_id) revalidatePath(`/clients/${client_id}`)
-        } catch (e) {
-            console.warn('revalidatePath error ignored:', e)
-        }
+        revalidatePath('/documents/templates')
+        revalidatePath(`/documents/review/${generatedDoc.id}`)
+        if (client_id) revalidatePath(`/clients/${client_id}`)
 
-        return NextResponse.json({ success: true, data: generatedDoc })
+        return actionSuccess(generatedDoc as unknown as GeneratedDocumentModel)
     } catch (error) {
-        console.error('Unexpected error in POST /api/documents/generate:', error)
+        console.error('Unexpected error in createGeneratedDocumentAction:', error)
         const message = error instanceof Error ? error.message : 'Error inesperado'
-        return NextResponse.json({ success: false, error: message }, { status: 500 })
+        return actionError(message)
     }
 }
 
-export async function PATCH(req: NextRequest) {
+/**
+ * Server Action to update an existing generated document (e.g. after manual editing or reviewing)
+ */
+export async function updateGeneratedDocumentAction(input: {
+    id: string
+    title?: string
+    final_ast?: JSONContentNode | Record<string, unknown>
+    paper_config?: PaperConfiguration | null
+}): Promise<ActionResult<GeneratedDocumentModel>> {
     try {
         const supabase = await createClient()
         const {
@@ -109,7 +117,7 @@ export async function PATCH(req: NextRequest) {
         } = await supabase.auth.getUser()
 
         if (authError || !user) {
-            return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 })
+            return actionError('No autenticado')
         }
 
         const { data: member, error: memberError } = await supabase
@@ -120,45 +128,37 @@ export async function PATCH(req: NextRequest) {
             .maybeSingle()
 
         if (memberError || !member?.organization_id) {
-            return NextResponse.json({ success: false, error: 'No se encontró organización activa' }, { status: 400 })
+            return actionError('No se encontró organización activa')
         }
 
-        const body = await req.json()
-        const { id, title, final_ast, paper_config } = body
-        if (!id) {
-            return NextResponse.json({ success: false, error: 'ID del documento requerido' }, { status: 400 })
-        }
-
-        const payload: Record<string, unknown> = {
-            final_ast,
+        const updatePayload: Record<string, unknown> = {
             updated_at: new Date().toISOString(),
         }
-        if (title) payload.title = title
-        if (paper_config) payload.paper_config = paper_config
+
+        if (input.title !== undefined) updatePayload.title = input.title
+        if (input.final_ast !== undefined) updatePayload.final_ast = input.final_ast as unknown as Json
+        if (input.paper_config !== undefined) updatePayload.paper_config = input.paper_config as unknown as Json
 
         const { data, error } = await supabase
             .from('generated_documents')
-            .update(payload)
-            .eq('id', id)
+            .update(updatePayload)
+            .eq('id', input.id)
             .eq('organization_id', member.organization_id)
             .select()
             .maybeSingle()
 
         if (error || !data) {
-            console.error('[PATCH /api/documents/generate] Update error:', error)
-            return NextResponse.json({ success: false, error: error?.message || 'Error al actualizar documento' }, { status: 500 })
+            console.error('[updateGeneratedDocumentAction] Update error:', error)
+            return actionError(error?.message || 'Error al actualizar el documento')
         }
 
-        try {
-            revalidatePath(`/documents/review/${id}`)
-        } catch (e) {
-            console.warn('revalidatePath error ignored:', e)
-        }
+        revalidatePath(`/documents/review/${input.id}`)
+        revalidatePath('/documents/templates')
 
-        return NextResponse.json({ success: true, data })
+        return actionSuccess(data as unknown as GeneratedDocumentModel)
     } catch (error) {
-        console.error('Unexpected error in PATCH /api/documents/generate:', error)
+        console.error('Unexpected error in updateGeneratedDocumentAction:', error)
         const message = error instanceof Error ? error.message : 'Error inesperado'
-        return NextResponse.json({ success: false, error: message }, { status: 500 })
+        return actionError(message)
     }
 }
