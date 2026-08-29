@@ -32,6 +32,36 @@ export const A4PaperContainer = forwardRef<HTMLDivElement, A4PaperContainerProps
             firstPageLeft !== margins.left ||
             firstPageRight !== margins.right
 
+        const isGeneralUniform =
+            margins.top === margins.bottom &&
+            margins.top === margins.left &&
+            margins.top === margins.right
+
+        const generalMarginsLabel = isGeneralUniform
+            ? `Márgenes: ${margins.top}mm`
+            : `Márgenes: S:${margins.top} I:${margins.bottom} L:${margins.left} D:${margins.right}mm`
+
+        let firstPageLabel = ''
+        if (hasCustomFirstPage) {
+            const isFirstPageUniform =
+                firstPageTop === firstPageBottom &&
+                firstPageTop === firstPageLeft &&
+                firstPageTop === firstPageRight
+
+            if (isFirstPageUniform) {
+                firstPageLabel = `Pág 1: ${firstPageTop}mm`
+            } else if (
+                firstPageTop !== margins.top &&
+                firstPageBottom === margins.bottom &&
+                firstPageLeft === margins.left &&
+                firstPageRight === margins.right
+            ) {
+                firstPageLabel = `Pág 1 Sup: ${firstPageTop}mm`
+            } else {
+                firstPageLabel = `Pág 1: S:${firstPageTop} I:${firstPageBottom} L:${firstPageLeft} D:${firstPageRight}mm`
+            }
+        }
+
         return (
             <div
                 ref={ref}
@@ -71,9 +101,9 @@ export const A4PaperContainer = forwardRef<HTMLDivElement, A4PaperContainerProps
                 {/* WYSIWYM Margins Badge (Hidden on print) */}
                 <div className="absolute top-2 right-2 print:hidden select-none pointer-events-none z-10">
                     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-100/90 text-zinc-600 border border-zinc-200 backdrop-blur-xs shadow-2xs dark:bg-zinc-800/90 dark:text-zinc-400 dark:border-zinc-700">
-                        <span>Márgenes: {margins.top}mm</span>
+                        <span>{generalMarginsLabel}</span>
                         {hasCustomFirstPage && (
-                            <span className="text-emerald-600 font-semibold">| Pág 1 Sup: {firstPageTop}mm</span>
+                            <span className="text-emerald-600 font-semibold">| {firstPageLabel}</span>
                         )}
                     </span>
                 </div>
