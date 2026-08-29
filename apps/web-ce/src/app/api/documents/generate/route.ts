@@ -1,4 +1,5 @@
 import { createClient } from '@carlosindriago/database/server'
+import type { Json } from '@carlosindriago/database'
 import {
     createGeneratedDocumentSchema,
     hydrateASTWithData,
@@ -68,9 +69,9 @@ export async function POST(req: NextRequest) {
                 template_id,
                 client_id: client_id || null,
                 title,
-                final_ast: finalAST,
-                form_data,
-                paper_config: paper_config || (template.paper_config as unknown as PaperConfiguration) || { format: 'a4' },
+                final_ast: finalAST as unknown as Json,
+                form_data: form_data as unknown as Json,
+                paper_config: (paper_config || (template.paper_config as unknown as PaperConfiguration) || { format: 'a4' }) as unknown as Json,
             })
             .select()
             .maybeSingle()
