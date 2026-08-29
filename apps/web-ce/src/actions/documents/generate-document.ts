@@ -11,6 +11,7 @@ import {
     type GeneratedDocumentModel,
     type JSONContentNode,
     type PaperConfiguration,
+    type DocumentStatus,
 } from '@carlosindriago/core'
 import { createOrgAction } from '@/lib/action-helpers'
 
@@ -24,7 +25,7 @@ export const createGeneratedDocumentAction = createOrgAction(
             return actionError('Validación fallida', parsed.error.flatten().fieldErrors)
         }
 
-        const { template_id, client_id, title, form_data, paper_config } = parsed.data
+        const { template_id, client_id, title, form_data, paper_config, status } = parsed.data
 
         // 1. Fetch template AST and paper config safely on the server
         const { data: template, error: templateError } = await supabase
@@ -52,6 +53,7 @@ export const createGeneratedDocumentAction = createOrgAction(
                 final_ast: finalAST as unknown as Json,
                 form_data: form_data as unknown as Json,
                 paper_config: (paper_config || (template.paper_config as unknown as PaperConfiguration) || { format: 'a4' }) as unknown as Json,
+                status: status || 'draft',
             })
             .select()
             .maybeSingle()
@@ -84,6 +86,7 @@ export const updateGeneratedDocumentAction = createOrgAction(
             title?: string
             final_ast?: JSONContentNode | Record<string, unknown>
             paper_config?: PaperConfiguration | null
+            status?: DocumentStatus
         }
     ) => {
         const updatePayload: Record<string, unknown> = {
@@ -93,6 +96,7 @@ export const updateGeneratedDocumentAction = createOrgAction(
         if (input.title !== undefined) updatePayload.title = input.title
         if (input.final_ast !== undefined) updatePayload.final_ast = input.final_ast as unknown as Json
         if (input.paper_config !== undefined) updatePayload.paper_config = input.paper_config as unknown as Json
+        if (input.status !== undefined) updatePayload.status = input.status
 
         const { data, error } = await supabase
             .from('generated_documents')

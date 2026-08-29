@@ -141,6 +141,13 @@ export function generatePrintPageStyle(
 }
 
 /**
+ * Document Status Lifecycle
+ */
+export type DocumentStatus = 'draft' | 'published' | 'archived'
+
+export const documentStatusSchema = z.enum(['draft', 'published', 'archived']).default('draft')
+
+/**
  * Zod Schema to validate saving/updating a Document Template
  */
 export const saveDocumentTemplateSchema = z.object({
@@ -150,6 +157,7 @@ export const saveDocumentTemplateSchema = z.object({
     variables: z.array(z.string()).optional().default([]),
     margins: documentMarginsSchema.optional().default({ top: 20, right: 20, bottom: 20, left: 20 }),
     paper_config: paperConfigurationSchema.optional().default({ format: 'a4' }),
+    status: documentStatusSchema.optional().default('draft'),
 })
 
 export type SaveDocumentTemplateInput = z.input<typeof saveDocumentTemplateSchema>
@@ -163,9 +171,10 @@ export const createGeneratedDocumentSchema = z.object({
     title: z.string().min(1, 'El título del documento es requerido'),
     form_data: z.record(z.string(), z.string()),
     paper_config: paperConfigurationSchema.optional(),
+    status: documentStatusSchema.optional().default('draft'),
 })
 
-export type CreateGeneratedDocumentInput = z.infer<typeof createGeneratedDocumentSchema>
+export type CreateGeneratedDocumentInput = z.input<typeof createGeneratedDocumentSchema>
 
 /**
  * Domain Models
@@ -178,6 +187,7 @@ export interface DocumentTemplateModel {
     variables: string[]
     margins: DocumentMargins
     paper_config?: PaperConfiguration
+    status: DocumentStatus
     created_at: string
     updated_at: string
 }
@@ -191,6 +201,7 @@ export interface GeneratedDocumentModel {
     final_ast: JSONContentNode
     form_data: Record<string, string>
     paper_config?: PaperConfiguration
+    status: DocumentStatus
     created_at: string
     updated_at: string
 }

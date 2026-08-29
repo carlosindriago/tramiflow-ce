@@ -22,7 +22,7 @@ export const saveTemplateAction = createOrgAction(
             return actionError('Validación fallida', parsed.error.flatten().fieldErrors)
         }
 
-        const { id, title, content_ast, margins, paper_config } = parsed.data
+        const { id, title, content_ast, margins, paper_config, status } = parsed.data
         const extractedVars = extractVariablesFromAST(content_ast)
 
         const payload = {
@@ -31,6 +31,7 @@ export const saveTemplateAction = createOrgAction(
             variables: extractedVars as unknown as Json,
             margins: margins as unknown as Json,
             paper_config: (paper_config || { format: 'a4' }) as unknown as Json,
+            status: status || 'draft',
             organization_id: orgId,
             updated_at: new Date().toISOString(),
         }

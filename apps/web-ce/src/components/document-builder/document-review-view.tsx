@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { BubbleMenu } from './bubble-menu'
@@ -29,7 +29,11 @@ import {
     FileText,
     FileSignature,
     Trash2,
+    Check,
+    Cloud,
+    AlertCircle,
 } from 'lucide-react'
+import { useEditorAutoSave } from '@/hooks/use-editor-autosave'
 import {
     Button,
     Input,
@@ -92,6 +96,8 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
     const [isSaving, setIsSaving] = useState(false)
     const [isExportingWord, setIsExportingWord] = useState(false)
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false)
+    const [hasUnsavedLocalDraft, setHasUnsavedLocalDraft] = useState(false)
+    const [localDraftAst, setLocalDraftAst] = useState<JSONContentNode | null>(null)
 
     const margins: DocumentMargins = initialDoc?.template?.margins || {
         top: 20,
@@ -132,6 +138,63 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
             },
         },
     })
+
+    // Autosave handler
+    const handleAutoSaveServer = useCallback(
+        async (ast: JSONContentNode) => {
+            if (!initialDoc?.id || !title.trim()) return
+            await updateGeneratedDocumentAction({
+                id: initialDoc.id,
+                title: title.trim(),
+                final_ast: ast,
+                paper_config: paperConfig,
+                status: 'draft',
+            })
+        },
+        [initialDoc?.id, title, paperConfig]
+    )
+
+    const {
+        saveStatus,
+        clearLocalDraft,
+        getLocalDraft,
+        forceSaveServer,
+    } = useEditorAutoSave({
+        editor,
+        documentId: initialDoc?.id,
+        onSaveServer: handleAutoSaveServer,
+        debounceMs: 3000,
+    })
+
+    // Check for unsaved local draft discrepancy on mount
+    useEffect(() => {
+        if (!editor) return
+        const draft = getLocalDraft()
+        if (draft && draft.ast) {
+            const currentContentStr = JSON.stringify(initialDoc?.final_ast || editor.getJSON())
+            const draftContentStr = JSON.stringify(draft.ast)
+            if (draftContentStr !== currentContentStr) {
+                setHasUnsavedLocalDraft(true)
+                setLocalDraftAst(draft.ast)
+            }
+        }
+    }, [editor, initialDoc, getLocalDraft])
+
+    const handleRecoverDraft = async () => {
+        if (!editor || !localDraftAst) return
+        editor.commands.setContent(localDraftAst)
+        setHasUnsavedLocalDraft(false)
+        setLocalDraftAst(null)
+        toast.success('Borrador local recuperado con éxito')
+        await forceSaveServer()
+    }
+
+    const handleDiscardDraft = () => {
+        clearLocalDraft()
+        setHasUnsavedLocalDraft(false)
+        setLocalDraftAst(null)
+        toast.info('Borrador local descartado')
+    }
 
     // Setup React-To-Print for browser PDF export
     const handlePrint = useReactToPrint({
@@ -204,6 +267,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                 title: title.trim(),
                 final_ast: finalAST,
                 paper_config: paperConfig,
+                status: 'published',
             })
 
             if (!res.success) {
@@ -211,6 +275,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                 return
             }
 
+            clearLocalDraft()
             toast.success('Documento guardado')
         } catch (err) {
             console.error('Error updating document:', err)
@@ -230,6 +295,35 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
 
     return (
         <div className="flex flex-col min-h-screen bg-muted/30">
+            {/* Local Draft Recovery Banner */}
+            {hasUnsavedLocalDraft && (
+                <div className="bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-800/60 px-4 py-2 flex items-center justify-between gap-3 text-xs text-amber-900 dark:text-amber-200 z-40 sticky top-0">
+                    <div className="flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                        <span>Se encontró un borrador local no guardado por un corte de conexión.</span>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                        <Button
+                            type="button"
+                            size="sm"
+                            onClick={handleRecoverDraft}
+                            className="bg-amber-600 hover:bg-amber-700 text-white text-xs h-7 px-2.5"
+                        >
+                            Recuperar
+                        </Button>
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={handleDiscardDraft}
+                            className="text-xs h-7 px-2 text-muted-foreground hover:text-foreground"
+                        >
+                            Descartar
+                        </Button>
+                    </div>
+                </div>
+            )}
+
             {/* Header */}
             <header className="sticky top-0 z-30 flex items-center justify-between border-b bg-background/95 backdrop-blur px-4 py-2.5">
                 <div className="flex items-center gap-3 flex-1 max-w-xl">
@@ -249,6 +343,33 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                 </div>
 
                 <div className="flex items-center gap-2">
+                    {/* Autosave Status Indicator */}
+                    <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground font-mono select-none px-2 py-1 rounded bg-muted/40 border border-border/50">
+                        {saveStatus === 'saving' && (
+                            <>
+                                <Loader2 className="h-3 w-3 animate-spin text-amber-500" />
+                                <span className="text-amber-600 dark:text-amber-400">Guardando...</span>
+                            </>
+                        )}
+                        {saveStatus === 'saved' && (
+                            <>
+                                <Check className="h-3 w-3 text-emerald-600" />
+                                <span className="text-emerald-600 dark:text-emerald-400">Guardado en la nube</span>
+                            </>
+                        )}
+                        {saveStatus === 'error' && (
+                            <>
+                                <AlertCircle className="h-3 w-3 text-destructive" />
+                                <span className="text-destructive">Error al sincronizar</span>
+                            </>
+                        )}
+                        {saveStatus === 'idle' && (
+                            <>
+                                <Cloud className="h-3 w-3 text-muted-foreground" />
+                                <span>Autoguardado</span>
+                            </>
+                        )}
+                    </div>
                     {/* Paper Size Selector */}
                     <Popover>
                         <PopoverTrigger asChild>
