@@ -38,14 +38,43 @@
     pointer-events: none;
 }
 
-.ProseMirror [data-type="signature-block"] {
+.ProseMirror [data-type="signature-block"],
+[data-type="signature-block"] {
     page-break-inside: avoid;
     break-inside: avoid;
 }
 
 @media print {
-    .ProseMirror [data-type="signature-block"] {
+    .ProseMirror table {
         page-break-inside: avoid;
         break-inside: avoid;
+    }
+
+    .ProseMirror tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .ProseMirror img {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        max-width: 100% !important;
+    }
+
+    .ProseMirror [data-type="signature-block"],
+    [data-type="signature-block"],
+    .signature-block {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .ProseMirror h1,
+    .ProseMirror h2,
+    .ProseMirror h3,
+    .ProseMirror h4,
+    .ProseMirror h5,
+    .ProseMirror h6 {
+        page-break-after: avoid;
+        break-after: avoid;
     }
 }

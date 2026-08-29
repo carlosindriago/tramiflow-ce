@@ -136,6 +136,30 @@ export function generatePrintPageStyle(
                 background: none !important;
                 background-image: none !important;
             }
+            .ProseMirror table, table {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .ProseMirror tr, tr {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .ProseMirror img, img {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                max-width: 100% !important;
+            }
+            .ProseMirror [data-type="signature-block"],
+            [data-type="signature-block"],
+            .signature-block {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .ProseMirror h1, .ProseMirror h2, .ProseMirror h3, .ProseMirror h4, .ProseMirror h5, .ProseMirror h6,
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+            }
         }
     `
 }
