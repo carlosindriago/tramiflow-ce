@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { BubbleMenu } from './bubble-menu'
@@ -40,7 +40,11 @@ import {
     Trash2,
     Undo,
     Redo,
+    Check,
+    Cloud,
+    AlertCircle,
 } from 'lucide-react'
+import { useEditorAutoSave } from '@/hooks/use-editor-autosave'
 import Link from 'next/link'
 import {
     Button,
@@ -65,6 +69,7 @@ import {
     type DocumentMargins,
     type DocumentTemplateModel,
     type PaperConfiguration,
+    type JSONContentNode,
 } from '@carlosindriago/core'
 
 import { A4PaperContainer } from './a4-paper-container'
@@ -103,6 +108,8 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
     const [isSaving, setIsSaving] = useState(false)
     const [customVar, setCustomVar] = useState('')
     const [isVarPopoverOpen, setIsVarPopoverOpen] = useState(false)
+    const [hasUnsavedLocalDraft, setHasUnsavedLocalDraft] = useState(false)
+    const [localDraftAst, setLocalDraftAst] = useState<JSONContentNode | null>(null)
 
     const handlePrint = useReactToPrint({
         contentRef: printRef,
@@ -162,6 +169,34 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
         },
     })
 
+    // Autosave handler for existing templates
+    const handleAutoSaveServer = useCallback(
+        async (ast: JSONContentNode) => {
+            if (!initialTemplate?.id || !title.trim()) return
+            await saveTemplateAction({
+                id: initialTemplate.id,
+                title: title.trim(),
+                content_ast: ast,
+                margins,
+                paper_config: paperConfig,
+                status: 'draft',
+            })
+        },
+        [initialTemplate?.id, title, margins, paperConfig]
+    )
+
+    const {
+        saveStatus,
+        clearLocalDraft,
+        getLocalDraft,
+        forceSaveServer,
+    } = useEditorAutoSave({
+        editor,
+        documentId: initialTemplate?.id || 'template_new',
+        onSaveServer: initialTemplate?.id ? handleAutoSaveServer : undefined,
+        debounceMs: 3000,
+    })
+
     // Force update when initialTemplate changes
     useEffect(() => {
         if (initialTemplate && editor) {
@@ -171,6 +206,38 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
             editor.commands.setContent(initialTemplate.content_ast)
         }
     }, [initialTemplate, editor])
+
+    // Check for unsaved local draft discrepancy on mount
+    useEffect(() => {
+        if (!editor) return
+        const draft = getLocalDraft()
+        if (draft && draft.ast) {
+            const currentContentStr = JSON.stringify(initialTemplate?.content_ast || editor.getJSON())
+            const draftContentStr = JSON.stringify(draft.ast)
+            if (draftContentStr !== currentContentStr) {
+                setHasUnsavedLocalDraft(true)
+                setLocalDraftAst(draft.ast)
+            }
+        }
+    }, [editor, initialTemplate, getLocalDraft])
+
+    const handleRecoverDraft = async () => {
+        if (!editor || !localDraftAst) return
+        editor.commands.setContent(localDraftAst)
+        setHasUnsavedLocalDraft(false)
+        setLocalDraftAst(null)
+        toast.success('Borrador local recuperado con éxito')
+        if (initialTemplate?.id) {
+            await forceSaveServer()
+        }
+    }
+
+    const handleDiscardDraft = () => {
+        clearLocalDraft()
+        setHasUnsavedLocalDraft(false)
+        setLocalDraftAst(null)
+        toast.info('Borrador local descartado')
+    }
 
     const handleInsertVariable = (varName: string) => {
         if (!editor) return
@@ -197,6 +264,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                 content_ast: ast,
                 margins,
                 paper_config: paperConfig,
+                status: 'published',
             })
 
             if (!result.success) {
@@ -204,6 +272,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                 return
             }
 
+            clearLocalDraft()
             toast.success(initialTemplate ? 'Plantilla actualizada' : 'Plantilla creada con éxito')
             router.push('/documents/templates')
             router.refresh()
@@ -225,6 +294,35 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
 
     return (
         <div className="flex flex-col min-h-screen bg-muted/30">
+            {/* Local Draft Recovery Banner */}
+            {hasUnsavedLocalDraft && (
+                <div className="bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-800/60 px-4 py-2 flex items-center justify-between gap-3 text-xs text-amber-900 dark:text-amber-200 z-40 sticky top-0">
+                    <div className="flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                        <span>Se encontró un borrador local no guardado por un corte de conexión.</span>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                        <Button
+                            type="button"
+                            size="sm"
+                            onClick={handleRecoverDraft}
+                            className="bg-amber-600 hover:bg-amber-700 text-white text-xs h-7 px-2.5"
+                        >
+                            Recuperar
+                        </Button>
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={handleDiscardDraft}
+                            className="text-xs h-7 px-2 text-muted-foreground hover:text-foreground"
+                        >
+                            Descartar
+                        </Button>
+                    </div>
+                </div>
+            )}
+
             {/* Top Navigation Bar */}
             <header className="sticky top-0 z-30 flex items-center justify-between border-b bg-background/95 backdrop-blur px-4 py-2.5">
                 <div className="flex items-center gap-3 flex-1 max-w-xl">
@@ -242,6 +340,33 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                 </div>
 
                 <div className="flex items-center gap-2">
+                    {/* Autosave Status Indicator */}
+                    <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground font-mono select-none px-2 py-1 rounded bg-muted/40 border border-border/50">
+                        {saveStatus === 'saving' && (
+                            <>
+                                <Loader2 className="h-3 w-3 animate-spin text-amber-500" />
+                                <span className="text-amber-600 dark:text-amber-400">Guardando...</span>
+                            </>
+                        )}
+                        {saveStatus === 'saved' && (
+                            <>
+                                <Check className="h-3 w-3 text-emerald-600" />
+                                <span className="text-emerald-600 dark:text-emerald-400">Guardado en la nube</span>
+                            </>
+                        )}
+                        {saveStatus === 'error' && (
+                            <>
+                                <AlertCircle className="h-3 w-3 text-destructive" />
+                                <span className="text-destructive">Error al sincronizar</span>
+                            </>
+                        )}
+                        {saveStatus === 'idle' && (
+                            <>
+                                <Cloud className="h-3 w-3 text-muted-foreground" />
+                                <span>Autoguardado</span>
+                            </>
+                        )}
+                    </div>
                     {/* Paper Size Configuration Popover */}
                     <Popover>
                         <PopoverTrigger asChild>

@@ -174,7 +174,7 @@ export const createGeneratedDocumentSchema = z.object({
     status: documentStatusSchema.optional().default('draft'),
 })
 
-export type CreateGeneratedDocumentInput = z.infer<typeof createGeneratedDocumentSchema>
+export type CreateGeneratedDocumentInput = z.input<typeof createGeneratedDocumentSchema>
 
 /**
  * Domain Models

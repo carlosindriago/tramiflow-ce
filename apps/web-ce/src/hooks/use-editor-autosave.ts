@@ -41,7 +41,10 @@ export function useEditorAutoSave({
     const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null)
     const timerRef = useRef<NodeJS.Timeout | null>(null)
     const onSaveServerRef = useRef(onSaveServer)
-    onSaveServerRef.current = onSaveServer
+
+    useEffect(() => {
+        onSaveServerRef.current = onSaveServer
+    }, [onSaveServer])
 
     const storageKey = `tramiflow_doc_${documentId || 'new_draft'}`
 
