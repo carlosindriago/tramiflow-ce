@@ -38,7 +38,7 @@ import { LineHeight } from './extensions/line-height'
 import { updateGeneratedDocAction, exportDocxAction } from '@/app/(dashboard)/documents/generate/actions'
 import type { DocumentMargins, JSONContentNode } from '@carlosindriago/core'
 
-interface GeneratedDocWithDetails {
+export interface GeneratedDocWithDetails {
     id: string
     title: string
     final_ast: JSONContentNode | Record<string, unknown>
