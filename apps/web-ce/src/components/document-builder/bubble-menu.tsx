@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react'
 import type { Editor } from '@tiptap/core'
 import { BubbleMenuPlugin, type BubbleMenuPluginProps } from '@tiptap/extension-bubble-menu'
 import { PluginKey } from '@tiptap/pm/state'
+import { cn } from '@carlosindriago/core'
 
 export interface BubbleMenuProps {
     editor: Editor
@@ -45,7 +46,11 @@ export function BubbleMenu({
     }, [editor, pluginKey, shouldShow, updateDelay])
 
     return (
-        <div ref={menuRef} style={{ visibility: 'hidden' }} className={className}>
+        <div
+            ref={menuRef}
+            style={{ position: 'absolute', visibility: 'hidden' }}
+            className={cn('absolute z-50 pointer-events-auto', className)}
+        >
             {children}
         </div>
     )
