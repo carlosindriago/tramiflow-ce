@@ -3,6 +3,50 @@ import { templateSchema } from '@carlosindriago/core'
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 
+export async function GET() {
+    try {
+        const supabase = await createClient()
+        const {
+            data: { user },
+            error: authError,
+        } = await supabase.auth.getUser()
+
+        if (authError || !user) {
+            return NextResponse.json({ success: false, error: 'No autenticado' }, { status: 401 })
+        }
+
+        const { data: member, error: memberError } = await supabase
+            .from('organization_members')
+            .select('organization_id')
+            .eq('user_id', user.id)
+            .limit(1)
+            .maybeSingle()
+
+        if (memberError || !member?.organization_id) {
+            return NextResponse.json({ success: false, error: 'No se encontró organización' }, { status: 400 })
+        }
+
+        const { data, error } = await supabase
+            .from('procedure_templates')
+            .select('id, name, requirements, steps, fees, government_fee, duration_work, is_active, is_archived')
+            .eq('organization_id', member.organization_id)
+            .eq('is_active', true)
+            .eq('is_archived', false)
+            .order('name', { ascending: true })
+
+        if (error) {
+            console.error('[GET /api/templates] Error:', error)
+            return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+        }
+
+        return NextResponse.json({ success: true, data: data || [] })
+    } catch (error) {
+        console.error('Unexpected error in GET /api/templates:', error)
+        const message = error instanceof Error ? error.message : 'Error inesperado'
+        return NextResponse.json({ success: false, error: message }, { status: 500 })
+    }
+}
+
 export async function POST(req: NextRequest) {
     try {
         const supabase = await createClient()

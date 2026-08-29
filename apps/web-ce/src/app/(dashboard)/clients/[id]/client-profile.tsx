@@ -34,8 +34,7 @@ import { ProcedureCard } from '@/components/procedures/procedure-card'
 import { NewProcedureDialog } from '@/components/procedures/new-procedure-dialog'
 import { ClientForm } from '@/components/clients/client-form'
 
-import { getClientDocuments, getClientProcedures } from './actions'
-import { getTemplatesAction } from '@/app/(dashboard)/procedures/actions'
+// Removed server action imports for client data fetching to avoid 500 render errors
 import type { Client } from '@carlosindriago/core'
 import { getPrimaryIdentificationNumber } from '@carlosindriago/core'
 import type { Document } from '@carlosindriago/core'
@@ -50,7 +49,7 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
     const [isEditOpen, setIsEditOpen] = useState(false)
     const queryClient = useQueryClient()
 
-    // Fetch client data via REST API to avoid server component render error
+    // Fetch client data via REST API
     const {
         data: client,
         isLoading: clientLoading,
@@ -63,7 +62,7 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
         },
     })
 
-    // Fetch documents
+    // Fetch documents via REST API
     const {
         data: documents = [],
         isLoading: docsLoading,
@@ -71,24 +70,30 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
     } = useQuery<Document[]>({
         queryKey: ['documents', clientId],
         queryFn: async () => {
-            const res = await getClientDocuments(clientId)
-            return res.success ? res.data : []
+            const res = await fetch(`/api/clients/${clientId}/documents`)
+            const json = await res.json()
+            return json.success ? json.data : []
         },
     })
 
-    // Fetch procedures
+    // Fetch procedures via REST API
     const { data: procedures = [], refetch: refetchProcedures } = useQuery<Procedure[]>({
         queryKey: ['procedures', clientId],
         queryFn: async () => {
-            const res = await getClientProcedures(clientId)
-            return res.success ? (res.data as unknown as Procedure[]) : []
+            const res = await fetch(`/api/clients/${clientId}/procedures`)
+            const json = await res.json()
+            return json.success ? (json.data as unknown as Procedure[]) : []
         },
     })
 
-    // Fetch templates for the dropdown
+    // Fetch templates via REST API
     const { data: templates = [] } = useQuery({
         queryKey: ['procedure-templates'],
-        queryFn: () => getTemplatesAction().then(res => (res.success ? res.data : [])),
+        queryFn: async () => {
+            const res = await fetch('/api/templates')
+            const json = await res.json()
+            return json.success ? json.data : []
+        },
     })
 
     if (clientLoading) {
