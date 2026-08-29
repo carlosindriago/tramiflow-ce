@@ -65,6 +65,7 @@ import { A4PaperContainer } from './a4-paper-container'
 import { VariableNode } from './extensions/variable-node'
 import { LineHeight } from './extensions/line-height'
 import { SignatureBlock } from './extensions/signature-block'
+import { saveTemplateAction } from '@/actions/documents/save-template'
 
 const COMMON_VARIABLES = [
     { label: 'Nombre Cliente', name: 'nombre_cliente' },
@@ -177,19 +178,13 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
         setIsSaving(true)
         try {
             const ast = editor.getJSON()
-            const response = await fetch('/api/documents/templates', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id: initialTemplate?.id,
-                    title: title.trim(),
-                    content_ast: ast,
-                    margins,
-                    paper_config: paperConfig,
-                }),
+            const result = await saveTemplateAction({
+                id: initialTemplate?.id,
+                title: title.trim(),
+                content_ast: ast,
+                margins,
+                paper_config: paperConfig,
             })
-
-            const result = await response.json()
 
             if (!result.success) {
                 toast.error(result.error || 'Error al guardar la plantilla')

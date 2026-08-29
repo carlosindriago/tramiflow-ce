@@ -26,6 +26,7 @@ import {
 import { toast, getPaperDimensions } from '@carlosindriago/core'
 import type { DocumentTemplateModel } from '@carlosindriago/core'
 import { NewDocumentDialog } from './new-document-dialog'
+import { deleteTemplateAction } from '@/actions/documents/save-template'
 
 interface DocumentTemplatesListProps {
     templates: DocumentTemplateModel[]
@@ -42,10 +43,7 @@ export function DocumentTemplatesList({ templates: initialTemplates }: DocumentT
 
         setDeletingId(id)
         try {
-            const response = await fetch(`/api/documents/templates?id=${id}`, {
-                method: 'DELETE',
-            })
-            const res = await response.json()
+            const res = await deleteTemplateAction(id)
             if (!res.success) {
                 toast.error(res.error || 'Error al eliminar plantilla')
                 return

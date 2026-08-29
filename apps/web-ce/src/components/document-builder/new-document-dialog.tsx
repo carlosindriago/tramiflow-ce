@@ -38,19 +38,21 @@ import {
     type PaperConfiguration,
 } from '@carlosindriago/core'
 import { FileText, Loader2, Sparkles, Plus, Check, ChevronsUpDown, Wand2, Info } from 'lucide-react'
+import { getDocumentTemplatesAction } from '@/actions/documents/save-template'
 
 interface NewDocumentDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     defaultClientId?: string
     defaultTemplateId?: string
+    defaultPaperConfig?: PaperConfiguration
     onDocumentCreated?: (docId: string) => void
 }
 
 function formatVariableLabel(key: string): string {
     return key
         .replace(/_/g, ' ')
-        .replace(/\b\w/g, char => char.toUpperCase())
+        .replace(/\b\w/g, c => c.toUpperCase())
 }
 
 export function NewDocumentDialog({
@@ -58,14 +60,15 @@ export function NewDocumentDialog({
     onOpenChange,
     defaultClientId,
     defaultTemplateId,
+    defaultPaperConfig,
     onDocumentCreated,
 }: NewDocumentDialogProps) {
     const router = useRouter()
-    const [selectedClientId, setSelectedClientId] = useState(defaultClientId || '')
-    const [selectedTemplateId, setSelectedTemplateId] = useState(defaultTemplateId || '')
+    const [selectedClientId, setSelectedClientId] = useState<string>(defaultClientId || '')
+    const [selectedTemplateId, setSelectedTemplateId] = useState<string>(defaultTemplateId || '')
     const [openClientCombobox, setOpenClientCombobox] = useState(false)
     const [openTemplateCombobox, setOpenTemplateCombobox] = useState(false)
-    const [paperConfig, setPaperConfig] = useState<PaperConfiguration>({ format: 'a4' })
+    const [paperConfig, setPaperConfig] = useState<PaperConfiguration>(defaultPaperConfig || { format: 'a4' })
     const [isGenerating, setIsGenerating] = useState(false)
     const [hasAutoFilled, setHasAutoFilled] = useState(false)
 
@@ -79,7 +82,7 @@ export function NewDocumentDialog({
 
     // 1. Fetch active clients
     const { data: clients = [], isLoading: clientsLoading } = useQuery<Client[]>({
-        queryKey: ['clients-list'],
+        queryKey: ['clients-list-for-docs'],
         queryFn: async () => {
             const res = await fetch('/api/clients')
             const json = await res.json()
@@ -88,13 +91,12 @@ export function NewDocumentDialog({
         enabled: open,
     })
 
-    // 2. Fetch document templates
+    // 2. Fetch document templates via Server Action
     const { data: templates = [], isLoading: templatesLoading } = useQuery<DocumentTemplateModel[]>({
         queryKey: ['document-templates-list'],
         queryFn: async () => {
-            const res = await fetch('/api/documents/templates')
-            const json = await res.json()
-            return json.success ? json.data : []
+            const res = await getDocumentTemplatesAction()
+            return res.success ? res.data : []
         },
         enabled: open,
     })
