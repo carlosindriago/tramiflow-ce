@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react'
 import Link from 'next/link'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { BubbleMenu } from './bubble-menu'
+import { ExportPreflightDialog } from './export-preflight-dialog'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import { Table } from '@tiptap/extension-table'
@@ -13,7 +14,6 @@ import { TableCell } from '@tiptap/extension-table-cell'
 import { useReactToPrint } from 'react-to-print'
 import {
     ArrowLeft,
-    Printer,
     FileDown,
     Save,
     Bold,
@@ -38,10 +38,6 @@ import {
     PopoverContent,
     PopoverTrigger,
     Separator,
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
 } from '@carlosindriago/ui'
 import {
     toast,
@@ -94,6 +90,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
     )
     const [isSaving, setIsSaving] = useState(false)
     const [isExportingWord, setIsExportingWord] = useState(false)
+    const [isExportDialogOpen, setIsExportDialogOpen] = useState(false)
 
     const margins: DocumentMargins = initialDoc?.template?.margins || {
         top: 20,
@@ -388,37 +385,13 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                     </Button>
 
                     <Button
-                        variant="outline"
                         size="sm"
-                        onClick={() => handlePrint()}
-                        className="gap-1.5 text-xs"
+                        onClick={() => setIsExportDialogOpen(true)}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 text-xs font-semibold"
                     >
-                        <Printer className="h-3.5 w-3.5" />
-                        Imprimir / PDF
+                        <FileDown className="h-3.5 w-3.5" />
+                        Exportar Documento
                     </Button>
-
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    size="sm"
-                                    onClick={handleExportWord}
-                                    disabled={isExportingWord}
-                                    className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 text-xs"
-                                >
-                                    {isExportingWord ? (
-                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                    ) : (
-                                        <FileDown className="h-3.5 w-3.5" />
-                                    )}
-                                    Exportar a Word (.docx)
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-xs text-xs">
-                                El archivo .docx es crudo; la paginación y los márgenes exactos podrían requerir ajustes en Microsoft Word.
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
                 </div>
             </header>
 
@@ -601,6 +574,19 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                     <EditorContent editor={editor} />
                 </A4PaperContainer>
             </main>
+
+            {/* Pre-flight Export Check Dialog */}
+            <ExportPreflightDialog
+                isOpen={isExportDialogOpen}
+                onOpenChange={setIsExportDialogOpen}
+                title={title}
+                paperConfig={paperConfig}
+                margins={margins}
+                editor={editor}
+                onExportPdf={() => handlePrint()}
+                onExportWord={handleExportWord}
+                isExportingWord={isExportingWord}
+            />
         </div>
     )
 }
