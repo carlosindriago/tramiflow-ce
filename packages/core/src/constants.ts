@@ -179,3 +179,13 @@ export const WHATSAPP = {
 export function formatPhoneForWhatsApp(phone: string): string {
     return phone.replace(/\D/g, '')
 }
+
+// ==========================================
+// Universal Legal Page Sizes
+// ==========================================
+export const LEGAL_PAGE_SIZES = {
+    A4: { width: 210, height: 297, label: 'A4 (210 × 297 mm)', name: 'A4', description: 'Estándar internacional' },
+    LETTER: { width: 215.9, height: 279.4, label: 'Carta / Letter (215.9 × 279.4 mm)', name: 'Carta', description: '8.5" × 11"' },
+    LEGAL: { width: 215.9, height: 355.6, label: 'Oficio EE.UU. / Legal (215.9 × 355.6 mm)', name: 'Oficio EE.UU.', description: '8.5" × 14"' },
+    FOLIO: { width: 215.9, height: 330.2, label: 'Oficio Latam / Folio (215.9 × 330.2 mm)', name: 'Oficio Latam', description: '8.5" × 13" (Perú/Latam)' },
+} as const

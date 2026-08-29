@@ -32,6 +32,8 @@ export const A4PaperContainer = forwardRef<HTMLDivElement, A4PaperContainerProps
                     className
                 )}
                 style={{
+                    ['--page-width' as unknown as string]: `${width}mm`,
+                    ['--page-height' as unknown as string]: `${height}mm`,
                     maxWidth: `${width}mm`,
                     minHeight: `${height}mm`,
                     paddingTop: `${margins.top}mm`,
@@ -41,7 +43,7 @@ export const A4PaperContainer = forwardRef<HTMLDivElement, A4PaperContainerProps
                     printColorAdjust: 'exact',
                     WebkitPrintColorAdjust: 'exact',
                     ...style,
-                }}
+                } as React.CSSProperties}
                 {...props}
             >
                 {children}

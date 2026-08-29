@@ -468,8 +468,8 @@ export function NewDocumentDialog({
                                             {getPaperDimensions(paperConfig).name}
                                         </span>
                                     </div>
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                        {(['a4', 'letter', 'legal'] as const).map(fmt => (
+                                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                                        {(['a4', 'letter', 'legal', 'folio'] as const).map(fmt => (
                                             <button
                                                 key={fmt}
                                                 type="button"

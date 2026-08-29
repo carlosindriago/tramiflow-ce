@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
+import { Table } from '@tiptap/extension-table'
+import { TableRow } from '@tiptap/extension-table-row'
+import { TableHeader } from '@tiptap/extension-table-header'
+import { TableCell } from '@tiptap/extension-table-cell'
 import {
     Bold,
     Italic,
@@ -26,6 +30,11 @@ import {
     Heading3,
     Pilcrow,
     FileText,
+    Table as TableIcon,
+    Rows,
+    Columns,
+    FileSignature,
+    Trash2,
 } from 'lucide-react'
 import Link from 'next/link'
 import {
@@ -55,6 +64,7 @@ import {
 import { A4PaperContainer } from './a4-paper-container'
 import { VariableNode } from './extensions/variable-node'
 import { LineHeight } from './extensions/line-height'
+import { SignatureBlock } from './extensions/signature-block'
 
 const COMMON_VARIABLES = [
     { label: 'Nombre Cliente', name: 'nombre_cliente' },
@@ -101,6 +111,13 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
             LineHeight.configure({
                 types: ['paragraph', 'heading'],
             }),
+            Table.configure({
+                resizable: true,
+            }),
+            TableRow,
+            TableHeader,
+            TableCell,
+            SignatureBlock,
         ],
         content: initialTemplate?.content_ast || {
             type: 'doc',
@@ -231,7 +248,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                             </h4>
                             <div className="space-y-2">
                                 <div className="grid grid-cols-1 gap-1.5">
-                                    {(['a4', 'letter', 'legal'] as const).map(fmt => (
+                                    {(['a4', 'letter', 'legal', 'folio'] as const).map(fmt => (
                                         <button
                                             key={fmt}
                                             type="button"
@@ -243,8 +260,13 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                                                     : 'bg-background hover:bg-muted border-border text-foreground'
                                             )}
                                         >
-                                            <span>{PAPER_DIMENSIONS[fmt].name}</span>
-                                            <span className="text-[10px] text-muted-foreground">
+                                            <div className="flex flex-col">
+                                                <span>{PAPER_DIMENSIONS[fmt].name}</span>
+                                                {PAPER_DIMENSIONS[fmt].description && (
+                                                    <span className="text-[10px] text-muted-foreground">{PAPER_DIMENSIONS[fmt].description}</span>
+                                                )}
+                                            </div>
+                                            <span className="text-[10px] font-mono text-muted-foreground">
                                                 {PAPER_DIMENSIONS[fmt].width} × {PAPER_DIMENSIONS[fmt].height} mm
                                             </span>
                                         </button>
@@ -539,6 +561,91 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                         <SelectItem value="2">2.0 (Doble)</SelectItem>
                     </SelectContent>
                 </Select>
+
+                <Separator orientation="vertical" className="h-5 mx-1" />
+
+                {/* Table Controls */}
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            type="button"
+                            variant={editor.isActive('table') ? 'secondary' : 'ghost'}
+                            size="sm"
+                            className="h-8 gap-1.5 text-xs font-medium"
+                        >
+                            <TableIcon className="h-4 w-4" />
+                            <span>Tabla</span>
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-52 p-2 space-y-1" align="start">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start text-xs gap-2"
+                            onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+                        >
+                            <Plus className="h-3.5 w-3.5 text-emerald-600" />
+                            Insertar Tabla (3x3)
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start text-xs gap-2"
+                            disabled={!editor.isActive('table')}
+                            onClick={() => editor.chain().focus().addRowAfter().run()}
+                        >
+                            <Rows className="h-3.5 w-3.5" />
+                            Añadir Fila
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start text-xs gap-2"
+                            disabled={!editor.isActive('table')}
+                            onClick={() => editor.chain().focus().addColumnAfter().run()}
+                        >
+                            <Columns className="h-3.5 w-3.5" />
+                            Añadir Columna
+                        </Button>
+                        <Separator className="my-1" />
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start text-xs gap-2 text-destructive hover:bg-destructive/10"
+                            disabled={!editor.isActive('table')}
+                            onClick={() => editor.chain().focus().deleteTable().run()}
+                        >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            Eliminar Tabla
+                        </Button>
+                    </PopoverContent>
+                </Popover>
+
+                {/* Signature Block Button */}
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1.5 text-xs font-medium border-zinc-300 dark:border-zinc-700"
+                    onClick={() =>
+                        editor
+                            .chain()
+                            .focus()
+                            .insertSignatureBlock({
+                                count: 2,
+                                label1: 'El Cliente',
+                                label2: 'El Contratista / Abogado',
+                            })
+                            .run()
+                    }
+                >
+                    <FileSignature className="h-3.5 w-3.5 text-primary" />
+                    <span>Firmas (2)</span>
+                </Button>
 
                 <Separator orientation="vertical" className="h-5 mx-1" />
 

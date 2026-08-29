@@ -5,6 +5,10 @@ import Link from 'next/link'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
+import { Table } from '@tiptap/extension-table'
+import { TableRow } from '@tiptap/extension-table-row'
+import { TableHeader } from '@tiptap/extension-table-header'
+import { TableCell } from '@tiptap/extension-table-cell'
 import { useReactToPrint } from 'react-to-print'
 import download from 'downloadjs'
 import {
@@ -48,6 +52,7 @@ import {
 } from '@carlosindriago/core'
 import { A4PaperContainer } from './a4-paper-container'
 import { LineHeight } from './extensions/line-height'
+import { SignatureBlock } from './extensions/signature-block'
 
 export interface GeneratedDocWithDetails {
     id: string
@@ -64,19 +69,25 @@ export interface GeneratedDocWithDetails {
     client?: {
         id: string
         full_name: string
+        email?: string | null
+        phone?: string | null
+        document_number?: string | null
+        address?: string | null
     } | null
     created_at: string
 }
 
 interface DocumentReviewViewProps {
-    document: GeneratedDocWithDetails
+    document?: GeneratedDocWithDetails
+    initialDoc?: GeneratedDocWithDetails
 }
 
-export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewProps) {
+export function DocumentReviewView({ document: docProp, initialDoc: initialDocProp }: DocumentReviewViewProps) {
+    const initialDoc = (docProp || initialDocProp)!
     const printRef = useRef<HTMLDivElement>(null)
-    const [title, setTitle] = useState(initialDoc.title)
+    const [title, setTitle] = useState(initialDoc?.title || 'Documento Generado')
     const [paperConfig, setPaperConfig] = useState<PaperConfiguration>(
-        initialDoc.paper_config || initialDoc.template?.paper_config || { format: 'a4' }
+        initialDoc?.paper_config || initialDoc?.template?.paper_config || { format: 'a4' }
     )
     const [isSaving, setIsSaving] = useState(false)
     const [isExportingWord, setIsExportingWord] = useState(false)
@@ -105,6 +116,13 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
             LineHeight.configure({
                 types: ['paragraph', 'heading'],
             }),
+            Table.configure({
+                resizable: true,
+            }),
+            TableRow,
+            TableHeader,
+            TableCell,
+            SignatureBlock,
         ],
         content: initialDoc.final_ast || {},
         editorProps: {
@@ -261,7 +279,7 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
                             </h4>
                             <div className="space-y-2">
                                 <div className="grid grid-cols-1 gap-1.5">
-                                    {(['a4', 'letter', 'legal'] as const).map(fmt => (
+                                    {(['a4', 'letter', 'legal', 'folio'] as const).map(fmt => (
                                         <button
                                             key={fmt}
                                             type="button"
@@ -273,8 +291,13 @@ export function DocumentReviewView({ document: initialDoc }: DocumentReviewViewP
                                                     : 'bg-background hover:bg-muted border-border text-foreground'
                                             )}
                                         >
-                                            <span>{PAPER_DIMENSIONS[fmt].name}</span>
-                                            <span className="text-[10px] text-muted-foreground">
+                                            <div className="flex flex-col">
+                                                <span>{PAPER_DIMENSIONS[fmt].name}</span>
+                                                {PAPER_DIMENSIONS[fmt].description && (
+                                                    <span className="text-[10px] text-muted-foreground">{PAPER_DIMENSIONS[fmt].description}</span>
+                                                )}
+                                            </div>
+                                            <span className="text-[10px] font-mono text-muted-foreground">
                                                 {PAPER_DIMENSIONS[fmt].width} × {PAPER_DIMENSIONS[fmt].height} mm
                                             </span>
                                         </button>
