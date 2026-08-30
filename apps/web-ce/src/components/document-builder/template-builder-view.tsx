@@ -322,10 +322,10 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
     }
 
     return (
-        <div className="flex flex-col min-h-screen bg-muted/30">
+        <div className="flex flex-col h-[calc(100vh-3.5rem)] overflow-hidden bg-muted/30">
             {/* Local Draft Recovery Banner */}
             {hasUnsavedLocalDraft && (
-                <div className="bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-800/60 px-4 py-2 flex items-center justify-between gap-3 text-xs text-amber-900 dark:text-amber-200 z-40 sticky top-0">
+                <div className="shrink-0 bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-800/60 px-4 py-2 flex items-center justify-between gap-3 text-xs text-amber-900 dark:text-amber-200 z-40">
                     <div className="flex items-center gap-2">
                         <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
                         <span>Se encontró un borrador local no guardado por un corte de conexión.</span>
@@ -353,7 +353,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
             )}
 
             {/* Top Navigation Bar */}
-            <header className="sticky top-0 z-30 flex items-center justify-between border-b bg-background/95 backdrop-blur px-4 py-2.5">
+            <header className="shrink-0 z-30 flex items-center justify-between border-b bg-background/95 backdrop-blur px-4 py-2.5">
                 <div className="flex items-center gap-3 flex-1 max-w-xl">
                     <Button variant="ghost" size="icon" asChild>
                         <Link href="/documents/templates">
@@ -648,11 +648,9 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                 </div>
             </header>
 
-            {/* Sticky Toolbar & Sub-bar */}
-            <div className="sticky top-[53px] z-20 border-b bg-background shadow-xs">
-                {/* Toolbar */}
-                <div className="flex flex-wrap items-center gap-1 px-4 py-1.5">
-                    {/* Undo / Redo */}
+            {/* Formatting Toolbar */}
+            <div className="shrink-0 z-20 flex flex-wrap items-center gap-1 border-b bg-background px-4 py-1.5 shadow-xs">
+                {/* Undo / Redo */}
                 <Button
                     type="button"
                     variant="ghost"
@@ -1192,25 +1190,6 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                         </div>
                     </PopoverContent>
                 </Popover>
-                </div>
-
-                {/* Sub-barra de Estado de Márgenes y Redacción */}
-                <div className="flex flex-wrap items-center justify-between w-full px-4 py-1.5 bg-muted/30 border-t border-border/50 text-[11px] text-muted-foreground">
-                    <div>
-                        <span>
-                            Márgenes: Sup {margins.top} | Inf {margins.bottom} | Izq {margins.left} | Der {margins.right} mm
-                            {margins.first_page_top !== undefined && margins.first_page_top !== margins.top && (
-                                <span className="ml-1 text-emerald-600 dark:text-emerald-400 font-medium">
-                                    (Pág 1: Sup {margins.first_page_top}mm)
-                                </span>
-                            )}
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                        <Info className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                        <span>Vista de redacción continua. Usa &quot;Previsualizar Documento Impreso&quot; para ver la paginación final.</span>
-                    </div>
-                </div>
             </div>
 
             {/* Paper Editor Container */}
@@ -1319,6 +1298,24 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     <EditorContent editor={editor} />
                 </A4PaperContainer>
             </main>
+
+            {/* Bottom Status Bar (Márgenes y Redacción) */}
+            <footer className="shrink-0 z-20 border-t border-border/60 bg-muted/40 px-4 py-1.5 flex flex-wrap items-center justify-between w-full text-[11px] text-muted-foreground shadow-xs">
+                <div>
+                    <span>
+                        Márgenes: Sup {margins.top} | Inf {margins.bottom} | Izq {margins.left} | Der {margins.right} mm
+                        {margins.first_page_top !== undefined && margins.first_page_top !== margins.top && (
+                            <span className="ml-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                                (Pág 1: Sup {margins.first_page_top}mm)
+                            </span>
+                        )}
+                    </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                    <Info className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <span>Vista de redacción continua. Usa &quot;Previsualizar Documento Impreso&quot; para ver la paginación final.</span>
+                </div>
+            </footer>
         </div>
     )
 }
