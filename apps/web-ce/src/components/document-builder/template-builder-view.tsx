@@ -1138,9 +1138,10 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                             variant="outline"
                             size="sm"
                             className="h-8 gap-1.5 text-xs font-semibold bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-700"
+                            title="Insertar variable dinámica en la posición del cursor"
                         >
                             <Variable className="h-3.5 w-3.5" />
-                            Insertar Variable
+                            Variable
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-80 p-3 space-y-3" align="start">
