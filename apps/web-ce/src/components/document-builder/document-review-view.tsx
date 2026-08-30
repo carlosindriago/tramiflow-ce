@@ -73,6 +73,7 @@ import {
 import { A4PaperContainer } from './a4-paper-container'
 import { FontFamilySelector } from './font-family-selector'
 import { LineHeight } from './extensions/line-height'
+import { SignatureBlockConfig } from './signature-block-config'
 import { SignatureBlock } from './extensions/signature-block'
 import { updateGeneratedDocumentAction } from '@/actions/documents/generate-document'
 
@@ -755,79 +756,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                                 </Button>
                             </div>
 
-                            <div className="space-y-2 text-xs">
-                                <div>
-                                    <Label className="text-[11px] text-muted-foreground">Cantidad de Firmas</Label>
-                                    <div className="flex gap-1 mt-0.5">
-                                        {[1, 2, 3].map(cnt => (
-                                            <Button
-                                                key={cnt}
-                                                type="button"
-                                                size="sm"
-                                                variant={(editor.getAttributes('signatureBlock').count || 2) === cnt ? 'default' : 'outline'}
-                                                className="flex-1 h-6 text-xs"
-                                                onClick={() => editor.chain().updateAttributes('signatureBlock', { count: cnt }).run()}
-                                            >
-                                                {cnt}
-                                            </Button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-1.5 pt-1 border-t border-border">
-                                    <div className="space-y-0.5">
-                                        <Label className="text-[10px] text-muted-foreground">Firma 1</Label>
-                                        <Input
-                                            value={editor.getAttributes('signatureBlock').label1 || ''}
-                                            onChange={e => editor.chain().updateAttributes('signatureBlock', { label1: e.target.value }).run()}
-                                            placeholder="ej: El Cliente"
-                                            className="h-6 text-xs"
-                                        />
-                                        <Input
-                                            value={editor.getAttributes('signatureBlock').sublabel1 || ''}
-                                            onChange={e => editor.chain().updateAttributes('signatureBlock', { sublabel1: e.target.value }).run()}
-                                            placeholder="ej: DNI / Doc: ______________"
-                                            className="h-6 text-xs font-mono text-[10px]"
-                                        />
-                                    </div>
-
-                                    {((editor.getAttributes('signatureBlock').count as number) || 2) >= 2 && (
-                                        <div className="space-y-0.5">
-                                            <Label className="text-[10px] text-muted-foreground">Firma 2</Label>
-                                            <Input
-                                                value={editor.getAttributes('signatureBlock').label2 || ''}
-                                                onChange={e => editor.chain().updateAttributes('signatureBlock', { label2: e.target.value }).run()}
-                                                placeholder="ej: El Abogado / Representante"
-                                                className="h-6 text-xs"
-                                            />
-                                            <Input
-                                                value={editor.getAttributes('signatureBlock').sublabel2 || ''}
-                                                onChange={e => editor.chain().updateAttributes('signatureBlock', { sublabel2: e.target.value }).run()}
-                                                placeholder="ej: DNI / Doc: ______________"
-                                                className="h-6 text-xs font-mono text-[10px]"
-                                            />
-                                        </div>
-                                    )}
-
-                                    {((editor.getAttributes('signatureBlock').count as number) || 2) >= 3 && (
-                                        <div className="space-y-0.5">
-                                            <Label className="text-[10px] text-muted-foreground">Firma 3</Label>
-                                            <Input
-                                                value={editor.getAttributes('signatureBlock').label3 || ''}
-                                                onChange={e => editor.chain().updateAttributes('signatureBlock', { label3: e.target.value }).run()}
-                                                placeholder="ej: Testigo / Garante"
-                                                className="h-6 text-xs"
-                                            />
-                                            <Input
-                                                value={editor.getAttributes('signatureBlock').sublabel3 || ''}
-                                                onChange={e => editor.chain().updateAttributes('signatureBlock', { sublabel3: e.target.value }).run()}
-                                                placeholder="ej: DNI / Doc: ______________"
-                                                className="h-6 text-xs font-mono text-[10px]"
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            <SignatureBlockConfig editor={editor} compact />
                         </div>
                     </BubbleMenu>
                 )}
