@@ -46,6 +46,27 @@ export function hydrateASTWithData(
             node.content = newContent
         }
 
+        // If node is a signatureBlock, interpolate variables in its attributes
+        if (node.type === 'signatureBlock' && node.attrs && typeof node.attrs === 'object') {
+            const count = (node.attrs.count as number) || 2
+            for (let i = 1; i <= count; i++) {
+                const labelKey = `label${i}`
+                const sublabelKey = `sublabel${i}`
+                if (typeof node.attrs[labelKey] === 'string') {
+                    node.attrs[labelKey] = node.attrs[labelKey].replace(
+                        /\[([a-zA-Z0-9_-]+)\]/g,
+                        (_match: string, varName: string) => data[varName] ?? `[${varName}]`
+                    )
+                }
+                if (typeof node.attrs[sublabelKey] === 'string') {
+                    node.attrs[sublabelKey] = node.attrs[sublabelKey].replace(
+                        /\[([a-zA-Z0-9_-]+)\]/g,
+                        (_match: string, varName: string) => data[varName] ?? `[${varName}]`
+                    )
+                }
+            }
+        }
+
         return node
     }
 

@@ -50,4 +50,33 @@ describe('extractVariablesFromAST', () => {
         }
         expect(extractVariablesFromAST(ast)).toEqual(['cliente_nombre', 'dni', 'fecha'])
     })
+
+    it('should extract variables embedded in signatureBlock attributes', () => {
+        const ast = {
+            type: 'doc',
+            content: [
+                {
+                    type: 'paragraph',
+                    content: [{ type: 'variableNode', attrs: { name: 'ciudad' } }],
+                },
+                {
+                    type: 'signatureBlock',
+                    attrs: {
+                        count: 2,
+                        label1: 'Sr. [nombre_cliente]',
+                        sublabel1: 'DNI / Doc: [dni_cliente]',
+                        label2: 'Abog. [nombre_abogado]',
+                        sublabel2: 'Inpreabogado Nº [inpre]',
+                    },
+                },
+            ],
+        }
+        expect(extractVariablesFromAST(ast)).toEqual([
+            'ciudad',
+            'nombre_cliente',
+            'dni_cliente',
+            'nombre_abogado',
+            'inpre',
+        ])
+    })
 })

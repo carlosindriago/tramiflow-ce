@@ -148,6 +148,10 @@ export function SignatureBlockConfig({
                     </div>
                 )}
             </div>
+
+            <div className="pt-1 text-[10px] text-muted-foreground flex items-center gap-1 border-t border-border/50">
+                <span>💡 Puedes usar variables como <code className="text-[9px] bg-muted px-1 py-0.5 rounded text-foreground font-mono">[nombre_cliente]</code> o <code className="text-[9px] bg-muted px-1 py-0.5 rounded text-foreground font-mono">[dni]</code></span>
+            </div>
         </div>
     )
 }

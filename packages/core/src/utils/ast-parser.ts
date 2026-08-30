@@ -30,6 +30,27 @@ export function extractVariablesFromAST(ast: JSONContentNode | null | undefined 
             }
         }
 
+        // Check if node is a signatureBlock with variables in its labels or sublabels
+        if (node.type === 'signatureBlock' && node.attrs && typeof node.attrs === 'object') {
+            const count = (node.attrs.count as number) || 2
+            for (let i = 1; i <= count; i++) {
+                const label = node.attrs[`label${i}`]
+                const sublabel = node.attrs[`sublabel${i}`]
+                for (const text of [label, sublabel]) {
+                    if (typeof text === 'string') {
+                        const matches = text.matchAll(/\[([a-zA-Z0-9_-]+)\]/g)
+                        for (const match of matches) {
+                            const cleanName = match[1]?.trim()
+                            if (cleanName && !variablesSet.has(cleanName)) {
+                                variablesSet.add(cleanName)
+                                variablesList.push(cleanName)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // Traverse child content if present
         if (Array.isArray(node.content)) {
             for (const child of node.content) {
