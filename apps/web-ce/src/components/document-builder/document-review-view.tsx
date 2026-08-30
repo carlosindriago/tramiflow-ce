@@ -33,7 +33,18 @@ import {
     Cloud,
     AlertCircle,
     Info,
+    Subscript as SubscriptIcon,
+    Superscript as SuperscriptIcon,
+    Pilcrow,
+    Heading1,
+    Heading2,
+    Heading3,
 } from 'lucide-react'
+import Subscript from '@tiptap/extension-subscript'
+import Superscript from '@tiptap/extension-superscript'
+import { TextStyle } from '@tiptap/extension-text-style'
+import { FontFamily } from '@tiptap/extension-font-family'
+import { FontSize } from './extensions/font-size'
 import { useEditorAutoSave } from '@/hooks/use-editor-autosave'
 import {
     Button,
@@ -42,6 +53,11 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
     Separator,
 } from '@carlosindriago/ui'
 import {
@@ -118,6 +134,11 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                     levels: [1, 2, 3],
                 },
             }),
+            TextStyle,
+            FontFamily,
+            FontSize,
+            Subscript,
+            Superscript,
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
             }),
@@ -497,12 +518,111 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
             <div className="sticky top-[53px] z-20 border-b bg-background shadow-xs">
                 {/* Formatting Toolbar */}
                 <div className="flex flex-wrap items-center gap-1 px-4 py-1.5">
+                    {/* Heading format */}
+                    <Select
+                        value={
+                            editor.isActive('heading', { level: 1 })
+                                ? 'h1'
+                                : editor.isActive('heading', { level: 2 })
+                                ? 'h2'
+                                : editor.isActive('heading', { level: 3 })
+                                ? 'h3'
+                                : 'p'
+                        }
+                        onValueChange={val => {
+                            if (val === 'p') editor.chain().focus().setParagraph().run()
+                            if (val === 'h1') editor.chain().focus().toggleHeading({ level: 1 }).run()
+                            if (val === 'h2') editor.chain().focus().toggleHeading({ level: 2 }).run()
+                            if (val === 'h3') editor.chain().focus().toggleHeading({ level: 3 }).run()
+                        }}
+                    >
+                        <SelectTrigger className="h-8 w-28 text-xs">
+                            <SelectValue placeholder="Estilo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="p">
+                                <span className="flex items-center gap-2">
+                                    <Pilcrow className="h-3.5 w-3.5" /> Párrafo
+                                </span>
+                            </SelectItem>
+                            <SelectItem value="h1">
+                                <span className="flex items-center gap-2 font-bold">
+                                    <Heading1 className="h-3.5 w-3.5" /> Título 1
+                                </span>
+                            </SelectItem>
+                            <SelectItem value="h2">
+                                <span className="flex items-center gap-2 font-semibold">
+                                    <Heading2 className="h-3.5 w-3.5" /> Título 2
+                                </span>
+                            </SelectItem>
+                            <SelectItem value="h3">
+                                <span className="flex items-center gap-2 font-medium">
+                                    <Heading3 className="h-3.5 w-3.5" /> Título 3
+                                </span>
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    {/* Font Family */}
+                    <Select
+                        value={editor.getAttributes('textStyle').fontFamily || 'default'}
+                        onValueChange={val => {
+                            if (val === 'default') {
+                                editor.chain().focus().unsetFontFamily().run()
+                            } else {
+                                editor.chain().focus().setFontFamily(val).run()
+                            }
+                        }}
+                    >
+                        <SelectTrigger className="h-8 w-[120px] text-xs">
+                            <SelectValue placeholder="Fuente" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="default">Fuente</SelectItem>
+                            <SelectItem value="Arial">Arial</SelectItem>
+                            <SelectItem value="Times New Roman">Times New Roman</SelectItem>
+                            <SelectItem value="Courier New">Courier New</SelectItem>
+                            <SelectItem value="Georgia">Georgia</SelectItem>
+                            <SelectItem value="Verdana">Verdana</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    {/* Font Size */}
+                    <Select
+                        value={editor.getAttributes('textStyle').fontSize || 'default'}
+                        onValueChange={val => {
+                            if (val === 'default') {
+                                editor.chain().focus().unsetFontSize().run()
+                            } else {
+                                editor.chain().focus().setFontSize(val).run()
+                            }
+                        }}
+                    >
+                        <SelectTrigger className="h-8 w-[72px] text-xs">
+                            <SelectValue placeholder="Tamaño" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="default">Auto</SelectItem>
+                            <SelectItem value="8pt">8 pt</SelectItem>
+                            <SelectItem value="10pt">10 pt</SelectItem>
+                            <SelectItem value="11pt">11 pt</SelectItem>
+                            <SelectItem value="12pt">12 pt</SelectItem>
+                            <SelectItem value="14pt">14 pt</SelectItem>
+                            <SelectItem value="16pt">16 pt</SelectItem>
+                            <SelectItem value="18pt">18 pt</SelectItem>
+                            <SelectItem value="24pt">24 pt</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    <Separator orientation="vertical" className="h-5 mx-1" />
+
                     <Button
                         type="button"
                         variant={editor.isActive('bold') ? 'secondary' : 'ghost'}
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => editor.chain().focus().toggleBold().run()}
+                        title="Negrita (Ctrl+B)"
                     >
                         <Bold className="h-4 w-4" />
                     </Button>
@@ -512,6 +632,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => editor.chain().focus().toggleItalic().run()}
+                        title="Cursiva (Ctrl+I)"
                     >
                         <Italic className="h-4 w-4" />
                     </Button>
@@ -521,8 +642,29 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => editor.chain().focus().toggleStrike().run()}
+                        title="Tachado"
                     >
                         <Strikethrough className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        type="button"
+                        variant={editor.isActive('subscript') ? 'secondary' : 'ghost'}
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => editor.chain().focus().toggleSubscript().run()}
+                        title="Subíndice"
+                    >
+                        <SubscriptIcon className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        type="button"
+                        variant={editor.isActive('superscript') ? 'secondary' : 'ghost'}
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => editor.chain().focus().toggleSuperscript().run()}
+                        title="Superíndice"
+                    >
+                        <SuperscriptIcon className="h-4 w-4" />
                     </Button>
 
                     <Separator orientation="vertical" className="h-5 mx-1" />
