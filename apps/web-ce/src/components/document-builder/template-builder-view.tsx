@@ -1194,7 +1194,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
             </div>
 
             {/* Paper Editor Container */}
-            <main className="flex-1 p-4 sm:p-8 overflow-y-auto flex justify-center relative">
+            <main className="flex-1 p-4 sm:p-8 overflow-y-auto flex justify-center items-start relative">
                 {editor && (
                     <BubbleMenu
                         editor={editor}
@@ -1295,7 +1295,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     </BubbleMenu>
                 )}
 
-                <A4PaperContainer ref={printRef} margins={margins} paperConfig={paperConfig} className="p-8 sm:p-12">
+                <A4PaperContainer ref={printRef} margins={margins} paperConfig={paperConfig}>
                     <EditorContent editor={editor} />
                 </A4PaperContainer>
             </main>

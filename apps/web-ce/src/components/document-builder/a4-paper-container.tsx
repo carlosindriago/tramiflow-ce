@@ -31,7 +31,7 @@ export const A4PaperContainer = forwardRef<HTMLDivElement, A4PaperContainerProps
                 ref={ref}
                 className={cn(
                     'a4-paper-container relative bg-white text-zinc-900 shadow-xl rounded-xs transition-all mx-auto',
-                    'w-full',
+                    'w-full h-auto',
                     'print:shadow-none print:border-none print:m-0 print:w-full print:max-w-none print:min-h-0 print:rounded-none print:bg-none print:bg-white',
                     className
                 )}
