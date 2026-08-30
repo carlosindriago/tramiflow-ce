@@ -81,6 +81,7 @@ import {
 } from '@carlosindriago/core'
 
 import { A4PaperContainer } from './a4-paper-container'
+import { FontFamilySelector } from './font-family-selector'
 import { VariableNode } from './extensions/variable-node'
 import { LineHeight } from './extensions/line-height'
 import { SignatureBlock } from './extensions/signature-block'
@@ -209,6 +210,21 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
         onSaveServer: initialTemplate?.id ? handleAutoSaveServer : undefined,
         debounceMs: 3000,
     })
+
+    // Sync active styles with selection in real time (Word/Docs style)
+    const [, setSelectionTick] = useState(0)
+    useEffect(() => {
+        if (!editor) return
+        const handleSelectionChange = () => {
+            setSelectionTick(t => t + 1)
+        }
+        editor.on('selectionUpdate', handleSelectionChange)
+        editor.on('transaction', handleSelectionChange)
+        return () => {
+            editor.off('selectionUpdate', handleSelectionChange)
+            editor.off('transaction', handleSelectionChange)
+        }
+    }, [editor])
 
     // Force update when initialTemplate changes
     useEffect(() => {
@@ -708,28 +724,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                 </Select>
 
                 {/* Font Family */}
-                <Select
-                    value={editor.getAttributes('textStyle').fontFamily || 'default'}
-                    onValueChange={val => {
-                        if (val === 'default') {
-                            editor.chain().focus().unsetFontFamily().run()
-                        } else {
-                            editor.chain().focus().setFontFamily(val).run()
-                        }
-                    }}
-                >
-                    <SelectTrigger className="h-8 w-[120px] text-xs">
-                        <SelectValue placeholder="Fuente" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="default">Fuente</SelectItem>
-                        <SelectItem value="Arial">Arial</SelectItem>
-                        <SelectItem value="Times New Roman">Times New Roman</SelectItem>
-                        <SelectItem value="Courier New">Courier New</SelectItem>
-                        <SelectItem value="Georgia">Georgia</SelectItem>
-                        <SelectItem value="Verdana">Verdana</SelectItem>
-                    </SelectContent>
-                </Select>
+                <FontFamilySelector editor={editor} />
 
                 {/* Font Size */}
                 <Select
@@ -742,19 +737,26 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                         }
                     }}
                 >
-                    <SelectTrigger className="h-8 w-[72px] text-xs">
-                        <SelectValue placeholder="Tamaño" />
+                    <SelectTrigger className="h-8 w-[76px] text-xs">
+                        <SelectValue placeholder="Tamaño">
+                            {editor.getAttributes('textStyle').fontSize || 'Auto'}
+                        </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="default">Auto</SelectItem>
                         <SelectItem value="8pt">8 pt</SelectItem>
+                        <SelectItem value="9pt">9 pt</SelectItem>
                         <SelectItem value="10pt">10 pt</SelectItem>
                         <SelectItem value="11pt">11 pt</SelectItem>
                         <SelectItem value="12pt">12 pt</SelectItem>
+                        <SelectItem value="13pt">13 pt</SelectItem>
                         <SelectItem value="14pt">14 pt</SelectItem>
                         <SelectItem value="16pt">16 pt</SelectItem>
                         <SelectItem value="18pt">18 pt</SelectItem>
+                        <SelectItem value="20pt">20 pt</SelectItem>
                         <SelectItem value="24pt">24 pt</SelectItem>
+                        <SelectItem value="28pt">28 pt</SelectItem>
+                        <SelectItem value="36pt">36 pt</SelectItem>
                     </SelectContent>
                 </Select>
 
@@ -903,11 +905,11 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                         <Button
                             type="button"
                             variant={editor.isActive('table') ? 'secondary' : 'ghost'}
-                            size="sm"
-                            className="h-8 gap-1.5 text-xs font-medium"
+                            size="icon"
+                            className="h-8 w-8"
+                            title="Tabla"
                         >
                             <TableIcon className="h-4 w-4" />
-                            <span>Tabla</span>
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-52 p-2 space-y-1" align="start">

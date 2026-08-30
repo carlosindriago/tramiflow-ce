@@ -71,6 +71,7 @@ import {
     type PaperConfiguration,
 } from '@carlosindriago/core'
 import { A4PaperContainer } from './a4-paper-container'
+import { FontFamilySelector } from './font-family-selector'
 import { LineHeight } from './extensions/line-height'
 import { SignatureBlock } from './extensions/signature-block'
 import { updateGeneratedDocumentAction } from '@/actions/documents/generate-document'
@@ -187,6 +188,21 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
         onSaveServer: handleAutoSaveServer,
         debounceMs: 3000,
     })
+
+    // Sync active styles with selection in real time (Word/Docs style)
+    const [, setSelectionTick] = useState(0)
+    useEffect(() => {
+        if (!editor) return
+        const handleSelectionChange = () => {
+            setSelectionTick(t => t + 1)
+        }
+        editor.on('selectionUpdate', handleSelectionChange)
+        editor.on('transaction', handleSelectionChange)
+        return () => {
+            editor.off('selectionUpdate', handleSelectionChange)
+            editor.off('transaction', handleSelectionChange)
+        }
+    }, [editor])
 
     // Check for unsaved local draft discrepancy on mount
     useEffect(() => {
@@ -564,28 +580,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                     </Select>
 
                     {/* Font Family */}
-                    <Select
-                        value={editor.getAttributes('textStyle').fontFamily || 'default'}
-                        onValueChange={val => {
-                            if (val === 'default') {
-                                editor.chain().focus().unsetFontFamily().run()
-                            } else {
-                                editor.chain().focus().setFontFamily(val).run()
-                            }
-                        }}
-                    >
-                        <SelectTrigger className="h-8 w-[120px] text-xs">
-                            <SelectValue placeholder="Fuente" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="default">Fuente</SelectItem>
-                            <SelectItem value="Arial">Arial</SelectItem>
-                            <SelectItem value="Times New Roman">Times New Roman</SelectItem>
-                            <SelectItem value="Courier New">Courier New</SelectItem>
-                            <SelectItem value="Georgia">Georgia</SelectItem>
-                            <SelectItem value="Verdana">Verdana</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <FontFamilySelector editor={editor} />
 
                     {/* Font Size */}
                     <Select
@@ -598,19 +593,26 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                             }
                         }}
                     >
-                        <SelectTrigger className="h-8 w-[72px] text-xs">
-                            <SelectValue placeholder="Tamaño" />
+                        <SelectTrigger className="h-8 w-[76px] text-xs">
+                            <SelectValue placeholder="Tamaño">
+                                {editor.getAttributes('textStyle').fontSize || 'Auto'}
+                            </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="default">Auto</SelectItem>
                             <SelectItem value="8pt">8 pt</SelectItem>
+                            <SelectItem value="9pt">9 pt</SelectItem>
                             <SelectItem value="10pt">10 pt</SelectItem>
                             <SelectItem value="11pt">11 pt</SelectItem>
                             <SelectItem value="12pt">12 pt</SelectItem>
+                            <SelectItem value="13pt">13 pt</SelectItem>
                             <SelectItem value="14pt">14 pt</SelectItem>
                             <SelectItem value="16pt">16 pt</SelectItem>
                             <SelectItem value="18pt">18 pt</SelectItem>
+                            <SelectItem value="20pt">20 pt</SelectItem>
                             <SelectItem value="24pt">24 pt</SelectItem>
+                            <SelectItem value="28pt">28 pt</SelectItem>
+                            <SelectItem value="36pt">36 pt</SelectItem>
                         </SelectContent>
                     </Select>
 
