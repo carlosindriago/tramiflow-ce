@@ -43,6 +43,7 @@ import {
     Check,
     Cloud,
     AlertCircle,
+    Info,
 } from 'lucide-react'
 import { useEditorAutoSave } from '@/hooks/use-editor-autosave'
 import Link from 'next/link'
@@ -619,9 +620,11 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                 </div>
             </header>
 
-            {/* Toolbar */}
-            <div className="sticky top-[53px] z-20 flex flex-wrap items-center gap-1 border-b bg-background px-4 py-1.5 shadow-xs">
-                {/* Undo / Redo */}
+            {/* Sticky Toolbar & Sub-bar */}
+            <div className="sticky top-[53px] z-20 border-b bg-background shadow-xs">
+                {/* Toolbar */}
+                <div className="flex flex-wrap items-center gap-1 px-4 py-1.5">
+                    {/* Undo / Redo */}
                 <Button
                     type="button"
                     variant="ghost"
@@ -1099,6 +1102,25 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                         </div>
                     </PopoverContent>
                 </Popover>
+                </div>
+
+                {/* Sub-barra de Estado de Márgenes y Redacción */}
+                <div className="flex flex-wrap items-center justify-between w-full px-4 py-1.5 bg-muted/30 border-t border-border/50 text-[11px] text-muted-foreground">
+                    <div>
+                        <span>
+                            Márgenes: Sup {margins.top} | Inf {margins.bottom} | Izq {margins.left} | Der {margins.right} mm
+                            {margins.first_page_top !== undefined && margins.first_page_top !== margins.top && (
+                                <span className="ml-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                                    (Pág 1: Sup {margins.first_page_top}mm)
+                                </span>
+                            )}
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <Info className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                        <span>Vista de redacción continua. Usa &quot;Previsualizar Documento Impreso&quot; para ver la paginación final.</span>
+                    </div>
+                </div>
             </div>
 
             {/* Paper Editor Container */}
