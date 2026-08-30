@@ -766,7 +766,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                                                 size="sm"
                                                 variant={(editor.getAttributes('signatureBlock').count || 2) === cnt ? 'default' : 'outline'}
                                                 className="flex-1 h-6 text-xs"
-                                                onClick={() => editor.chain().focus().updateAttributes('signatureBlock', { count: cnt }).run()}
+                                                onClick={() => editor.chain().updateAttributes('signatureBlock', { count: cnt }).run()}
                                             >
                                                 {cnt}
                                             </Button>
@@ -779,13 +779,13 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                                         <Label className="text-[10px] text-muted-foreground">Firma 1</Label>
                                         <Input
                                             value={editor.getAttributes('signatureBlock').label1 || ''}
-                                            onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { label1: e.target.value }).run()}
+                                            onChange={e => editor.chain().updateAttributes('signatureBlock', { label1: e.target.value }).run()}
                                             placeholder="ej: El Cliente"
                                             className="h-6 text-xs"
                                         />
                                         <Input
                                             value={editor.getAttributes('signatureBlock').sublabel1 || ''}
-                                            onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel1: e.target.value }).run()}
+                                            onChange={e => editor.chain().updateAttributes('signatureBlock', { sublabel1: e.target.value }).run()}
                                             placeholder="ej: DNI / Doc: ______________"
                                             className="h-6 text-xs font-mono text-[10px]"
                                         />
@@ -796,13 +796,13 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                                             <Label className="text-[10px] text-muted-foreground">Firma 2</Label>
                                             <Input
                                                 value={editor.getAttributes('signatureBlock').label2 || ''}
-                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { label2: e.target.value }).run()}
+                                                onChange={e => editor.chain().updateAttributes('signatureBlock', { label2: e.target.value }).run()}
                                                 placeholder="ej: El Abogado / Representante"
                                                 className="h-6 text-xs"
                                             />
                                             <Input
                                                 value={editor.getAttributes('signatureBlock').sublabel2 || ''}
-                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel2: e.target.value }).run()}
+                                                onChange={e => editor.chain().updateAttributes('signatureBlock', { sublabel2: e.target.value }).run()}
                                                 placeholder="ej: DNI / Doc: ______________"
                                                 className="h-6 text-xs font-mono text-[10px]"
                                             />
@@ -814,13 +814,13 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                                             <Label className="text-[10px] text-muted-foreground">Firma 3</Label>
                                             <Input
                                                 value={editor.getAttributes('signatureBlock').label3 || ''}
-                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { label3: e.target.value }).run()}
+                                                onChange={e => editor.chain().updateAttributes('signatureBlock', { label3: e.target.value }).run()}
                                                 placeholder="ej: Testigo / Garante"
                                                 className="h-6 text-xs"
                                             />
                                             <Input
                                                 value={editor.getAttributes('signatureBlock').sublabel3 || ''}
-                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel3: e.target.value }).run()}
+                                                onChange={e => editor.chain().updateAttributes('signatureBlock', { sublabel3: e.target.value }).run()}
                                                 placeholder="ej: DNI / Doc: ______________"
                                                 className="h-6 text-xs font-mono text-[10px]"
                                             />
