@@ -44,7 +44,14 @@ import {
     Cloud,
     AlertCircle,
     Info,
+    Subscript as SubscriptIcon,
+    Superscript as SuperscriptIcon,
 } from 'lucide-react'
+import Subscript from '@tiptap/extension-subscript'
+import Superscript from '@tiptap/extension-superscript'
+import { TextStyle } from '@tiptap/extension-text-style'
+import { FontFamily } from '@tiptap/extension-font-family'
+import { FontSize } from './extensions/font-size'
 import { useEditorAutoSave } from '@/hooks/use-editor-autosave'
 import Link from 'next/link'
 import {
@@ -126,6 +133,11 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     levels: [1, 2, 3],
                 },
             }),
+            TextStyle,
+            FontFamily,
+            FontSize,
+            Subscript,
+            Superscript,
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
             }),
@@ -668,7 +680,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                         if (val === 'h3') editor.chain().focus().toggleHeading({ level: 3 }).run()
                     }}
                 >
-                    <SelectTrigger className="h-8 w-32 text-xs">
+                    <SelectTrigger className="h-8 w-28 text-xs">
                         <SelectValue placeholder="Estilo" />
                     </SelectTrigger>
                     <SelectContent>
@@ -695,6 +707,57 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     </SelectContent>
                 </Select>
 
+                {/* Font Family */}
+                <Select
+                    value={editor.getAttributes('textStyle').fontFamily || 'default'}
+                    onValueChange={val => {
+                        if (val === 'default') {
+                            editor.chain().focus().unsetFontFamily().run()
+                        } else {
+                            editor.chain().focus().setFontFamily(val).run()
+                        }
+                    }}
+                >
+                    <SelectTrigger className="h-8 w-[120px] text-xs">
+                        <SelectValue placeholder="Fuente" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="default">Fuente</SelectItem>
+                        <SelectItem value="Arial">Arial</SelectItem>
+                        <SelectItem value="Times New Roman">Times New Roman</SelectItem>
+                        <SelectItem value="Courier New">Courier New</SelectItem>
+                        <SelectItem value="Georgia">Georgia</SelectItem>
+                        <SelectItem value="Verdana">Verdana</SelectItem>
+                    </SelectContent>
+                </Select>
+
+                {/* Font Size */}
+                <Select
+                    value={editor.getAttributes('textStyle').fontSize || 'default'}
+                    onValueChange={val => {
+                        if (val === 'default') {
+                            editor.chain().focus().unsetFontSize().run()
+                        } else {
+                            editor.chain().focus().setFontSize(val).run()
+                        }
+                    }}
+                >
+                    <SelectTrigger className="h-8 w-[72px] text-xs">
+                        <SelectValue placeholder="Tamaño" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="default">Auto</SelectItem>
+                        <SelectItem value="8pt">8 pt</SelectItem>
+                        <SelectItem value="10pt">10 pt</SelectItem>
+                        <SelectItem value="11pt">11 pt</SelectItem>
+                        <SelectItem value="12pt">12 pt</SelectItem>
+                        <SelectItem value="14pt">14 pt</SelectItem>
+                        <SelectItem value="16pt">16 pt</SelectItem>
+                        <SelectItem value="18pt">18 pt</SelectItem>
+                        <SelectItem value="24pt">24 pt</SelectItem>
+                    </SelectContent>
+                </Select>
+
                 <Separator orientation="vertical" className="h-5 mx-1" />
 
                 {/* Inline Formats */}
@@ -704,6 +767,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     size="icon"
                     className="h-8 w-8"
                     onClick={() => editor.chain().focus().toggleBold().run()}
+                    title="Negrita (Ctrl+B)"
                 >
                     <Bold className="h-4 w-4" />
                 </Button>
@@ -713,6 +777,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     size="icon"
                     className="h-8 w-8"
                     onClick={() => editor.chain().focus().toggleItalic().run()}
+                    title="Cursiva (Ctrl+I)"
                 >
                     <Italic className="h-4 w-4" />
                 </Button>
@@ -722,8 +787,29 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     size="icon"
                     className="h-8 w-8"
                     onClick={() => editor.chain().focus().toggleStrike().run()}
+                    title="Tachado"
                 >
                     <Strikethrough className="h-4 w-4" />
+                </Button>
+                <Button
+                    type="button"
+                    variant={editor.isActive('subscript') ? 'secondary' : 'ghost'}
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => editor.chain().focus().toggleSubscript().run()}
+                    title="Subíndice"
+                >
+                    <SubscriptIcon className="h-4 w-4" />
+                </Button>
+                <Button
+                    type="button"
+                    variant={editor.isActive('superscript') ? 'secondary' : 'ghost'}
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => editor.chain().focus().toggleSuperscript().run()}
+                    title="Superíndice"
+                >
+                    <SuperscriptIcon className="h-4 w-4" />
                 </Button>
 
                 <Separator orientation="vertical" className="h-5 mx-1" />
