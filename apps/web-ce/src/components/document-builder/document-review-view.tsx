@@ -584,22 +584,24 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
 
                     {/* Font Size */}
                     <Select
-                        value={editor.getAttributes('textStyle').fontSize || 'default'}
+                        value={
+                            (editor.getAttributes('textStyle').fontSize as string) ||
+                            (editor.isActive('heading', { level: 1 })
+                                ? '24pt'
+                                : editor.isActive('heading', { level: 2 })
+                                ? '18pt'
+                                : editor.isActive('heading', { level: 3 })
+                                ? '14pt'
+                                : '12pt')
+                        }
                         onValueChange={val => {
-                            if (val === 'default') {
-                                editor.chain().focus().unsetFontSize().run()
-                            } else {
-                                editor.chain().focus().setFontSize(val).run()
-                            }
+                            editor.chain().focus().setFontSize(val).run()
                         }}
                     >
-                        <SelectTrigger className="h-8 w-[76px] text-xs">
-                            <SelectValue placeholder="Tamaño">
-                                {editor.getAttributes('textStyle').fontSize || 'Auto'}
-                            </SelectValue>
+                        <SelectTrigger className="h-8 w-[76px] text-xs font-medium">
+                            <SelectValue placeholder="Tamaño" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="default">Auto</SelectItem>
                             <SelectItem value="8pt">8 pt</SelectItem>
                             <SelectItem value="9pt">9 pt</SelectItem>
                             <SelectItem value="10pt">10 pt</SelectItem>

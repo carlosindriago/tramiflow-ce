@@ -14,8 +14,8 @@ import {
 import { Check, ChevronDown, Plus } from 'lucide-react'
 
 export const STANDARD_LEGAL_FONTS = [
-    { label: 'Arial', value: 'Arial', category: 'Sans-Serif' },
     { label: 'Times New Roman', value: 'Times New Roman', category: 'Serif' },
+    { label: 'Arial', value: 'Arial', category: 'Sans-Serif' },
     { label: 'EB Garamond', value: 'EB Garamond', category: 'Serif' },
     { label: 'Georgia', value: 'Georgia', category: 'Serif' },
     { label: 'Calibri', value: 'Calibri', category: 'Sans-Serif' },
@@ -27,6 +27,46 @@ export const STANDARD_LEGAL_FONTS = [
     { label: 'Roboto', value: 'Roboto', category: 'Sans-Serif' },
 ]
 
+export function getActiveFontFamily(editor: Editor | null): string {
+    if (!editor) return 'Times New Roman'
+
+    // 1. Direct inline mark attribute
+    const inlineFont = editor.getAttributes('textStyle').fontFamily
+    if (inlineFont && typeof inlineFont === 'string' && inlineFont.trim()) {
+        return inlineFont.trim()
+    }
+
+    // 2. Computed DOM style from current selection anchor
+    if (typeof window !== 'undefined') {
+        try {
+            const selection = window.getSelection()
+            if (selection && selection.anchorNode) {
+                const element =
+                    selection.anchorNode instanceof HTMLElement
+                        ? selection.anchorNode
+                        : selection.anchorNode.parentElement
+                if (element) {
+                    const computedFont = window.getComputedStyle(element).fontFamily
+                    if (computedFont) {
+                        const cleanFont = computedFont.split(',')[0].replace(/['"]/g, '').trim()
+                        if (cleanFont) {
+                            const matched = STANDARD_LEGAL_FONTS.find(
+                                f => f.value.toLowerCase() === cleanFont.toLowerCase()
+                            )
+                            if (matched) return matched.label
+                            return cleanFont
+                        }
+                    }
+                }
+            }
+        } catch {
+            // fallback
+        }
+    }
+
+    return 'Times New Roman'
+}
+
 export interface FontFamilySelectorProps {
     editor: Editor | null
 }
@@ -37,7 +77,7 @@ export function FontFamilySelector({ editor }: FontFamilySelectorProps) {
 
     if (!editor) return null
 
-    const currentFont = (editor.getAttributes('textStyle').fontFamily as string) || ''
+    const currentFont = getActiveFontFamily(editor)
 
     const filteredFonts = STANDARD_LEGAL_FONTS.filter(f =>
         f.label.toLowerCase().includes(search.toLowerCase().trim())
@@ -65,11 +105,11 @@ export function FontFamilySelector({ editor }: FontFamilySelectorProps) {
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="h-8 w-[130px] justify-between px-2 text-xs font-normal text-foreground bg-background hover:bg-muted"
+                    className="h-8 w-[140px] justify-between px-2.5 text-xs font-normal text-foreground bg-background hover:bg-muted"
                     title="Familia Tipográfica"
                 >
-                    <span className="truncate max-w-[95px] text-left" style={{ fontFamily: currentFont || undefined }}>
-                        {currentFont || 'Fuente'}
+                    <span className="truncate max-w-[100px] text-left font-medium" style={{ fontFamily: currentFont }}>
+                        {currentFont}
                     </span>
                     <ChevronDown className="h-3.5 w-3.5 opacity-50 shrink-0" />
                 </Button>
@@ -113,11 +153,11 @@ export function FontFamilySelector({ editor }: FontFamilySelectorProps) {
                             type="button"
                             onClick={() => handleApplyFont('')}
                             className={`w-full flex items-center justify-between px-2 py-1.5 text-xs rounded-sm hover:bg-muted text-left transition-colors ${
-                                !currentFont ? 'bg-primary/10 text-primary font-medium' : 'text-foreground'
+                                currentFont.toLowerCase() === 'times new roman' ? 'bg-primary/10 text-primary font-medium' : 'text-foreground'
                             }`}
                         >
-                            <span>Por defecto</span>
-                            {!currentFont && <Check className="h-3.5 w-3.5 text-primary" />}
+                            <span>Por defecto (Times New Roman)</span>
+                            {currentFont.toLowerCase() === 'times new roman' && <Check className="h-3.5 w-3.5 text-primary" />}
                         </button>
 
                         <Separator className="my-1" />
