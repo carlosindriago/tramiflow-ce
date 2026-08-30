@@ -731,7 +731,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                 </div>
 
             {/* Document Canvas */}
-            <main className="flex-1 p-4 sm:p-8 overflow-y-auto flex justify-center relative">
+            <main className="flex-1 p-4 sm:p-8 overflow-y-auto flex justify-center items-start relative">
                 {editor && (
                     <BubbleMenu
                         editor={editor}
@@ -783,6 +783,12 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                                             placeholder="ej: El Cliente"
                                             className="h-6 text-xs"
                                         />
+                                        <Input
+                                            value={editor.getAttributes('signatureBlock').sublabel1 || ''}
+                                            onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel1: e.target.value }).run()}
+                                            placeholder="ej: DNI / Doc: ______________"
+                                            className="h-6 text-xs font-mono text-[10px]"
+                                        />
                                     </div>
 
                                     {((editor.getAttributes('signatureBlock').count as number) || 2) >= 2 && (
@@ -793,6 +799,12 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                                                 onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { label2: e.target.value }).run()}
                                                 placeholder="ej: El Abogado / Representante"
                                                 className="h-6 text-xs"
+                                            />
+                                            <Input
+                                                value={editor.getAttributes('signatureBlock').sublabel2 || ''}
+                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel2: e.target.value }).run()}
+                                                placeholder="ej: DNI / Doc: ______________"
+                                                className="h-6 text-xs font-mono text-[10px]"
                                             />
                                         </div>
                                     )}
@@ -806,6 +818,12 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                                                 placeholder="ej: Testigo / Garante"
                                                 className="h-6 text-xs"
                                             />
+                                            <Input
+                                                value={editor.getAttributes('signatureBlock').sublabel3 || ''}
+                                                onChange={e => editor.chain().focus().updateAttributes('signatureBlock', { sublabel3: e.target.value }).run()}
+                                                placeholder="ej: DNI / Doc: ______________"
+                                                className="h-6 text-xs font-mono text-[10px]"
+                                            />
                                         </div>
                                     )}
                                 </div>
@@ -814,7 +832,7 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                     </BubbleMenu>
                 )}
 
-                <A4PaperContainer ref={printRef} margins={margins} paperConfig={paperConfig} className="p-8 sm:p-12">
+                <A4PaperContainer ref={printRef} margins={margins} paperConfig={paperConfig}>
                     <EditorContent editor={editor} />
                 </A4PaperContainer>
             </main>
