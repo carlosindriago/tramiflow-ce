@@ -38,6 +38,13 @@ export async function middleware(request: NextRequest) {
 
     // Public routes that don't depend on auth
     const { pathname } = request.nextUrl
+    const isApiRoute = pathname.startsWith('/api')
+
+    // For API routes, allow Supabase session cookies to be passed without HTML redirecting
+    if (isApiRoute) {
+        return supabaseResponse
+    }
+
     const publicRoutes = ['/login', '/auth/callback', '/shared', '/u/', '/templates/share', '/terms', '/privacy', '/help']
     const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
 
