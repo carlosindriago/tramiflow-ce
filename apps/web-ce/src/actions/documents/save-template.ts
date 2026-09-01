@@ -1,6 +1,5 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import type { Json } from '@carlosindriago/database'
 import {
     saveDocumentTemplateSchema,
@@ -50,7 +49,6 @@ export const saveTemplateAction = createOrgAction(
                 return actionError(error?.message || 'Error al actualizar la plantilla')
             }
 
-            revalidatePath('/documents/templates')
             return actionSuccess(data as unknown as DocumentTemplateModel)
         }
 
@@ -69,7 +67,6 @@ export const saveTemplateAction = createOrgAction(
             return actionError(errorMsg)
         }
 
-        revalidatePath('/documents/templates')
         return actionSuccess(data as unknown as DocumentTemplateModel)
     }
 )
@@ -90,7 +87,6 @@ export const deleteTemplateAction = createOrgAction(
             return actionError(error.message)
         }
 
-        revalidatePath('/documents/templates')
         return actionSuccess({ id })
     }
 )
