@@ -483,6 +483,7 @@ export default function ClientProfile({ clientId }: ClientProfileProps) {
                 open={isNewDocOpen}
                 onOpenChange={setIsNewDocOpen}
                 defaultClientId={clientId}
+                defaultClient={client || undefined}
                 onDocumentCreated={() => refetchGenDocs()}
             />
         </div>

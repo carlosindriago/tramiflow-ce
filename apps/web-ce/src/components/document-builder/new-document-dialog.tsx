@@ -43,6 +43,7 @@ interface NewDocumentDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     defaultClientId?: string
+    defaultClient?: Client | null
     defaultTemplateId?: string
     defaultTemplate?: DocumentTemplateModel
     initialTemplates?: DocumentTemplateModel[]
@@ -60,6 +61,7 @@ export function NewDocumentDialog({
     open,
     onOpenChange,
     defaultClientId,
+    defaultClient,
     defaultTemplateId,
     defaultTemplate,
     initialTemplates,
@@ -67,7 +69,7 @@ export function NewDocumentDialog({
     onDocumentCreated,
 }: NewDocumentDialogProps) {
     const router = useRouter()
-    const [selectedClientId, setSelectedClientId] = useState<string>(defaultClientId || '')
+    const [selectedClientId, setSelectedClientId] = useState<string>(defaultClientId || defaultClient?.id || '')
     const [selectedTemplateId, setSelectedTemplateId] = useState<string>(defaultTemplate?.id || defaultTemplateId || '')
     const [openClientCombobox, setOpenClientCombobox] = useState(false)
     const [openTemplateCombobox, setOpenTemplateCombobox] = useState(false)
@@ -80,16 +82,16 @@ export function NewDocumentDialog({
     // Sync state when dialog opens or defaults change
     useEffect(() => {
         if (open) {
-            setSelectedClientId(defaultClientId || '')
+            setSelectedClientId(defaultClientId || defaultClient?.id || '')
             setSelectedTemplateId(defaultTemplate?.id || defaultTemplateId || '')
             if (defaultTemplate?.paper_config) {
                 setPaperConfig(defaultTemplate.paper_config)
             }
         }
-    }, [open, defaultClientId, defaultTemplateId, defaultTemplate])
+    }, [open, defaultClientId, defaultClient, defaultTemplateId, defaultTemplate])
 
     // 1. Fetch active clients
-    const { data: clients = [], isLoading: clientsLoading } = useQuery<Client[]>({
+    const { data: fetchedClients = [], isLoading: clientsLoading } = useQuery<Client[]>({
         queryKey: ['clients-list-for-docs'],
         queryFn: async () => {
             const res = await fetch('/api/clients')
@@ -98,6 +100,14 @@ export function NewDocumentDialog({
         },
         enabled: open,
     })
+
+    const clients = useMemo(() => {
+        const list = [...fetchedClients]
+        if (defaultClient && !list.some(c => c.id === defaultClient.id)) {
+            list.unshift(defaultClient)
+        }
+        return list
+    }, [fetchedClients, defaultClient])
 
     // 2. Fetch document templates via dedicated REST API
     const { data: fetchedTemplates = [], isLoading: templatesLoading } = useQuery<DocumentTemplateModel[]>({
@@ -125,8 +135,11 @@ export function NewDocumentDialog({
 
     // Find currently selected client and template
     const selectedClient = useMemo(() => {
+        if (defaultClient && defaultClient.id === selectedClientId) {
+            return defaultClient
+        }
         return clients.find(c => c.id === selectedClientId) || null
-    }, [clients, selectedClientId])
+    }, [clients, selectedClientId, defaultClient])
 
     const selectedTemplate = useMemo(() => {
         if (defaultTemplate && defaultTemplate.id === selectedTemplateId) {
@@ -180,12 +193,17 @@ export function NewDocumentDialog({
         const newDefaults: Record<string, string> = {
             docTitle: initialDocTitle,
         }
+
+        const prefilled = selectedClient
+            ? autoFillClientVariables(selectedTemplate.variables || [], selectedClient)
+            : {}
+
         for (const v of selectedTemplate.variables || []) {
-            newDefaults[v] = ''
+            newDefaults[v] = prefilled[v] || ''
         }
 
         reset(newDefaults)
-        setHasAutoFilled(false)
+        setHasAutoFilled(Boolean(selectedClient))
     }, [selectedTemplate, selectedClient, reset])
 
     // Auto-fill handler on user request
@@ -222,6 +240,10 @@ export function NewDocumentDialog({
         setIsGenerating(true)
         try {
             const { docTitle, ...formData } = values
+            const cleanFormData: Record<string, string> = {}
+            for (const [k, v] of Object.entries(formData)) {
+                cleanFormData[k] = v === undefined || v === null ? '' : String(v)
+            }
 
             const res = await fetch('/api/documents/generate', {
                 method: 'POST',
@@ -229,8 +251,8 @@ export function NewDocumentDialog({
                 body: JSON.stringify({
                     template_id: selectedTemplate.id,
                     client_id: selectedClientId,
-                    title: docTitle as string,
-                    form_data: formData as Record<string, string>,
+                    title: (docTitle as string)?.trim() || selectedTemplate.title,
+                    form_data: cleanFormData,
                     paper_config: paperConfig,
                 }),
             })
@@ -288,14 +310,18 @@ export function NewDocumentDialog({
                                             role="combobox"
                                             aria-expanded={openClientCombobox}
                                             className="w-full justify-between font-normal text-left h-10 border-border bg-background"
-                                            disabled={isGenerating || clientsLoading || Boolean(defaultClientId)}
+                                            disabled={isGenerating || (clientsLoading && !selectedClient) || Boolean(defaultClientId || defaultClient?.id)}
                                         >
                                             {selectedClient ? (
                                                 <span className="font-medium text-foreground">{selectedClient.full_name}</span>
+                                            ) : clientsLoading ? (
+                                                <span className="text-muted-foreground flex items-center gap-2">
+                                                    <Loader2 className="h-3.5 w-3.5 animate-spin" /> Cargando clientes...
+                                                </span>
                                             ) : (
                                                 <span className="text-muted-foreground">Seleccionar cliente...</span>
                                             )}
-                                            {!defaultClientId && (
+                                            {!(defaultClientId || defaultClient?.id) && (
                                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                             )}
                                         </Button>
