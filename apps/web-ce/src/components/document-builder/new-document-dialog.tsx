@@ -38,6 +38,7 @@ import {
     type PaperConfiguration,
 } from '@carlosindriago/core'
 import { FileText, Loader2, Sparkles, Plus, Check, ChevronsUpDown, Wand2, Info } from 'lucide-react'
+import { createGeneratedDocumentAction } from '@/actions/documents/generate-document'
 
 interface NewDocumentDialogProps {
     open: boolean
@@ -245,21 +246,15 @@ export function NewDocumentDialog({
                 cleanFormData[k] = v === undefined || v === null ? '' : String(v)
             }
 
-            const res = await fetch('/api/documents/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    template_id: selectedTemplate.id,
-                    client_id: selectedClientId,
-                    title: (docTitle as string)?.trim() || selectedTemplate.title,
-                    form_data: cleanFormData,
-                    paper_config: paperConfig,
-                }),
+            const result = await createGeneratedDocumentAction({
+                template_id: selectedTemplate.id,
+                client_id: selectedClientId,
+                title: (docTitle as string)?.trim() || selectedTemplate.title,
+                form_data: cleanFormData,
+                paper_config: paperConfig,
             })
 
-            const result = await res.json().catch(() => ({}))
-
-            if (!res.ok || !result.success || !result.data) {
+            if (!result.success || !result.data) {
                 toast.error(result.error || 'Error al generar el documento')
                 return
             }
@@ -267,6 +262,7 @@ export function NewDocumentDialog({
             toast.success('¡Documento generado exitosamente!')
             onOpenChange(false)
             onDocumentCreated?.(result.data.id)
+            router.refresh()
             router.push(`/documents/review/${result.data.id}`)
         } catch (err) {
             console.error('Error generating document:', err)

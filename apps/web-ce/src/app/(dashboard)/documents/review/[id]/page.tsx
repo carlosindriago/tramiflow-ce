@@ -5,6 +5,8 @@ import {
     type GeneratedDocWithDetails,
 } from '@/components/document-builder/document-review-view'
 
+export const dynamic = 'force-dynamic'
+
 interface PageProps {
     params: Promise<{ id: string }>
 }
