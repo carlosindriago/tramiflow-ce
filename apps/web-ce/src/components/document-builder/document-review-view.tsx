@@ -75,7 +75,6 @@ import { FontFamilySelector } from './font-family-selector'
 import { LineHeight } from './extensions/line-height'
 import { SignatureBlockConfig } from './signature-block-config'
 import { SignatureBlock } from './extensions/signature-block'
-import { updateGeneratedDocumentAction } from '@/actions/documents/generate-document'
 
 export interface GeneratedDocWithDetails {
     id: string
@@ -163,17 +162,24 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
         },
     })
 
-    // Autosave handler
+    // Autosave handler via REST API
     const handleAutoSaveServer = useCallback(
         async (ast: JSONContentNode) => {
             if (!initialDoc?.id || !title.trim()) return
-            await updateGeneratedDocumentAction({
-                id: initialDoc.id,
-                title: title.trim(),
-                final_ast: ast,
-                paper_config: paperConfig,
-                status: 'draft',
-            })
+            try {
+                await fetch(`/api/documents/generated/${initialDoc.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: title.trim(),
+                        final_ast: ast,
+                        paper_config: paperConfig,
+                        status: 'draft',
+                    }),
+                })
+            } catch (err) {
+                console.error('[handleAutoSaveServer] Error updating document:', err)
+            }
         },
         [initialDoc?.id, title, paperConfig]
     )
@@ -301,15 +307,20 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
         setIsSaving(true)
         try {
             const finalAST = editor.getJSON()
-            const res = await updateGeneratedDocumentAction({
-                id: initialDoc.id,
-                title: title.trim(),
-                final_ast: finalAST,
-                paper_config: paperConfig,
-                status: 'published',
+            const response = await fetch(`/api/documents/generated/${initialDoc.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: title.trim(),
+                    final_ast: finalAST,
+                    paper_config: paperConfig,
+                    status: 'published',
+                }),
             })
 
-            if (!res.success) {
+            const res = await response.json().catch(() => ({}))
+
+            if (!response.ok || !res.success) {
                 toast.error(res.error || 'Error al guardar cambios')
                 return
             }
