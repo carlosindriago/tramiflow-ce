@@ -55,8 +55,13 @@ export function createOrgAction<TArgs extends unknown[], TReturn>(
                 ...args
             )
         } catch (error) {
-            console.error('Unhandled action error:', error)
-            const message = error instanceof Error ? error.message : 'Error inesperado del servidor'
+            console.error('[createOrgAction] Unhandled server action error:', error)
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : typeof error === 'string'
+                      ? error
+                      : 'Error inesperado del servidor'
             return actionError(message)
         }
     }
