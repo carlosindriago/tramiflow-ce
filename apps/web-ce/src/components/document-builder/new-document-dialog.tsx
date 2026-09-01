@@ -38,7 +38,6 @@ import {
     type PaperConfiguration,
 } from '@carlosindriago/core'
 import { FileText, Loader2, Sparkles, Plus, Check, ChevronsUpDown, Wand2, Info } from 'lucide-react'
-import { getDocumentTemplatesAction } from '@/actions/documents/save-template'
 import { createGeneratedDocumentAction } from '@/actions/documents/generate-document'
 
 interface NewDocumentDialogProps {
@@ -46,6 +45,8 @@ interface NewDocumentDialogProps {
     onOpenChange: (open: boolean) => void
     defaultClientId?: string
     defaultTemplateId?: string
+    defaultTemplate?: DocumentTemplateModel
+    initialTemplates?: DocumentTemplateModel[]
     defaultPaperConfig?: PaperConfiguration
     onDocumentCreated?: (docId: string) => void
 }
@@ -61,15 +62,19 @@ export function NewDocumentDialog({
     onOpenChange,
     defaultClientId,
     defaultTemplateId,
+    defaultTemplate,
+    initialTemplates,
     defaultPaperConfig,
     onDocumentCreated,
 }: NewDocumentDialogProps) {
     const router = useRouter()
     const [selectedClientId, setSelectedClientId] = useState<string>(defaultClientId || '')
-    const [selectedTemplateId, setSelectedTemplateId] = useState<string>(defaultTemplateId || '')
+    const [selectedTemplateId, setSelectedTemplateId] = useState<string>(defaultTemplate?.id || defaultTemplateId || '')
     const [openClientCombobox, setOpenClientCombobox] = useState(false)
     const [openTemplateCombobox, setOpenTemplateCombobox] = useState(false)
-    const [paperConfig, setPaperConfig] = useState<PaperConfiguration>(defaultPaperConfig || { format: 'a4' })
+    const [paperConfig, setPaperConfig] = useState<PaperConfiguration>(
+        defaultPaperConfig || defaultTemplate?.paper_config || { format: 'a4' }
+    )
     const [isGenerating, setIsGenerating] = useState(false)
     const [hasAutoFilled, setHasAutoFilled] = useState(false)
 
@@ -77,9 +82,12 @@ export function NewDocumentDialog({
     useEffect(() => {
         if (open) {
             setSelectedClientId(defaultClientId || '')
-            setSelectedTemplateId(defaultTemplateId || '')
+            setSelectedTemplateId(defaultTemplate?.id || defaultTemplateId || '')
+            if (defaultTemplate?.paper_config) {
+                setPaperConfig(defaultTemplate.paper_config)
+            }
         }
-    }, [open, defaultClientId, defaultTemplateId])
+    }, [open, defaultClientId, defaultTemplateId, defaultTemplate])
 
     // 1. Fetch active clients
     const { data: clients = [], isLoading: clientsLoading } = useQuery<Client[]>({
@@ -92,15 +100,29 @@ export function NewDocumentDialog({
         enabled: open,
     })
 
-    // 2. Fetch document templates via Server Action
-    const { data: templates = [], isLoading: templatesLoading } = useQuery<DocumentTemplateModel[]>({
+    // 2. Fetch document templates via dedicated REST API
+    const { data: fetchedTemplates = [], isLoading: templatesLoading } = useQuery<DocumentTemplateModel[]>({
         queryKey: ['document-templates-list'],
         queryFn: async () => {
-            const res = await getDocumentTemplatesAction()
-            return res.success ? res.data : []
+            const res = await fetch('/api/documents/templates')
+            if (!res.ok) {
+                const json = await res.json().catch(() => ({}))
+                throw new Error(json.error || 'Error al cargar plantillas de documentos')
+            }
+            const json = await res.json()
+            return json.success ? json.data : []
         },
+        initialData: initialTemplates,
         enabled: open,
     })
+
+    const templates = useMemo(() => {
+        const list = [...fetchedTemplates]
+        if (defaultTemplate && !list.some(t => t.id === defaultTemplate.id)) {
+            list.unshift(defaultTemplate)
+        }
+        return list
+    }, [fetchedTemplates, defaultTemplate])
 
     // Find currently selected client and template
     const selectedClient = useMemo(() => {
@@ -108,8 +130,11 @@ export function NewDocumentDialog({
     }, [clients, selectedClientId])
 
     const selectedTemplate = useMemo(() => {
+        if (defaultTemplate && defaultTemplate.id === selectedTemplateId) {
+            return defaultTemplate
+        }
         return templates.find(t => t.id === selectedTemplateId) || null
-    }, [templates, selectedTemplateId])
+    }, [templates, selectedTemplateId, defaultTemplate])
 
     // Build dynamic Zod validation schema based on selected template's variables
     const dynamicSchema = useMemo(() => {
@@ -350,7 +375,7 @@ export function NewDocumentDialog({
                                             role="combobox"
                                             aria-expanded={openTemplateCombobox}
                                             className="w-full justify-between font-normal text-left h-10 border-border bg-background"
-                                            disabled={isGenerating || templatesLoading || Boolean(defaultTemplateId)}
+                                            disabled={isGenerating || (templatesLoading && templates.length === 0)}
                                         >
                                             {selectedTemplate ? (
                                                 <div className="flex items-center justify-between w-full pr-2">

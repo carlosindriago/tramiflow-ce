@@ -27,14 +27,16 @@ export function SignatureBlockConfig({
     // Synchronize local state whenever editor selection moves to a different node
     useEffect(() => {
         const attrs = editor.getAttributes('signatureBlock') || {}
-        setCount((attrs.count as number) || 2)
-        setLabel1((attrs.label1 as string) || '')
-        setSublabel1((attrs.sublabel1 as string) || '')
-        setLabel2((attrs.label2 as string) || '')
-        setSublabel2((attrs.sublabel2 as string) || '')
-        setLabel3((attrs.label3 as string) || '')
-        setSublabel3((attrs.sublabel3 as string) || '')
-    }, [editor.state.selection])
+        React.startTransition(() => {
+            setCount((attrs.count as number) || 2)
+            setLabel1((attrs.label1 as string) || '')
+            setSublabel1((attrs.sublabel1 as string) || '')
+            setLabel2((attrs.label2 as string) || '')
+            setSublabel2((attrs.sublabel2 as string) || '')
+            setLabel3((attrs.label3 as string) || '')
+            setSublabel3((attrs.sublabel3 as string) || '')
+        })
+    }, [editor, editor.state.selection])
 
     const commitAttributes = (updates?: Record<string, unknown>) => {
         const payload = {

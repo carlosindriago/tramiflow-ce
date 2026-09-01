@@ -189,6 +189,8 @@ export function DocumentTemplatesList({ templates: initialTemplates }: DocumentT
             {selectedTemplateForGen && (
                 <NewDocumentDialog
                     defaultTemplateId={selectedTemplateForGen.id}
+                    defaultTemplate={selectedTemplateForGen}
+                    initialTemplates={templates}
                     open={Boolean(selectedTemplateForGen)}
                     onOpenChange={open => {
                         if (!open) setSelectedTemplateForGen(null)
