@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { BubbleMenu } from './bubble-menu'
 import { ExportPreflightDialog } from './export-preflight-dialog'
@@ -75,6 +76,7 @@ import { FontFamilySelector } from './font-family-selector'
 import { LineHeight } from './extensions/line-height'
 import { SignatureBlockConfig } from './signature-block-config'
 import { SignatureBlock } from './extensions/signature-block'
+import { updateGeneratedDocumentAction } from '@/actions/documents/generate-document'
 
 export interface GeneratedDocWithDetails {
     id: string
@@ -105,6 +107,7 @@ interface DocumentReviewViewProps {
 }
 
 export function DocumentReviewView({ document: docProp, initialDoc: initialDocProp }: DocumentReviewViewProps) {
+    const router = useRouter()
     const initialDoc = (docProp || initialDocProp)!
     const printRef = useRef<HTMLDivElement>(null)
     const [title, setTitle] = useState(initialDoc?.title || 'Documento Generado')
@@ -162,20 +165,17 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
         },
     })
 
-    // Autosave handler via REST API
+    // Autosave handler via Server Action
     const handleAutoSaveServer = useCallback(
         async (ast: JSONContentNode) => {
             if (!initialDoc?.id || !title.trim()) return
             try {
-                await fetch(`/api/documents/generated/${initialDoc.id}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        title: title.trim(),
-                        final_ast: ast,
-                        paper_config: paperConfig,
-                        status: 'draft',
-                    }),
+                await updateGeneratedDocumentAction({
+                    id: initialDoc.id,
+                    title: title.trim(),
+                    final_ast: ast,
+                    paper_config: paperConfig,
+                    status: 'draft',
                 })
             } catch (err) {
                 console.error('[handleAutoSaveServer] Error updating document:', err)
@@ -307,26 +307,22 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
         setIsSaving(true)
         try {
             const finalAST = editor.getJSON()
-            const response = await fetch(`/api/documents/generated/${initialDoc.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    title: title.trim(),
-                    final_ast: finalAST,
-                    paper_config: paperConfig,
-                    status: 'published',
-                }),
+            const res = await updateGeneratedDocumentAction({
+                id: initialDoc.id,
+                title: title.trim(),
+                final_ast: finalAST,
+                paper_config: paperConfig,
+                status: 'published',
             })
 
-            const res = await response.json().catch(() => ({}))
-
-            if (!response.ok || !res.success) {
+            if (!res.success) {
                 toast.error(res.error || 'Error al guardar cambios')
                 return
             }
 
             clearLocalDraft()
             toast.success('Documento guardado')
+            router.refresh()
         } catch (err) {
             console.error('Error updating document:', err)
             toast.error('Error inesperado al guardar')
