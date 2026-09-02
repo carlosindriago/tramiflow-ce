@@ -67,6 +67,12 @@ import {
     SelectTrigger,
     SelectValue,
     Separator,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
 } from '@carlosindriago/ui'
 import {
     toast,
@@ -116,6 +122,8 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
         initialTemplate?.paper_config || { format: 'a4' }
     )
     const [isSaving, setIsSaving] = useState(false)
+    const [isRenameModalOpen, setIsRenameModalOpen] = useState(false)
+    const [tempTitle, setTempTitle] = useState('')
     const [customVar, setCustomVar] = useState('')
     const [isVarPopoverOpen, setIsVarPopoverOpen] = useState(false)
     const [hasUnsavedLocalDraft, setHasUnsavedLocalDraft] = useState(false)
@@ -287,9 +295,20 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
         setIsVarPopoverOpen(false)
     }
 
-    const handleSave = async () => {
+    const handleSave = async (titleOverride?: string) => {
         if (!editor) return
-        if (!title.trim()) {
+
+        const effectiveTitle = (titleOverride ?? title).trim()
+        const defaultTitle = 'Nueva Plantilla de Documento'
+
+        // Intercept if title is empty or is the default placeholder
+        if ((!effectiveTitle || effectiveTitle === defaultTitle) && !titleOverride) {
+            setTempTitle(title === defaultTitle ? '' : title)
+            setIsRenameModalOpen(true)
+            return
+        }
+
+        if (!effectiveTitle) {
             toast.error('Por favor ingresa un título para la plantilla')
             return
         }
@@ -303,7 +322,7 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
 
             const result = await saveTemplateAction({
                 id: initialTemplate?.id ? String(initialTemplate.id) : undefined,
-                title: title.trim(),
+                title: effectiveTitle,
                 content_ast: cleanAst,
                 margins: cleanMargins,
                 paper_config: cleanPaperConfig,
@@ -315,6 +334,10 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                 return
             }
 
+            if (titleOverride) {
+                setTitle(titleOverride)
+            }
+            setIsRenameModalOpen(false)
             clearLocalDraft()
             toast.success(initialTemplate ? 'Plantilla actualizada' : 'Plantilla creada con éxito')
             router.push('/documents/templates')
@@ -655,7 +678,12 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     </Button>
 
                     {/* Save Button */}
-                    <Button onClick={handleSave} disabled={isSaving} size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5">
+                    <Button
+                        onClick={() => handleSave()}
+                        disabled={isSaving}
+                        size="sm"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5"
+                    >
                         {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                         Guardar Plantilla
                     </Button>
@@ -1223,6 +1251,71 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                     </div>
                 </div>
             </footer>
+            {/* Intercept Modal: Template Descriptive Name Required */}
+            <Dialog open={isRenameModalOpen} onOpenChange={setIsRenameModalOpen}>
+                <DialogContent className="sm:max-w-[480px] bg-card border-border">
+                    <DialogHeader>
+                        <DialogTitle className="text-lg font-bold text-foreground">
+                            Nombre de la Plantilla
+                        </DialogTitle>
+                        <DialogDescription className="text-xs text-muted-foreground mt-1">
+                            Asigna un nombre descriptivo para identificar fácilmente esta plantilla en tu archivo.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <form
+                        onSubmit={e => {
+                            e.preventDefault()
+                            if (!tempTitle.trim()) {
+                                toast.error('Ingresa un título válido para continuar')
+                                return
+                            }
+                            handleSave(tempTitle.trim())
+                        }}
+                        className="space-y-4 py-2"
+                    >
+                        <div className="space-y-1.5">
+                            <Label htmlFor="template-rename-input" className="text-xs font-semibold text-foreground">
+                                Título de la Plantilla <span className="text-destructive">*</span>
+                            </Label>
+                            <Input
+                                id="template-rename-input"
+                                value={tempTitle}
+                                onChange={e => setTempTitle(e.target.value)}
+                                placeholder="Ej: Contrato de Prestación de Servicios 2026"
+                                autoFocus
+                                className="h-10 text-sm border-border bg-background"
+                            />
+                        </div>
+
+                        <DialogFooter className="pt-3 gap-2 sm:gap-0">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setIsRenameModalOpen(false)}
+                                disabled={isSaving}
+                                className="text-xs"
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={isSaving || !tempTitle.trim()}
+                                className="bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs gap-2"
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                        Guardando...
+                                    </>
+                                ) : (
+                                    'Guardar Plantilla'
+                                )}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
