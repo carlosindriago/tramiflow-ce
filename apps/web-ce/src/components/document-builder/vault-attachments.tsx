@@ -65,9 +65,9 @@ export function VaultAttachments({
         if (!selectedFiles || selectedFiles.length === 0) return
 
         const file = selectedFiles[0]
-        // Max 50MB limit check
-        if (file.size > 50 * 1024 * 1024) {
-            toast.error('El archivo excede el límite máximo de 50MB')
+        // Max 4MB limit check (Vercel Server Actions payload constraint)
+        if (file.size > 4 * 1024 * 1024) {
+            toast.error('El archivo excede el límite máximo de 4MB')
             if (fileInputRef.current) fileInputRef.current.value = ''
             return
         }
