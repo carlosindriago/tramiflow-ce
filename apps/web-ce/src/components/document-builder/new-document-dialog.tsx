@@ -246,12 +246,15 @@ export function NewDocumentDialog({
                 cleanFormData[k] = v === undefined || v === null ? '' : String(v)
             }
 
+            const cleanPaperConfig = JSON.parse(JSON.stringify(paperConfig))
+
             const result = await createGeneratedDocumentAction({
-                template_id: selectedTemplate.id,
-                client_id: selectedClientId,
+                template_id: String(selectedTemplate.id),
+                client_id: selectedClientId ? String(selectedClientId) : undefined,
                 title: (docTitle as string)?.trim() || selectedTemplate.title,
                 form_data: cleanFormData,
-                paper_config: paperConfig,
+                paper_config: cleanPaperConfig,
+                status: 'draft',
             })
 
             if (!result.success || !result.data) {

@@ -188,12 +188,15 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
     const handleAutoSaveServer = useCallback(
         async (ast: JSONContentNode) => {
             if (!initialTemplate?.id || !title.trim()) return
+            const cleanAst = JSON.parse(JSON.stringify(ast))
+            const cleanMargins = JSON.parse(JSON.stringify(margins))
+            const cleanPaperConfig = JSON.parse(JSON.stringify(paperConfig))
             await saveTemplateAction({
-                id: initialTemplate.id,
+                id: String(initialTemplate.id),
                 title: title.trim(),
-                content_ast: ast,
-                margins,
-                paper_config: paperConfig,
+                content_ast: cleanAst,
+                margins: cleanMargins,
+                paper_config: cleanPaperConfig,
                 status: 'draft',
             })
         },
@@ -293,13 +296,17 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
 
         setIsSaving(true)
         try {
-            const ast = editor.getJSON()
+            const rawAst = editor.getJSON()
+            const cleanAst = JSON.parse(JSON.stringify(rawAst))
+            const cleanMargins = JSON.parse(JSON.stringify(margins))
+            const cleanPaperConfig = JSON.parse(JSON.stringify(paperConfig))
+
             const result = await saveTemplateAction({
-                id: initialTemplate?.id,
+                id: initialTemplate?.id ? String(initialTemplate.id) : undefined,
                 title: title.trim(),
-                content_ast: ast,
-                margins,
-                paper_config: paperConfig,
+                content_ast: cleanAst,
+                margins: cleanMargins,
+                paper_config: cleanPaperConfig,
                 status: 'published',
             })
 
