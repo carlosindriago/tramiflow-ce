@@ -3,11 +3,13 @@
 import type { Json } from '@carlosindriago/database'
 import {
     createGeneratedDocumentSchema,
+    updateGeneratedDocumentSchema,
     hydrateASTWithData,
     actionSuccess,
     actionError,
     type GeneratedDocumentModel,
     type CreateGeneratedDocumentInput,
+    type UpdateGeneratedDocumentInput,
     type JSONContentNode,
     type PaperConfiguration,
 } from '@carlosindriago/core'
@@ -78,18 +80,14 @@ export const createGeneratedDocumentAction = createOrgAction(
 export const updateGeneratedDocumentAction = createOrgAction(
     async (
         { supabase, orgId },
-        input: {
-            id: string
-            title?: string
-            final_ast?: JSONContentNode | Record<string, unknown>
-            paper_config?: PaperConfiguration | null
-            form_data?: Record<string, string>
-            status?: string
-        }
+        rawInput: UpdateGeneratedDocumentInput
     ) => {
-        if (!input.id) {
-            return actionError('ID del documento requerido')
+        const parsed = updateGeneratedDocumentSchema.safeParse(rawInput)
+        if (!parsed.success) {
+            return actionError('Validación fallida', parsed.error.flatten().fieldErrors)
         }
+
+        const input = parsed.data
 
         const updatePayload: Record<string, unknown> = {
             updated_at: new Date().toISOString(),

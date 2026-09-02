@@ -201,6 +201,20 @@ export const createGeneratedDocumentSchema = z.object({
 export type CreateGeneratedDocumentInput = z.input<typeof createGeneratedDocumentSchema>
 
 /**
+ * Zod Schema to validate updating an existing Generated Document
+ */
+export const updateGeneratedDocumentSchema = z.object({
+    id: z.string().uuid(),
+    title: z.string().min(1).optional(),
+    final_ast: z.record(z.string(), z.any()).or(z.array(z.any())).optional(),
+    form_data: z.record(z.string(), z.string()).optional(),
+    paper_config: paperConfigurationSchema.optional().nullable(),
+    status: documentStatusSchema.optional(),
+})
+
+export type UpdateGeneratedDocumentInput = z.input<typeof updateGeneratedDocumentSchema>
+
+/**
  * Domain Models
  */
 export interface DocumentTemplateModel {
