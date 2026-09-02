@@ -76,10 +76,13 @@ import { FontFamilySelector } from './font-family-selector'
 import { LineHeight } from './extensions/line-height'
 import { SignatureBlockConfig } from './signature-block-config'
 import { SignatureBlock } from './extensions/signature-block'
+import { VaultAttachments } from './vault-attachments'
 import { updateGeneratedDocumentAction } from '@/actions/documents/generate-document'
 
 export interface GeneratedDocWithDetails {
     id: string
+    organization_id?: string
+    client_id?: string | null
     title: string
     final_ast: JSONContentNode | Record<string, unknown>
     form_data: Record<string, string>
@@ -738,8 +741,8 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                     </Button>
                 </div>
 
-            {/* Document Canvas */}
-            <main className="flex-1 p-4 sm:p-8 overflow-y-auto flex justify-center items-start relative">
+            {/* Document Canvas & Vault Attachments */}
+            <main className="flex-1 p-4 sm:p-8 overflow-y-auto flex flex-col items-center gap-8 relative">
                 {editor && (
                     <BubbleMenu
                         editor={editor}
@@ -771,6 +774,15 @@ export function DocumentReviewView({ document: docProp, initialDoc: initialDocPr
                 <A4PaperContainer ref={printRef} margins={margins} paperConfig={paperConfig}>
                     <EditorContent editor={editor} />
                 </A4PaperContainer>
+
+                {/* Confidential Attachments Vault */}
+                <div className="w-full max-w-[210mm]">
+                    <VaultAttachments
+                        organizationId={initialDoc.organization_id || ''}
+                        documentId={initialDoc.id}
+                        clientId={initialDoc.client?.id || initialDoc.client_id || undefined}
+                    />
+                </div>
             </main>
 
             {/* Bottom Status Bar (Márgenes y Redacción) */}
