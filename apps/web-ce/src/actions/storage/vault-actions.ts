@@ -20,23 +20,25 @@ export interface VaultSignedUrlResult {
  * The destination path is strictly scoped by organization ID: org_id/client_id/uuid-filename.ext
  */
 export const uploadToVaultAction = createOrgAction<
-    [formData: FormData, clientId?: string, documentType?: string],
+    [formData: FormData],
     VaultUploadResult
->(async ({ orgId, supabase }, formData: FormData, clientId?: string, documentType?: string) => {
+>(async ({ orgId, supabase }, formData: FormData) => {
     const file = formData.get('file') as File | null
 
     if (!file || !(file instanceof File)) {
         return actionError('No se proporcionó ningún archivo válido para subir.')
     }
 
-    // Optional client ID or fallback to 'general'
-    const resolvedClientId = clientId || (formData.get('clientId') as string | null) || 'general'
-    const resolvedDocType = documentType || (formData.get('documentType') as string | null) || 'document'
+    // Optional client ID subfolder or root organization folder
+    const clientId = (formData.get('clientId') as string | null) || (formData.get('client_id') as string | null)
+    const resolvedDocType = (formData.get('documentType') as string | null) || 'document'
 
     // Clean filename and generate secure UUID prefix
     const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
     const uniqueId = crypto.randomUUID()
-    const storagePath = `${orgId}/${resolvedClientId}/${uniqueId}-${sanitizedFileName}`
+    const storagePath = clientId
+        ? `${orgId}/${clientId}/${uniqueId}-${sanitizedFileName}`
+        : `${orgId}/${uniqueId}-${sanitizedFileName}`
 
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
@@ -54,7 +56,7 @@ export const uploadToVaultAction = createOrgAction<
         })
 
     if (uploadError) {
-        console.error('Error uploading file to vault_documents:', uploadError)
+        console.error('[uploadToVaultAction] Error uploading file to vault_documents:', uploadError)
         return actionError(`Error al subir el archivo: ${uploadError.message}`)
     }
 
