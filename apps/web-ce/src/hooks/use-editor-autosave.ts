@@ -4,11 +4,11 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import type { Editor } from '@tiptap/core'
 import type { JSONContentNode } from '@carlosindriago/core'
 
-export type AutoSaveStatus = 'idle' | 'saved' | 'saving' | 'error'
+export type AutoSaveStatus = 'idle' | 'saving' | 'saved' | 'error' | 'local_draft'
 
 export interface LocalDraftData {
     ast: JSONContentNode
-    updatedAt: number
+    timestamp: number
 }
 
 export interface UseEditorAutoSaveOptions {
@@ -28,7 +28,9 @@ export interface UseEditorAutoSaveReturn {
 }
 
 /**
- * Custom Hook for Hybrid Autosave (Immediate LocalStorage backup + Debounced Server Save)
+ * Custom Hook for Hybrid Autosave:
+ * 1. Immediate local backup in localStorage upon every keystroke (local_draft).
+ * 2. Debounced asynchronous server persistence after inactivity (saving -> saved / error).
  */
 export function useEditorAutoSave({
     editor,
@@ -46,7 +48,7 @@ export function useEditorAutoSave({
         onSaveServerRef.current = onSaveServer
     }, [onSaveServer])
 
-    const storageKey = `tramiflow_doc_${documentId || 'new_draft'}`
+    const storageKey = `tramiflow_draft_${documentId || 'new'}`
 
     const clearLocalDraft = useCallback(() => {
         if (typeof window === 'undefined') return
@@ -63,7 +65,9 @@ export function useEditorAutoSave({
             const raw = localStorage.getItem(storageKey)
             if (!raw) return null
             const parsed = JSON.parse(raw) as LocalDraftData
-            if (parsed && parsed.ast) return parsed
+            if (parsed && parsed.ast && typeof parsed.timestamp === 'number') {
+                return parsed
+            }
             return null
         } catch (e) {
             console.error('[useEditorAutoSave] Error reading local draft:', e)
@@ -97,27 +101,27 @@ export function useEditorAutoSave({
             if (!editor) return
             const ast = editor.getJSON() as JSONContentNode
 
-            // 1. Immediately backup to localStorage
+            // 1. Immediate local persistence
             try {
                 const draftData: LocalDraftData = {
                     ast,
-                    updatedAt: Date.now(),
+                    timestamp: Date.now(),
                 }
                 localStorage.setItem(storageKey, JSON.stringify(draftData))
+                setSaveStatus('local_draft')
             } catch (err) {
                 console.error('[useEditorAutoSave] Error saving to localStorage:', err)
             }
 
-            // 2. Schedule debounced server save if onSaveServer provided
+            // 2. Scheduled server persistence (Debounce)
             if (!onSaveServerRef.current) return
 
             if (timerRef.current) {
                 clearTimeout(timerRef.current)
             }
 
-            setSaveStatus('saving')
-
             timerRef.current = setTimeout(async () => {
+                setSaveStatus('saving')
                 try {
                     if (onSaveServerRef.current) {
                         await onSaveServerRef.current(ast)

@@ -237,14 +237,20 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
         }
     }, [initialTemplate, editor])
 
-    // Check for unsaved local draft discrepancy on mount
+    // Check for unsaved local draft on mount (recovery logic)
     useEffect(() => {
         if (!editor) return
         const draft = getLocalDraft()
         if (draft && draft.ast) {
+            const serverUpdatedAt = initialTemplate?.updated_at
+                ? new Date(initialTemplate.updated_at).getTime()
+                : 0
+            const isLocalNewer = draft.timestamp > serverUpdatedAt
             const currentContentStr = JSON.stringify(initialTemplate?.content_ast || editor.getJSON())
             const draftContentStr = JSON.stringify(draft.ast)
-            if (draftContentStr !== currentContentStr) {
+            const hasDifference = draftContentStr !== currentContentStr
+
+            if ((isLocalNewer || !initialTemplate?.content_ast) && hasDifference) {
                 setHasUnsavedLocalDraft(true)
                 setLocalDraftAst(draft.ast)
             }
@@ -1157,8 +1163,8 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                 </A4PaperContainer>
             </main>
 
-            {/* Bottom Status Bar (Márgenes y Redacción) */}
-            <footer className="shrink-0 z-20 border-t border-border/60 bg-muted/40 px-4 py-1.5 flex flex-wrap items-center justify-between w-full text-[11px] text-muted-foreground shadow-xs">
+            {/* Bottom Status Bar (Márgenes, Redacción y Estado de Guardado) */}
+            <footer className="shrink-0 z-20 border-t border-border/60 bg-muted/40 px-4 py-1.5 flex flex-wrap items-center justify-between w-full text-[11px] text-muted-foreground shadow-xs gap-2">
                 <div>
                     <span>
                         Márgenes: Sup {margins.top} | Inf {margins.bottom} | Izq {margins.left} | Der {margins.right} mm
@@ -1169,9 +1175,45 @@ export function TemplateBuilderView({ initialTemplate }: TemplateBuilderViewProp
                         )}
                     </span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                    <Info className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                    <span>Vista de redacción continua. Usa &quot;Previsualizar Documento Impreso&quot; para ver la paginación final.</span>
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                        <Info className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                        <span>Vista de redacción continua. Usa &quot;Previsualizar Documento Impreso&quot; para ver la paginación final.</span>
+                    </div>
+
+                    {/* Visual Autosave Status Indicator */}
+                    <div className="flex items-center gap-1.5 font-medium border-l border-border/60 pl-3">
+                        {saveStatus === 'saving' && (
+                            <>
+                                <Loader2 className="h-3 w-3 animate-spin text-amber-500" />
+                                <span className="text-amber-600 dark:text-amber-400">Guardando...</span>
+                            </>
+                        )}
+                        {saveStatus === 'saved' && (
+                            <>
+                                <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                                <span className="text-emerald-600 dark:text-emerald-400">Guardado en la nube</span>
+                            </>
+                        )}
+                        {saveStatus === 'local_draft' && (
+                            <>
+                                <div className="h-2 w-2 rounded-full bg-sky-500" />
+                                <span className="text-sky-600 dark:text-sky-400">Borrador local</span>
+                            </>
+                        )}
+                        {saveStatus === 'error' && (
+                            <>
+                                <div className="h-2 w-2 rounded-full bg-destructive" />
+                                <span className="text-destructive">Error al sincronizar</span>
+                            </>
+                        )}
+                        {saveStatus === 'idle' && (
+                            <>
+                                <div className="h-2 w-2 rounded-full bg-muted-foreground/50" />
+                                <span>Autoguardado</span>
+                            </>
+                        )}
+                    </div>
                 </div>
             </footer>
         </div>
