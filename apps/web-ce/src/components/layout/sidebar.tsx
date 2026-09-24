@@ -223,6 +223,10 @@ export function AppSidebar() {
         } catch (error) {
             console.error('Error signing out:', error)
         } finally {
+            // Navegación dura intencional: fuerza recarga completa para limpiar
+            // por completo el estado en memoria (ej. cache de React Query) y
+            // evitar que datos de la sesión anterior queden accesibles tras el logout.
+            // eslint-disable-next-line @next/next/no-location-assign-relative-destination
             window.location.href = '/login'
         }
     }
