@@ -5,12 +5,11 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
     // 1. Verify Cron Secret (Security)
+    // Fail closed: an unset CRON_SECRET must reject the request, not skip auth.
+    const cronSecret = process.env.CRON_SECRET
     const authHeader = request.headers.get('authorization')
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-        // Enforce secret in production, optional in local dev if not set
-        if (process.env.CRON_SECRET) {
-            return new NextResponse('Unauthorized', { status: 401 })
-        }
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+        return new NextResponse('Unauthorized', { status: 401 })
     }
 
     // Service Role Client for bypassing RLS during Cron Job
