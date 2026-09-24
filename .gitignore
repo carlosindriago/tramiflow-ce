@@ -79,3 +79,6 @@ build_log.txt
 dummy.mjs
 apps/web-ce/dist.css
 
+# Bitácoras internas de tareas (no sincronizar en repo público)
+docs/tarea-*.md
+
